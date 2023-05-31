@@ -35,6 +35,9 @@ var dashboardName = 'dashboard-${uniqueString(resourceGroup().id)}'
 // var logicAppName = 'logic-${uniqueString(resourceGroup().id)}'
 // var cognitiveServiceName = 'cog-${uniqueString(resourceGroup().id)}'
 
+// Slot names
+//var functionAppDevSlotName = 'dev'
+var webAppDevSlotName = 'dev'
 
 // Tags
 var defaultTags = {
@@ -74,6 +77,7 @@ module webappmod './main-2-webapp.bicep' = {
   params: {
     webAppPlanName: webAppPlanName
     webSiteName: webSiteName
+    webAppDevSlotName: webAppDevSlotName
     resourceGroupName: resourceGroup().name
     Deployed_Environment: Deployed_Environment
     appInsightsName: appInsightsName

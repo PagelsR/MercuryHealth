@@ -14,6 +14,7 @@ param sqlAdminLoginName string
 
 param webAppPlanName string
 param webSiteName string
+param webAppDevSlotName string
 param resourceGroupName string
 param appInsightsName string
 param appInsightsInstrumentationKey string
@@ -25,7 +26,7 @@ param defaultTags object
 // App Configuration Data Reader	Allows read access to App Configuration data.	516239f1-63e1-4d78-a4de-a74fb236a071
 //var AppConfigDataReaderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '516239f1-63e1-4d78-a4de-a74fb236a071')
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: webAppPlanName
   location: location
   tags: defaultTags
@@ -35,7 +36,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   }
 }
 
-resource appService 'Microsoft.Web/sites@2021-03-01' = {
+resource appService 'Microsoft.Web/sites@2022-09-01' = {
   name: webSiteName
   location: location
   kind: 'app'
@@ -49,11 +50,31 @@ resource appService 'Microsoft.Web/sites@2021-03-01' = {
     siteConfig: {
       minTlsVersion: '1.2'
       healthCheckPath: '/healthy'
+      netFrameworkVersion: 'v6.0'
+      alwaysOn: true
+      autoHealEnabled: true
     }
   }
 }
 
-resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2021-03-01' = {
+// Create Web App's staging slot
+resource webappSlotDevName 'Microsoft.Web/sites/slots@2022-03-01' = {
+  name: '${appService.name}/${webAppDevSlotName}'
+  location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
+  tags: {
+    displayName: 'webAppSlots'
+  }
+  properties: {
+    enabled: true
+    httpsOnly: true
+    serverFarmId: appServicePlan.id
+  }
+}
+
+resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2022-09-01' = {
   name: 'appsettings'
   parent: appService
   properties: {
@@ -65,6 +86,18 @@ resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2021-03-01' = {
     APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
     WebAppUrl: 'https://${appService.name}.azurewebsites.net/'
     ASPNETCORE_ENVIRONMENT: 'Development'
+  }
+}
+
+// Set specific app settings to be "sticky" slot specific value
+resource webSlotConfig 'Microsoft.Web/sites/config@2022-09-01' = {
+  name: 'slotConfigNames'
+  parent: appService
+  properties: {
+    appSettingNames: [
+      'WebAppUrl'
+      'AspNetCore_Environment'
+    ]
   }
 }
 
