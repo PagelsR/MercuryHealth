@@ -176,7 +176,7 @@ jobs:
 
     # Deploy Database *.dacpac file
     - name: 'Deploy the database to Azure'
-      uses: Azure/sql-action@v1.2
+      uses: Azure/sql-action@v2.2
       with:
         server-name: ${{ steps.Infra.outputs.out_sqlserverFQName }}
         #connection-string: ${{ secrets.sql-connection-string }}
@@ -256,7 +256,7 @@ jobs:
 
     # Deploy Database *.dacpac file
     #- name: 'Deploy the database to Azure'
-    #  uses: Azure/sql-action@v1.2
+    #  uses: Azure/sql-action@v2.2
     #  with:
     #    server-name: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}
     #    connection-string: ${{ secrets.sql-connection-string }}
