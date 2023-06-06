@@ -19,8 +19,8 @@ resource sqlServer 'Microsoft.Sql/servers@2022-08-01-preview' = {
     administratorLoginPassword: sqlAdminLoginPassword
     version: '12.0'
     minimalTlsVersion: '1.2'
-    publicNetworkAccess: 'Disabled'
-    restrictOutboundNetworkAccess: 'Disabled'
+    publicNetworkAccess: 'Enabled'
+    restrictOutboundNetworkAccess: 'Enabled'
   }
 }
 
