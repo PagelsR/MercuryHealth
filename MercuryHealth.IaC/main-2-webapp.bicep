@@ -59,8 +59,7 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
 
 // Create Web App's staging slot
 resource webappSlotDevName 'Microsoft.Web/sites/slots@2022-09-01' = {
-  //name: '${appService.name}/${webAppDevSlotName}'
-  name: webAppDevSlotName
+  name: '${appService.name}/${webAppDevSlotName}'
   location: location
   identity: {
     type: 'SystemAssigned'
