@@ -94,7 +94,7 @@ resource roleAssignmentForLoadTestService 'Microsoft.Authorization/roleAssignmen
   scope: existing_LoadTestService
   properties: {
     principalType: 'ServicePrincipal'
-    principalId: resourceId('Microsoft.AzureActiveDirectory/userAssignedIdentities', 'rpagels@xpirit.com') //reference(existing_LoadTestService.id, '2020-12-01', 'Full').identity.principalId //existing_appService.identity.principalId
+    principalId: resourceId('Microsoft.AzureActiveDirectory/userAssignedIdentities', principalObjectIdOfUser) //reference(existing_LoadTestService.id, '2020-12-01', 'Full').identity.principalId //existing_appService.identity.principalId
     roleDefinitionId: loadTestOwnderRoleDefinitionId
   }
 }
