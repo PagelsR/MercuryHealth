@@ -1,4 +1,4 @@
-name: Deployment-Environment
+name: Deployment-Environment-Full
 
 # TThe workflow_call keyword allows to specify inputs that are passed to the called workflow
 # from the caller workflow.
