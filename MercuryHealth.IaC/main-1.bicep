@@ -237,12 +237,10 @@ module configsettingsmod './main-13-configsettings.bicep' = {
     kvValue_ConnectionStringValue: webappmod.outputs.out_secretConnectionString
     appServiceprincipalId: webappmod.outputs.out_appServiceprincipalId
     webappName: webSiteName
-    loadTestsName: loadTestsName
     AzObjectIdPagels: AzObjectIdPagels
     functionAppName: functionAppName
     funcAppServiceprincipalId: functionappmod.outputs.out_funcAppServiceprincipalId
     configStoreEndPoint: configstoremod.outputs.out_configStoreEndPoint
-    configStoreName: configStoreName
     FontNameKey: FontNameKey
     FontColorKey: FontColorKey
     FontSizeKey: FontSizeKey
@@ -266,20 +264,22 @@ module configsettingsmod './main-13-configsettings.bicep' = {
  }
 
 // Add Role Assignments
-// module roleAssignments './main-99-RoleAssignments.bicep' = {
-//   name: 'addRoleAssignments'
-//   params: {
-//     loadTestResourceName: loadTestsName
-//     principalObjectIdOfUser: AzObjectIdPagels
-//     subscriptionId: subscription().subscriptionId
-//     resourceGroupName: resourceGroup().name
-//     signInName: AzObjectIdPagels
-//     }
-//     dependsOn:  [
-//       configsettingsmod
-//       loadtestsmod
-//     ]
-// }
+module roleAssignments './main-99-RoleAssignments.bicep' = {
+  name: 'addRoleAssignments'
+  params: {
+    loadTestResourceName: loadTestsName
+    principalObjectIdOfUser: AzObjectIdPagels
+    subscriptionId: subscription().subscriptionId
+    resourceGroupName: resourceGroup().name
+    signInName: AzObjectIdPagels
+    configStoreName: configStoreName
+    webappName: webSiteName
+    }
+    dependsOn:  [
+      configsettingsmod
+      loadtestsmod
+    ]
+}
 
  // Create Front Door
 //module frontdoormod './main-14-frontdoor.bicep' = {
