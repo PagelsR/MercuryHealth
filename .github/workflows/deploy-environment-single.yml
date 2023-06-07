@@ -599,3 +599,35 @@ jobs:
       - name: Approve Deployment
         run: |
           echo 'Approve Deployment'
+
+###################################################################
+# Swap Deployment Slots                         
+###################################################################
+  Approval_Stage_SwapSlots:
+    #if: contains(github.event_name, 'push')
+
+    name: Deploy to Prod
+    
+    env:
+      dotnet_version: '6.x.x'
+      buildConfiguration: 'Release'
+
+    # The type of runner that the job will run on - windows-latest
+    runs-on: ubuntu-latest
+
+    # Identify any jobs that must complete successfully before this job will run.
+    needs: [deploy_infrastructure, Approval_Stage_Application]
+    timeout-minutes: 10
+        
+    steps:
+      - name: Swap Slots
+        run: |
+          az webapp deployment slot swap 
+          --resource-group ${{ inputs.resource-group-base-name }}
+          --name ${{needs.deploy_infrastructure.outputs.output_webSiteName}}
+          --slot ${{ inputs.environment-suffix }}
+          --target-slot 'prod'
+
+          
+
+

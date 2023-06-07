@@ -237,6 +237,7 @@ module configsettingsmod './main-13-configsettings.bicep' = {
     kvValue_ConnectionStringValue: webappmod.outputs.out_secretConnectionString
     appServiceprincipalId: webappmod.outputs.out_appServiceprincipalId
     webappName: webSiteName
+    webAppDevSlotName: webAppDevSlotName
     AzObjectIdPagels: AzObjectIdPagels
     functionAppName: functionAppName
     funcAppServiceprincipalId: functionappmod.outputs.out_funcAppServiceprincipalId

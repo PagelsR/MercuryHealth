@@ -47,22 +47,22 @@ resource roleAssignmentForAppConfig 'Microsoft.Authorization/roleAssignments@202
 // TESTING ONLY
 // ****************************************************************
 // Azure built-in roles - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
-var loadTestOwnderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '45bb0b16-2f0c-4e78-afaa-a07599b003f6')
+// var loadTestOwnderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '45bb0b16-2f0c-4e78-afaa-a07599b003f6')
 
-// // Reference Existing resource
-resource existing_LoadTestService 'Microsoft.LoadTestService/loadTests@2022-12-01' existing = {
-  name: loadTestResourceName
-}
+// // // Reference Existing resource
+// resource existing_LoadTestService 'Microsoft.LoadTestService/loadTests@2022-12-01' existing = {
+//   name: loadTestResourceName
+// }
 
-resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(existing_LoadTestService.id, loadTestOwnderRoleDefinitionId)
-  scope: existing_LoadTestService
-  properties: {
-    principalType: 'User'
-    principalId: principalObjectIdOfUser
-    roleDefinitionId: loadTestOwnderRoleDefinitionId
-  }
-}
+// resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+//   name: guid(existing_LoadTestService.id, loadTestOwnderRoleDefinitionId)
+//   scope: existing_LoadTestService
+//   properties: {
+//     principalType: 'User'
+//     principalId: principalObjectIdOfUser
+//     roleDefinitionId: loadTestOwnderRoleDefinitionId
+//   }
+// }
 
 // NOT WORKING
 // Add role assignment to Load Test Service
