@@ -174,160 +174,89 @@ resource secret5 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
 //   name: webAppName
 // }
 
-// resource existing_appConfig 'Microsoft.AppConfiguration/configurationStores@2022-05-01' existing = {
-//   name: configStoreName
-// }
-
-// Add role assigment for Service Identity
-// Azure built-in roles - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
-// App Configuration Data Reader	Allows read access to App Configuration data.	516239f1-63e1-4d78-a4de-a74fb236a071
-//var AppConfigDataReaderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '516239f1-63e1-4d78-a4de-a74fb236a071')
-
-// Add role assignment to App Config Store
-// resource roleAssignmentForAppConfig 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-//   name: guid(existing_appConfig.id, AppConfigDataReaderRoleDefinitionId)
-//   scope: existing_appConfig
-//   properties: {
-//     principalType: 'ServicePrincipal'
-//     principalId: reference(existing_appService.id, '2020-12-01', 'Full').identity.principalId //existing_appService.identity.principalId
-//     roleDefinitionId: AppConfigDataReaderRoleDefinitionId
-//   }
-// }
-
-// resource existing_loadtest 'Microsoft.LoadTestService/loadTests@2022-12-01' existing = {
-//   name: loadTestsName
-// }
-
-// Add role assignment for Service Identity
-// Azure built-in roles - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
-// Azure Load Testing - https://learn.microsoft.com/en-us/azure/load-testing/how-to-assign-roles?WT.mc_id=Portal-Microsoft_Azure_CloudNativeTesting
-// Load Testing Ownder.	45bb0b16-2f0c-4e78-afaa-a07599b003f6
-//var loadTestingOwnerRoleDefinitionId  = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '45bb0b16-2f0c-4e78-afaa-a07599b003f6')
-
-// Add role assignment to Load Testing
-// resource roleAssignmentForLoadTest 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-//   name: guid(existing_loadtest.id, loadTestingOwnerRoleDefinitionId )
-//   scope: existing_loadtest
-//   properties: {
-//     principalType: 'User' //'ServicePrincipal'
-//     principalId: AzObjectIdPagels //reference(existing_loadtest.id, '2022-12-01', 'Full').identity.principalId //existing_appService.identity.principalId
-//     roleDefinitionId: loadTestingOwnerRoleDefinitionId
-//   }
-// }
-
-// resource serviceIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-//   name: 'myServiceIdentity'
-//   location: resourceGroup().location
-// }
-
-// Assign 'Load Test Owner' Role Assignment for email alias rpagels.
-// resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-//   // name: '${deploymentName}-roleAssignment'
-//   name: guid(existing_loadtest.id, loadTestingOwnerRoleDefinitionId )
-//   properties: {
-//     principalType: 'ServicePrincipal'
-//     principalId: AzObjectIdPagels
-//     roleDefinitionId: loadTestingOwnerRoleDefinitionId
-//   }
-// }
-
-// Assign 'Load Test Owner' Role Assignment for email alias rpagels.
-// resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-//   name: guid(existing_loadtest.id, loadTestingOwnerRoleDefinitionId )
-//   scope: existing_loadtest
-//   properties: {
-//     principalId: AzObjectIdPagels
-//     roleDefinitionId: '/subscriptions/<subscriptionId>/providers/Microsoft.Authorization/roleDefinitions/45bb0b16-2f0c-4e78-afaa-a07599b003f6'
-//     roleDefinitionId: loadTestingOwnerRoleDefinitionId
-//   }
-// }
-
 /////////////////////////////////////////////////
 // Add Settings for Web App
 /////////////////////////////////////////////////
 
-// 'ConnectionStrings:MercuryHealthWebContext': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ConnectionStringName})'
-// 'ConnectionStrings:AppConfig': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_configStoreConnectionName})'
-
 // Base app settings shared for all slots
-var base_prod_webappsettings = {
-  ConnectionStrings_MercuryHealthWebContext: '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ConnectionStringName})'
-  ConnectionStrings_AppConfig: '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_configStoreConnectionName})'
-  DeployedEnvironment: Deployed_Environment
-  WEBSITE_RUN_FROM_PACKAGE: '1'
-  WEBSITE_SENTINEL: '1'
-  APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey
-  APPINSIGHTS_PROFILERFEATURE_VERSION: '1.0.0'
-  APPINSIGHTS_SNAPSHOTFEATURE_VERSION: '1.0.0'
-  APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
-  WEBSITE_FONTNAME: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontNameKey})'
-  WEBSITE_FONTCOLOR: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontColorKey})'
-  WEBSITE_FONTSIZE: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontSizeKey})'
-  WEBSITE_ENABLE_SYNC_UPDATE_SITE: 'true'
-}
-
-// Production slot unique settings
-var production_slot_webappsettings = {
-   WebAppUrl: 'https://${webAppName}.azurewebsites.net/'
-   AspNetCore_Environment: 'Production'
-}
-
-// Set app settings on Production slot
-resource webAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
-  name: '${webAppName}/appsettings'
-  properties: union(base_prod_webappsettings, production_slot_webappsettings)
-  dependsOn: [
-    secret1
-    secret2
-  ]
-}
-
-// Dev slot unique settings
-var dev_slot_webappsettings ={
-  WebAppUrl: 'https://${webAppName}-dev.azurewebsites.net/'
-  AspNetCore_Environment: 'Development'
-}
-// Set app settings on dev slot
-resource webAppStagingSlotSetting 'Microsoft.Web/sites/slots/config@2022-09-01' = {
-  name: '${webAppDevSlotName}/appsettings'
-  properties: union(base_prod_webappsettings, dev_slot_webappsettings)
-  dependsOn: [
-    secret1
-    secret2
-  ]
-}
-
-// Reference Existing resource
-// resource existing_appService 'Microsoft.Web/sites@2022-03-01' existing = {
-//   name: webAppName
+// var base_prod_webappsettings = {
+// DeployedEnvironment: Deployed_Environment
+//   'ConnectionStrings:MercuryHealthWebContext': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ConnectionStringName})'
+//   'ConnectionStrings:AppConfig': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_configStoreConnectionName})'
+//   WEBSITE_RUN_FROM_PACKAGE: '1'
+//   WEBSITE_SENTINEL: '1'
+//   APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey
+//   APPINSIGHTS_PROFILERFEATURE_VERSION: '1.0.0'
+//   APPINSIGHTS_SNAPSHOTFEATURE_VERSION: '1.0.0'
+//   APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
+//   WEBSITE_FONTNAME: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontNameKey})'
+//   WEBSITE_FONTCOLOR: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontColorKey})'
+//   WEBSITE_FONTSIZE: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontSizeKey})'
+//   WEBSITE_ENABLE_SYNC_UPDATE_SITE: 'true'
 // }
 
-// Create Web sites/config 'appsettings' - Web App
-// resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
-//   name: 'appsettings'
-//   parent: existing_appService
-//   properties: {
-//     'ConnectionStrings:MercuryHealthWebContext': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ConnectionStringName})'
-//     'ConnectionStrings:AppConfig': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_configStoreConnectionName})'
-//     DeployedEnvironment: Deployed_Environment
-//     WEBSITE_RUN_FROM_PACKAGE: '1'
-//     WEBSITE_SENTINEL: '1'
-//     APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey
-//     APPINSIGHTS_PROFILERFEATURE_VERSION: '1.0.0'
-//     APPINSIGHTS_SNAPSHOTFEATURE_VERSION: '1.0.0'
-//     APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
-//     WebAppUrl: 'https://${existing_appService.name}.azurewebsites.net/'
-//     ASPNETCORE_ENVIRONMENT: 'Development'
-//     WEBSITE_FONTNAME: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontNameKey})'
-//     WEBSITE_FONTCOLOR: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontColorKey})'
-//     WEBSITE_FONTSIZE: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontSizeKey})'
-//     WEBSITE_ENABLE_SYNC_UPDATE_SITE: 'true'
-//   }
+// // Production slot unique settings
+// var production_slot_webappsettings = {
+//    WebAppUrl: 'https://${webAppName}.azurewebsites.net/'
+//    AspNetCore_Environment: 'Production'
+// }
+
+// // Set app settings on Production slot
+// resource webAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
+//   name: '${webAppName}/appsettings'
+//   properties: union(base_prod_webappsettings, production_slot_webappsettings)
 //   dependsOn: [
 //     secret1
 //     secret2
 //   ]
 // }
+
+// // Dev slot unique settings
+// var dev_slot_webappsettings ={
+//   WebAppUrl: 'https://${webAppName}-dev.azurewebsites.net/'
+//   AspNetCore_Environment: 'Development'
+// }
+// // Set app settings on dev slot
+// resource webAppStagingSlotSetting 'Microsoft.Web/sites/slots/config@2022-09-01' = {
+//   name: '${webAppDevSlotName}/appsettings'
+//   properties: union(base_prod_webappsettings, dev_slot_webappsettings)
+//   dependsOn: [
+//     secret1
+//     secret2
+//   ]
+// }
+
+// Reference Existing resource
+resource existing_appService 'Microsoft.Web/sites@2022-03-01' existing = {
+  name: webAppName
+}
+
+//Create Web sites/config 'appsettings' - Web App
+resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
+  name: 'appsettings'
+  parent: existing_appService
+  properties: {
+    'ConnectionStrings:MercuryHealthWebContext': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ConnectionStringName})'
+    'ConnectionStrings:AppConfig': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_configStoreConnectionName})'
+    DeployedEnvironment: Deployed_Environment
+    WEBSITE_RUN_FROM_PACKAGE: '1'
+    WEBSITE_SENTINEL: '1'
+    APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey
+    APPINSIGHTS_PROFILERFEATURE_VERSION: '1.0.0'
+    APPINSIGHTS_SNAPSHOTFEATURE_VERSION: '1.0.0'
+    APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
+    WebAppUrl: 'https://${existing_appService.name}.azurewebsites.net/'
+    ASPNETCORE_ENVIRONMENT: 'Development'
+    WEBSITE_FONTNAME: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontNameKey})'
+    WEBSITE_FONTCOLOR: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontColorKey})'
+    WEBSITE_FONTSIZE: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontSizeKey})'
+    WEBSITE_ENABLE_SYNC_UPDATE_SITE: 'true'
+  }
+  dependsOn: [
+    secret1
+    secret2
+  ]
+}
 
 // Reference Existing resource
 resource existing_funcAppService 'Microsoft.Web/sites@2022-03-01' existing = {
