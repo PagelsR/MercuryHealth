@@ -263,16 +263,15 @@ var base_prod_webappsettings = {
   WEBSITE_ENABLE_SYNC_UPDATE_SITE: 'true'
 }
 
-// Update production slot with unique settings
+// Production slot unique settings
 var production_slot_webappsettings = {
    WebAppUrl: 'https://${webAppName}.azurewebsites.net/'
-  ASPNETCORE_ENVIRONMENT: 'Production'
+   AspNetCore_Environment: 'Production'
 }
 
-// Set app settings on production slot')
+// Set app settings on Production slot
 resource webAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
   name: '${webAppName}/appsettings'
-  //parent: existing_appService
   properties: union(base_prod_webappsettings, production_slot_webappsettings)
   dependsOn: [
     secret1
@@ -280,13 +279,13 @@ resource webAppSettings 'Microsoft.Web/sites/config@2022-09-01' = {
   ]
 }
 
-// Update dev slot with unique settings
+// Dev slot unique settings
 var dev_slot_webappsettings ={
   WebAppUrl: 'https://${webAppName}-dev.azurewebsites.net/'
   AspNetCore_Environment: 'Development'
 }
 // Set app settings on dev slot
-resource webAppStagingSlotSetting 'Microsoft.Web/sites/slots/config@2022-03-01' = {
+resource webAppStagingSlotSetting 'Microsoft.Web/sites/slots/config@2022-09-01' = {
   name: '${webAppDevSlotName}/appsettings'
   //parent: existing_appService
   properties: union(base_prod_webappsettings, dev_slot_webappsettings)
