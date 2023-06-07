@@ -577,6 +577,7 @@ jobs:
       - name: 'Azure logout'
         run: |
           az logout
+
 ###################################################################
 # CD Stage - Dev  
 ###################################################################
@@ -591,7 +592,7 @@ jobs:
 
     # Identify any jobs that must complete successfully before this job will run.
     #needs: [UITesting_Stage_Application, LoadTesting_Stage_Application_Home, LoadTesting_Stage_Application_Nutrition, LoadTesting_Stage_Application_Exercise]
-    needs: [UITesting_Stage_Application, LoadTesting_Stage_Application_APIs]
+    needs: [UITesting_Stage_Application, LoadTesting_Stage_Application_APIs, deploy_infrastructure ]
     environment:
       name: ${{ inputs.environment-suffix }}
       url: ${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net
@@ -618,14 +619,15 @@ jobs:
     # Identify any jobs that must complete successfully before this job will run.
     needs: [deploy_infrastructure, Approval_Stage_Application]
     timeout-minutes: 10
-        
+    
+    # ${{ inputs.environment-suffix }}
     steps:
       - name: Swap Slots
         run: |
           az webapp deployment slot swap 
           --resource-group ${{ inputs.resource-group-base-name }}
           --name ${{needs.deploy_infrastructure.outputs.output_webSiteName}}
-          --slot ${{ inputs.environment-suffix }}
+          --slot 'dev'
           --target-slot 'prod'
 
           
