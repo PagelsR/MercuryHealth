@@ -43,12 +43,36 @@ resource roleAssignmentForAppConfig 'Microsoft.Authorization/roleAssignments@202
   }
 }
 
+// ****************************************************************
+// TESTING ONLY
+// ****************************************************************
+// Azure built-in roles - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
+// var loadTestOwnderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '45bb0b16-2f0c-4e78-afaa-a07599b003f6')
 
+// // Reference Existing resource
+// resource existing_LoadTestService 'Microsoft.LoadTestService/loadTests@2022-12-01' existing = {
+//   name: loadTestResourceName
+// }
+
+// // Add role assignment to Load Test Service
+// resource roleAssignmentForLoadTestService 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
+//   name: guid(existing_LoadTestService.id, loadTestOwnderRoleDefinitionId)
+//   scope: existing_LoadTestService
+//   properties: {
+//     principalType: 'ServicePrincipal'
+//     principalId: resourceId('Microsoft.AzureActiveDirectory/userAssignedIdentities', principalObjectIdOfUser) //reference(existing_LoadTestService.id, '2020-12-01', 'Full').identity.principalId //existing_appService.identity.principalId
+//     roleDefinitionId: loadTestOwnderRoleDefinitionId
+//   }
+// }
+
+// ****************************************************************
+// TESTING ONLY
+// ****************************************************************
 
 
 // Azure built-in roles - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
 //param loadTestOwnerRoleId string = '45bb0b16-2f0c-4e78-afaa-a07599b003f6'
-var loadTestOwnderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '45bb0b16-2f0c-4e78-afaa-a07599b003f6')
+//var loadTestOwnderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '45bb0b16-2f0c-4e78-afaa-a07599b003f6')
 
 // Add role assigment for Load Testing Service
 // resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
@@ -82,22 +106,6 @@ var loadTestOwnderRoleDefinitionId = subscriptionResourceId('Microsoft.Authoriza
 //     scope: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.LoadTestService/loadtests/${loadTestResourceName}'
 //   }
 // }
-
-// Reference Existing resource
-resource existing_LoadTestService 'Microsoft.LoadTestService/loadTests@2022-12-01' existing = {
-  name: loadTestResourceName
-}
-
-// Add role assignment to Load Test Service
-resource roleAssignmentForLoadTestService 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(existing_LoadTestService.id, loadTestOwnderRoleDefinitionId)
-  scope: existing_LoadTestService
-  properties: {
-    principalType: 'ServicePrincipal'
-    principalId: resourceId('Microsoft.AzureActiveDirectory/userAssignedIdentities', principalObjectIdOfUser) //reference(existing_LoadTestService.id, '2020-12-01', 'Full').identity.principalId //existing_appService.identity.principalId
-    roleDefinitionId: loadTestOwnderRoleDefinitionId
-  }
-}
 
 // resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
 //   name: guid(subscriptionId, resourceGroupName, loadTestResourceName)
