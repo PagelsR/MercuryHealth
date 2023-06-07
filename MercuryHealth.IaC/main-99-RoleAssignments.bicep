@@ -59,11 +59,12 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   scope: existing_LoadTestService
   properties: {
     principalType: 'User'
-    principalId: '0aa95253-9e37-4af9-a63a-3b35ed78e98b' //rincipalObjectIdOfUser
+    principalId: principalObjectIdOfUser
     roleDefinitionId: loadTestOwnderRoleDefinitionId
   }
 }
 
+// NOT WORKING
 // Add role assignment to Load Test Service
 // resource roleAssignmentForLoadTestService 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
 //   name: guid(existing_LoadTestService.id, loadTestOwnderRoleDefinitionId)
