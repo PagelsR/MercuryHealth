@@ -284,6 +284,7 @@ jobs:
       with:
         app-name: ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}
         package: './MercuryHealth.Website'
+        slot-name: ${{ inputs.environment-suffix }}
 
     - name: Download Build Artifacts-Function Application
       uses: actions/download-artifact@v2
@@ -620,14 +621,13 @@ jobs:
     needs: [deploy_infrastructure, Approval_Stage_Application]
     timeout-minutes: 10
     
-    # ${{ inputs.environment-suffix }}
     steps:
       - name: Swap Slots
         run: |
           az webapp deployment slot swap 
           --resource-group ${{ inputs.resource-group-base-name }}
           --name ${{needs.deploy_infrastructure.outputs.output_webSiteName}}
-          --slot 'dev'
+          --slot ${{ inputs.environment-suffix }}
           --target-slot 'prod'
 
           

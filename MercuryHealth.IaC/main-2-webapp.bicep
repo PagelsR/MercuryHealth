@@ -1,4 +1,4 @@
-param skuName string = 'S1'
+param skuName string = 'S2'
 //param skuCapacity int = 1
 param location string = resourceGroup().location
 param Deployed_Environment string
