@@ -38,6 +38,8 @@ resource sqlDB 'Microsoft.Sql/servers/databases@2022-08-01-preview' = {
   properties: {
     requestedBackupStorageRedundancy: 'Local'
     zoneRedundant: false
+    autoPauseDelay: 60
+    minCapacity: '0.5'
   }
 }
 
