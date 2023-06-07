@@ -50,18 +50,18 @@ resource roleAssignmentForAppConfig 'Microsoft.Authorization/roleAssignments@202
 // var loadTestOwnderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '45bb0b16-2f0c-4e78-afaa-a07599b003f6')
 
 // // Reference Existing resource
-// resource existing_LoadTestService 'Microsoft.LoadTestService/loadTests@2022-12-01' existing = {
-//   name: loadTestResourceName
-// }
+resource existing_LoadTestService 'Microsoft.LoadTestService/loadTests@2022-12-01' existing = {
+  name: loadTestResourceName
+}
 
-// resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
-//   name: 'loadTestOwnerAssignment'
-//   scope: existing_LoadTestService
-//   properties: {
-//     principalId: principalObjectIdOfUser
-//     roleDefinitionId: loadTestOwnderRoleDefinitionId
-//   }
-// }
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-08-01-preview' = {
+  name: 'loadTestOwnerAssignment'
+  scope: existing_LoadTestService
+  properties: {
+    principalId: '0aa95253-9e37-4af9-a63a-3b35ed78e98b' //principalObjectIdOfUser
+    roleDefinitionId: '45bb0b16-2f0c-4e78-afaa-a07599b003f6' //loadTestOwnderRoleDefinitionId
+  }
+}
 
 // Add role assignment to Load Test Service
 // resource roleAssignmentForLoadTestService 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
