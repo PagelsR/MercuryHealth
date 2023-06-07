@@ -246,10 +246,13 @@ resource secret5 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
 // Add Settings for Web App
 /////////////////////////////////////////////////
 
+// 'ConnectionStrings:MercuryHealthWebContext': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ConnectionStringName})'
+// 'ConnectionStrings:AppConfig': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_configStoreConnectionName})'
+
 // Base app settings shared for all slots
 var base_prod_webappsettings = {
-  'ConnectionStrings:MercuryHealthWebContext': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ConnectionStringName})'
-  'ConnectionStrings:AppConfig': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_configStoreConnectionName})'
+  ConnectionStrings_MercuryHealthWebContext: '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ConnectionStringName})'
+  ConnectionStrings_AppConfig: '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_configStoreConnectionName})'
   DeployedEnvironment: Deployed_Environment
   WEBSITE_RUN_FROM_PACKAGE: '1'
   WEBSITE_SENTINEL: '1'
@@ -287,13 +290,17 @@ var dev_slot_webappsettings ={
 // Set app settings on dev slot
 resource webAppStagingSlotSetting 'Microsoft.Web/sites/slots/config@2022-09-01' = {
   name: '${webAppDevSlotName}/appsettings'
-  //parent: existing_appService
   properties: union(base_prod_webappsettings, dev_slot_webappsettings)
   dependsOn: [
     secret1
     secret2
   ]
 }
+
+// Reference Existing resource
+// resource existing_appService 'Microsoft.Web/sites@2022-03-01' existing = {
+//   name: webAppName
+// }
 
 // Create Web sites/config 'appsettings' - Web App
 // resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
