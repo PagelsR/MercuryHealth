@@ -246,6 +246,32 @@ resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2022-03-01' = {
     APPINSIGHTS_SNAPSHOTFEATURE_VERSION: '1.0.0'
     APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
     WebAppUrl: 'https://${existing_appService.name}.azurewebsites.net/'
+    ASPNETCORE_ENVIRONMENT: 'Production'
+    WEBSITE_FONTNAME: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontNameKey})'
+    WEBSITE_FONTCOLOR: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontColorKey})'
+    WEBSITE_FONTSIZE: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontSizeKey})'
+    WEBSITE_ENABLE_SYNC_UPDATE_SITE: 'true'
+  }
+  dependsOn: [
+    secret1
+    secret2
+  ]
+}
+
+// Set app settings on dev slot
+resource webAppStagingSlotSetting 'Microsoft.Web/sites/slots/config@2022-09-01' = {
+  name: '${webAppDevSlotName}/appsettings'
+  properties: {
+    'ConnectionStrings:MercuryHealthWebContext': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_ConnectionStringName})'
+    'ConnectionStrings:AppConfig': '@Microsoft.KeyVault(VaultName=${keyvaultName};SecretName=${kvValue_configStoreConnectionName})'
+    DeployedEnvironment: Deployed_Environment
+    WEBSITE_RUN_FROM_PACKAGE: '1'
+    WEBSITE_SENTINEL: '1'
+    APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey
+    APPINSIGHTS_PROFILERFEATURE_VERSION: '1.0.0'
+    APPINSIGHTS_SNAPSHOTFEATURE_VERSION: '1.0.0'
+    APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
+    WebAppUrl: 'https://${existing_appService.name}.azurewebsites.net/'
     ASPNETCORE_ENVIRONMENT: 'Development'
     WEBSITE_FONTNAME: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontNameKey})'
     WEBSITE_FONTCOLOR: '@Microsoft.AppConfiguration(Endpoint=${configStoreEndPoint}; Key=${FontColorKey})'
