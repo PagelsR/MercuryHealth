@@ -57,7 +57,7 @@ resource loadTestingRoleAssignment 'Microsoft.Authorization/roleAssignments@2022
   name: guid(existing_LoadTestService.id, loadTestOwnderRoleDefinitionId)
   scope: existing_LoadTestService
   properties: {
-    principalId: existing_LoadTestService.identity.principalId
+    principalId: signInNameObjectId //existing_LoadTestService.identity.principalId
     roleDefinitionId: loadTestOwnderRoleDefinitionId
   }
   dependsOn: [
