@@ -36,6 +36,7 @@ resource appConfigRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-0
     roleDefinitionId: AppConfigDataReaderRoleDefinitionId
   }
   dependsOn: [
+    existing_appConfig
     existing_appService
   ]
 }
