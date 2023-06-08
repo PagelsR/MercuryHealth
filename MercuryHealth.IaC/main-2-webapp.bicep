@@ -21,11 +21,6 @@ param appInsightsInstrumentationKey string
 param appInsightsConnectionString string
 param defaultTags object
 
-// Add role assigment for Service Identity
-// Azure built-in roles - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
-// App Configuration Data Reader	Allows read access to App Configuration data.	516239f1-63e1-4d78-a4de-a74fb236a071
-//var AppConfigDataReaderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '516239f1-63e1-4d78-a4de-a74fb236a071')
-
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
   name: webAppPlanName
   location: location

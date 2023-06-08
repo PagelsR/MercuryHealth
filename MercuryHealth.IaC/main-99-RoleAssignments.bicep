@@ -13,11 +13,11 @@ param loadTestResourceName string
 
 
 // Reference Existing resource
-resource existing_appService 'Microsoft.Web/sites@2022-03-01' existing = {
+resource existing_appService 'Microsoft.Web/sites@2022-09-01' existing = {
   name: webappName
 }
 
-resource existing_appConfig 'Microsoft.AppConfiguration/configurationStores@2022-05-01' existing = {
+resource existing_appConfig 'Microsoft.AppConfiguration/configurationStores@2023-03-01' existing = {
   name: configStoreName
 }
 
@@ -28,18 +28,18 @@ resource existing_appConfig 'Microsoft.AppConfiguration/configurationStores@2022
 // Add role assigment for Service Identity
 // Azure built-in roles - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
 // App Configuration Data Reader. Allows read access to App Configuration data.	516239f1-63e1-4d78-a4de-a74fb236a071
-var AppConfigDataReaderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '516239f1-63e1-4d78-a4de-a74fb236a071')
+//var AppConfigDataReaderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '516239f1-63e1-4d78-a4de-a74fb236a071')
 
 // Add role assignment to App Config Store
-resource roleAssignmentForAppConfig 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(existing_appConfig.id, AppConfigDataReaderRoleDefinitionId)
-  scope: existing_appConfig
-  properties: {
-    principalType: 'ServicePrincipal'
-    principalId: reference(existing_appService.id, '2020-12-01', 'Full').identity.principalId //existing_appService.identity.principalId
-    roleDefinitionId: AppConfigDataReaderRoleDefinitionId
-  }
-}
+// resource roleAssignmentForAppConfig 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+//   name: guid(existing_appConfig.id, AppConfigDataReaderRoleDefinitionId)
+//   scope: existing_appConfig
+//   properties: {
+//     principalType: 'ServicePrincipal'
+//     principalId: reference(existing_appService.id, '2020-12-01', 'Full').identity.principalId //existing_appService.identity.principalId
+//     roleDefinitionId: AppConfigDataReaderRoleDefinitionId
+//   }
+// }
 
 // ****************************************************************
 // Add Role Assignment - Load Test Owner
@@ -127,4 +127,5 @@ resource roleAssignmentForAppConfig 'Microsoft.Authorization/roleAssignments@202
 //     scope: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.LoadTestService/loadtests/${loadTestResourceName}'
 //   }
 // }
+
 
