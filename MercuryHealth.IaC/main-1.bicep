@@ -237,7 +237,7 @@ module configsettingsmod './main-13-configsettings.bicep' = {
     kvValue_ConnectionStringValue: webappmod.outputs.out_secretConnectionString
     appServiceprincipalId: webappmod.outputs.out_appServiceprincipalId
     webAppName: webSiteName
-    webAppDevSlotName: webAppDevSlotName
+    //webAppDevSlotName: webAppDevSlotName
     AzObjectIdPagels: AzObjectIdPagels
     functionAppName: functionAppName
     funcAppServiceprincipalId: functionappmod.outputs.out_funcAppServiceprincipalId
@@ -272,7 +272,7 @@ module roleAssignments './main-99-RoleAssignments.bicep' = {
     principalObjectIdOfUser: AzObjectIdPagels
     subscriptionId: subscription().subscriptionId
     resourceGroupName: resourceGroup().name
-    signInName: AzObjectIdPagels
+    signInNameObjectId: AzObjectIdPagels
     configStoreName: configStoreName
     webappName: webSiteName
     }

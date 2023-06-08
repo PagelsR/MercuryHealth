@@ -284,7 +284,7 @@ jobs:
       with:
         app-name: ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}
         package: './MercuryHealth.Website'
-        slot-name: ${{ inputs.environment-suffix }}
+        #slot-name: ${{ inputs.environment-suffix }}
 
     - name: Download Build Artifacts-Function Application
       uses: actions/download-artifact@v2

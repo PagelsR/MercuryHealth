@@ -57,9 +57,14 @@ resource appService 'Microsoft.Web/sites@2022-09-01' = {
   }
 }
 
+/////////////////////////////////////////////////
+// Used for Multiple App Service Deployment Slots
+/////////////////////////////////////////////////
+
 // Create Web App's staging slot
 resource webappSlotDevName 'Microsoft.Web/sites/slots@2022-09-01' = {
-  name: '${appService.name}/${webAppDevSlotName}'
+  name: webAppDevSlotName //'${appService.name}/${webAppDevSlotName}'
+  parent: appService
   location: location
   identity: {
     type: 'SystemAssigned'
@@ -73,21 +78,6 @@ resource webappSlotDevName 'Microsoft.Web/sites/slots@2022-09-01' = {
     serverFarmId: appServicePlan.id
   }
 }
-
-// resource webSiteAppSettingsStrings 'Microsoft.Web/sites/config@2022-09-01' = {
-//   name: 'appsettings'
-//   parent: appService
-//   properties: {
-//     DeployedEnvironment: Deployed_Environment
-//     WEBSITE_RUN_FROM_PACKAGE: '1'
-//     APPINSIGHTS_INSTRUMENTATIONKEY: appInsightsInstrumentationKey
-//     APPINSIGHTS_PROFILERFEATURE_VERSION: '1.0.0'
-//     APPINSIGHTS_SNAPSHOTFEATURE_VERSION: '1.0.0'
-//     APPLICATIONINSIGHTS_CONNECTION_STRING: appInsightsConnectionString
-//     WebAppUrl: 'https://${appService.name}.azurewebsites.net/'
-//     ASPNETCORE_ENVIRONMENT: 'Development'
-//   }
-// }
 
 // Set specific app settings to be "sticky" slot specific value
 resource webSlotConfig 'Microsoft.Web/sites/config@2022-09-01' = {

@@ -5,18 +5,12 @@
 param principalObjectIdOfUser string
 param configStoreName string
 param webappName string
-param signInName string
+param signInNameObjectId string
 param subscriptionId string
 param resourceGroupName string
 param loadTestResourceName string
 //param loadTestReaderRoleId string
 
-
-// Role: Load Test Contributor
-// Scope: /subscriptions/9a0cf54e-d873-4da7-ba83-f9fe8fb5934e/resourceGroups/rg-MercuryHealth-dev/providers/Microsoft.LoadTestService/loadtests/loadtests-x7vgm47suuyt2
-// Name: Randy Pagels
-// Object ID: 0aa95253-9e37-4af9-a63a-3b35ed78e98b
-// Type: User
 
 // Reference Existing resource
 resource existing_appService 'Microsoft.Web/sites@2022-03-01' existing = {
@@ -27,9 +21,13 @@ resource existing_appConfig 'Microsoft.AppConfiguration/configurationStores@2022
   name: configStoreName
 }
 
+// ****************************************************************
+// Add Role Assignment - App Configuration Data Reader
+// ****************************************************************
+
 // Add role assigment for Service Identity
 // Azure built-in roles - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
-// App Configuration Data Reader	Allows read access to App Configuration data.	516239f1-63e1-4d78-a4de-a74fb236a071
+// App Configuration Data Reader. Allows read access to App Configuration data.	516239f1-63e1-4d78-a4de-a74fb236a071
 var AppConfigDataReaderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '516239f1-63e1-4d78-a4de-a74fb236a071')
 
 // Add role assignment to App Config Store
@@ -44,8 +42,9 @@ resource roleAssignmentForAppConfig 'Microsoft.Authorization/roleAssignments@202
 }
 
 // ****************************************************************
-// TESTING ONLY
+// Add Role Assignment - Load Test Owner
 // ****************************************************************
+
 // Azure built-in roles - https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
 // var loadTestOwnderRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '45bb0b16-2f0c-4e78-afaa-a07599b003f6')
 
@@ -123,25 +122,9 @@ resource roleAssignmentForAppConfig 'Microsoft.Authorization/roleAssignments@202
 //   type: 'Microsoft.Authorization/roleAssignments'
 //   apiVersion: '2020-04-01-preview'
 //   properties: {
-//     principalId: referenceResourceId('Microsoft.AzureActiveDirectory/userAssignedIdentities', signInName)
+//     principalId: referenceResourceId('Microsoft.AzureActiveDirectory/userAssignedIdentities', signInNameObjectId)
 //     roleDefinitionId: '/subscriptions/${subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/${loadTestReaderRoleId}'
 //     scope: '/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.LoadTestService/loadtests/${loadTestResourceName}'
 //   }
 // }
 
-// - ------------------------------------------------------------
-
-// Reference Existing resource
-// resource existing_ContainerApp 'Microsoft.App/containerApps@2022-10-01' existing = {
-//   name: containerAppName
-// }
-
-// // Add role assignment to Load Testing Service
-// resource roleAssignmentForContainerApp 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-//   name: guid(existing_ContainerApp.id, secretUserRole)
-//   scope: existing_ContainerApp
-//   properties: {
-//     principalId: principalId
-//     roleDefinitionId: secretUserRole
-//   }
-// }
