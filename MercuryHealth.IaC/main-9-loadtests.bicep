@@ -12,9 +12,9 @@ resource loadtesting 'Microsoft.LoadTestService/loadTests@2022-12-01' = {
     properties: {
         description: 'Azure Load Testing Service'
     }
-    // identity: {
-    //     type:'SystemAssigned'
-    //   }
+    identity: {
+        type:'SystemAssigned'
+      }
 }
 
 // Stand up 2nd location for APIM stats
