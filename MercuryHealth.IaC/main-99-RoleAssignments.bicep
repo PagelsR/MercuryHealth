@@ -43,14 +43,14 @@ var AppConfigDataReaderRoleDefinitionId = subscriptionResourceId('Microsoft.Auth
 //   ]
 // }
 
-var appConfigResourceId = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.AppConfiguration/configurationStores/${configStoreName}'
+//var appConfigResourceId = '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.AppConfiguration/configurationStores/${configStoreName}'
 
 resource appConfigRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
   name: guid(existing_appConfig.id, AppConfigDataReaderRoleDefinitionId)
+  scope: existing_appConfig
   properties: {
     principalId: existing_appService.identity.principalId
-    roleDefinitionId: '7ab4d5ef-9811-47c2-8b1a-8ea4c5f75b92' // App Configuration Data Reader role definition ID
-    scope: appConfigResourceId
+    roleDefinitionId: AppConfigDataReaderRoleDefinitionId //'516239f1-63e1-4d78-a4de-a74fb236a071' // App Configuration Data Reader role definition ID
   }
   dependsOn: [
     existing_appService
