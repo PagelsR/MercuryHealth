@@ -269,9 +269,6 @@ module roleAssignments './main-99-RoleAssignments.bicep' = {
   name: 'addRoleAssignments'
   params: {
     loadTestResourceName: loadTestsName
-    principalObjectIdOfUser: AzObjectIdPagels
-    subscriptionId: subscription().subscriptionId
-    resourceGroupName: resourceGroup().name
     signInNameObjectId: AzObjectIdPagels
     configStoreName: configStoreName
     webappName: webSiteName
