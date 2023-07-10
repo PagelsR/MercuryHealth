@@ -5,14 +5,14 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>4a2e330e-5c38-4c63-bc0f-cd5f5d933e4f</UserSecretsId>
-    <ApplicationInsightsResourceId>/subscriptions/f5e66d29-1a7f-4ee3-822e-74f644d3e665/resourceGroups/rg-MercuryHealth-dev/providers/microsoft.insights/components/appi-fq3ruuhxgjony</ApplicationInsightsResourceId>
+    <ApplicationInsightsResourceId>/subscriptions/9a0cf54e-d873-4da7-ba83-f9fe8fb5934e/resourceGroups/rg-MercuryHealth-dev/providers/microsoft.insights/components/appi-x7vgm47suuyt2</ApplicationInsightsResourceId>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <FileVersion>1.1.0.0</FileVersion>
     <Version>1.1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.5.0" />
+    <PackageReference Include="Azure.Identity" Version="1.6.0" />
  	<PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="6.0.2" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.SnapshotCollector" Version="1.4.2" />

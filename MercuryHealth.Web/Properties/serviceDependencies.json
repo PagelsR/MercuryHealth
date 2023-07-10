@@ -7,13 +7,13 @@
     "secrets1": {
       "type": "secrets"
     },
-    "appInsights1": {
-      "type": "appInsights",
-      "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING"
-    },
     "appConfig1": {
       "type": "appConfig",
       "connectionId": "AppConfig"
+    },
+    "appInsights1": {
+      "type": "appInsights",
+      "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING"
     }
   }
 }

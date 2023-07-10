@@ -12,7 +12,7 @@
     },
     "resourceGroupLocation": {
       "type": "string",
-      "defaultValue": "eastus2",
+      "defaultValue": "eastus",
       "metadata": {
         "_parameterType": "location",
         "description": "Location of the resource group. Resource groups could have different location than resources."
@@ -36,7 +36,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "name": "[concat(parameters('resourceGroupName'), 'Deployment', uniqueString(concat('appcs-fq3ruuhxgjony', subscription().subscriptionId)))]",
+      "name": "[concat(parameters('resourceGroupName'), 'Deployment', uniqueString(concat('appcs-x7vgm47suuyt2', subscription().subscriptionId)))]",
       "resourceGroup": "[parameters('resourceGroupName')]",
       "apiVersion": "2019-10-01",
       "dependsOn": [
@@ -55,8 +55,16 @@
               "sku": {
                 "name": "standard"
               },
-              "name": "appcs-fq3ruuhxgjony",
-              "apiVersion": "2020-06-01"
+              "systemData": {
+                "createdBy": "1a826907-05e8-4ae7-b6d8-e46a1c7d45f4",
+                "createdByType": "Application",
+                "createdAt": "2023-06-12T16:36:31-04:00",
+                "lastModifiedBy": "1a826907-05e8-4ae7-b6d8-e46a1c7d45f4",
+                "lastModifiedByType": "Application",
+                "lastModifiedAt": "2023-06-12T16:36:33-04:00"
+              },
+              "name": "appcs-x7vgm47suuyt2",
+              "apiVersion": "2022-05-01"
             }
           ]
         }
