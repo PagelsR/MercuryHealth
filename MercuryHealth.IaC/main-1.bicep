@@ -8,6 +8,12 @@ param costCenter string = '74f644d3e665'
 param releaseAnnotationGuid string = newGuid()
 param Deployed_Environment string
 
+@secure()
+param cloudFlareAPIToken string
+
+@secure()
+param cloudFlareZoneID string
+
 // Generate Azure SQL Credentials
 var sqlAdminLoginName = 'AzureAdmin'
 var sqlAdminLoginPassword = '${substring(base64(uniqueString(resourceGroup().id)), 0, 10)}.${uniqueString(resourceGroup().id)}'
@@ -276,6 +282,21 @@ module roleAssignments './main-99-RoleAssignments.bicep' = {
     dependsOn:  [
       configsettingsmod
       loadtestsmod
+    ]
+}
+
+// Add DNS Registration for Web App
+module dnsRegistration './99-DNSRegistration.bicep' = {
+  name: 'dnsRegistration'
+  params: {
+    webAppName:webSiteName
+    location: location
+    cloudFlareAPIToken: cloudFlareAPIToken
+    cloudFlareZoneId: cloudFlareZoneID
+
+    }
+    dependsOn:  [
+      webappmod
     ]
 }
 

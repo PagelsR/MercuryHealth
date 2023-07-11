@@ -2,10 +2,17 @@ param webAppName string
 
 //param name string
 param location string
-param cloudFlareToken string
 
-var record = 'mercuryhealth.org'
-var domain = 'naya.ns.cloudflare.com'
+@secure()
+param cloudFlareAPIToken string
+
+@secure()
+param cloudFlareZoneId string
+
+// var record = 'mercuryhealth.org'
+// var domain = 'naya.ns.cloudflare.com'
+var record = 'www'
+var domain = 'mercuryhealth.org'
 
 /////////////////////////////////////////////////
 // Used for App Service
@@ -27,13 +34,17 @@ resource cloudflare 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
     environmentVariables: [
       {
         name: 'CLOUDFLARE_API_TOKEN'
-        secureValue: cloudFlareToken
+        secureValue: cloudFlareAPIToken
+      }
+      {
+        name: 'CLOUDFLARE_ZONE_ID'
+        secureValue: cloudFlareZoneId
       }
     ]
     scriptContent: '''
       param([string] $hostname, [string] $domain, [string] $destination)
 
-      $zoneid = "72e0e6d795ec809b9158033c4a4c73d3"
+      $zoneid = $Env:CLOUDFLARE_ZONE_ID
       $url = "https://api.cloudflare.com/client/v4/zones/$zoneid/dns_records"
       
       $addresses = (

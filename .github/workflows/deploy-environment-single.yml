@@ -27,6 +27,12 @@ on:
       azure-credentials:
         description: 'Credentials used to log into Azure for deployment of resources'
         required: true
+      cloudflare-api-token:
+        description: 'Credentials used for CloudFlare resources'
+        required: true
+      cloudflare-zone-id:
+        description: 'Credentials used for CloudFlare resources'
+        required: true
 
 jobs:
   ###################################################################
@@ -65,7 +71,7 @@ jobs:
       uses: azure/login@v1
       continue-on-error: false
       with:
-        creds: ${{ secrets.azure-credentials }}
+        creds: azure-credentials
 
     - name: Ensure Resource Group Exists
       uses: Azure/CLI@v1
@@ -139,7 +145,7 @@ jobs:
       with:
         resourceGroupName: ${{ env.Azure_Resource_GroupName }}
         template: ./MercuryHealth.IaC/main-1.bicep
-        parameters: ./MercuryHealth.IaC/main-1.params.json Deployed_Environment=${{ env.Deployed_Environment }}
+        parameters: ./MercuryHealth.IaC/main-1.params.json Deployed_Environment=${{ env.Deployed_Environment }} cloudflare-api-token=${{ secrets.cloudflare-api-token }} cloudflare-zone-id=${{ secrets.cloudflare-zone-id }}
         deploymentMode: Incremental
         failOnStdErr: false
 
