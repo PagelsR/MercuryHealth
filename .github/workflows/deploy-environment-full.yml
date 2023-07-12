@@ -435,7 +435,7 @@ jobs:
           retention-days: 30
 
       #- name: 'Upload Playwright Test Results-Report'
-      #  uses: actions/upload-artifact@v2
+      #  uses: actions/upload-artifact@v3
       #  if: always()
       #  with:
       #    name: MercuryHealth.UITestsResults
@@ -542,7 +542,7 @@ jobs:
             ]
             
       - name: 'Upload Load Test Results'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         continue-on-error: true
         with:
           name: MercuryHealth.LoadTestsResults
@@ -611,7 +611,7 @@ jobs:
             ]
 
       - name: 'Upload Load Test Results'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         continue-on-error: true
         with:
           name: MercuryHealth.LoadTestsResults
