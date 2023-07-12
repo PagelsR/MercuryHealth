@@ -4,6 +4,12 @@
     "parameters": {
         "Deployed_Environment": {
             "value": ""
+        },
+        "CLOUDFLARE_API_TOKEN": {
+            "value": ""
+        },
+        "CLOUDFLARE_ZONE_ID": {
+            "value": ""
         }
     }
 }
