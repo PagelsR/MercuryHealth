@@ -5,10 +5,10 @@
         "Deployed_Environment": {
             "value": ""
         },
-        "CLOUDFLARE_API_TOKEN": {
+        "cloudFlareAPIToken": {
             "value": ""
         },
-        "CLOUDFLARE_ZONE_ID": {
+        "cloudFlareZoneID": {
             "value": ""
         }
     }
