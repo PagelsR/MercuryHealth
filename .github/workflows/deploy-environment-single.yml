@@ -1,7 +1,7 @@
 name: Deploy-Environment-Single
 
 on:
-  workflow_call:
+  workflow_call:fv
     inputs:
       resource-group-base-name:
         description: 'Resource Group base name'
@@ -71,7 +71,7 @@ jobs:
       uses: azure/login@v1
       continue-on-error: false
       with:
-        creds: azure-credentials
+        creds: ${{ secret.azure-credentials }}
 
     - name: Ensure Resource Group Exists
       uses: Azure/CLI@v1
