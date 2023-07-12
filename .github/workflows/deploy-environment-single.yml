@@ -71,7 +71,7 @@ jobs:
       uses: azure/login@v1
       continue-on-error: false
       with:
-        creds: ${{ secret.azure-credentials }}
+        creds: ${{ secrets.azure-credentials }}
 
     - name: Ensure Resource Group Exists
       uses: Azure/CLI@v1
