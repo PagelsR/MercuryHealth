@@ -1,7 +1,7 @@
 name: Deploy-Environment-Single
 
 on:
-  workflow_call:fv
+  workflow_call:
     inputs:
       resource-group-base-name:
         description: 'Resource Group base name'
