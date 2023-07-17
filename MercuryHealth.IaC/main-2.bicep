@@ -1,18 +1,35 @@
 // Deploy Azure infrastructure for app + data + monitoring
 
-//targetScope = 'subscription'
 // Region for all resources
 param location string = resourceGroup().location
-param createdBy string = 'Randy Pagels' // resourceGroup().managedBy
-param costCenter string = '74f644d3e665'
-param releaseAnnotationGuid string = newGuid()
-param Deployed_Environment string
 
 @secure()
 param cloudFlareAPIToken string
 
 @secure()
 param cloudFlareZoneID string
+
+
+// Add DNS Registration for Web App
+module dnsRegistration './99-DNSCertificateBindings.bicep' = {
+  name: 'dnsRegistration'
+  params: {
+    webAppName: webSiteName
+    location: location
+    cloudFlareAPIToken: cloudFlareAPIToken
+    cloudFlareZoneId: cloudFlareZoneID
+    cloudFlareRecordName: 'mercuryhealth.org'
+    }
+    dependsOn:  [
+      webappmod
+    ]
+}
+
+output endpointUri string = dnsRegistration.o.properties.defaultHostName
+output certificateThumbprint string = certificateOrder.properties.certificates[0].thumbprint
+
+output out_apimSubscriptionKey string = apimservicemod.outputs.out_ApimSubscriptionKeyString
+
 
 // Generate Azure SQL Credentials
 var sqlAdminLoginName = 'AzureAdmin'
