@@ -52,6 +52,7 @@ jobs:
       output_appInsightsAPIApplicationId: ${{ steps.Infra.outputs.out_appInsightsAPIApplicationId }}
       output_secretConnectionString: ${{ steps.Infra.outputs.out_secretConnectionString }}
       output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}
+      output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
 
     name: Deploy Infrastructure
     env:
@@ -138,25 +139,26 @@ jobs:
     ###########################################
     # Deploy ARM Template using Bicep DSL
     ###########################################
-    - name: Infrastructure
+    # parameters: ./MercuryHealth.IaC/main-1.params.json Deployed_Environment=${{ env.Deployed_Environment }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }}
+    - name: Infrastructure Deployment
       id: Infra
       uses: azure/arm-deploy@v1
       continue-on-error: false
       with:
         resourceGroupName: ${{ env.Azure_Resource_GroupName }}
         template: ./MercuryHealth.IaC/main-1.bicep
-        parameters: ./MercuryHealth.IaC/main-1.params.json Deployed_Environment=${{ env.Deployed_Environment }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }}
+        parameters: ./MercuryHealth.IaC/main-1.params.json Deployed_Environment=${{ env.Deployed_Environment }}
         deploymentMode: Incremental
         failOnStdErr: false
 
-    - name: Setup DNS, Cert, Binding
+    - name: Setup App Service DNS
       id: InfraDNS
       uses: azure/arm-deploy@v1
       continue-on-error: false
       with:
         resourceGroupName: ${{ env.Azure_Resource_GroupName }}
         template: ./MercuryHealth.IaC/main-2.bicep
-        parameters: ./MercuryHealth.IaC/main-2.params.json cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }}
+        parameters: ./MercuryHealth.IaC/main-2.params.json webSiteName=${{ steps.Infra.outputs.out_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }}
         deploymentMode: Incremental
         failOnStdErr: false
 
@@ -190,8 +192,7 @@ jobs:
          echo 'output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}'
          echo 'output_secretConnectionString: ${{ steps.Infra.outputs.out_secretConnectionString }}'
 
-         echo 'output_secretConnectionString: ${{ steps.InfraDNS.outputs.out_secretConnectionString }}'
-         echo 'output_secretConnectionString: ${{ steps.InfraDNS.outputs.out_secretConnectionString }}'
+         echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
 
     ##########################################################
     # DB Deploy during IaC

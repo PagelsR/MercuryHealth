@@ -25,40 +25,39 @@ resource existing_appService 'Microsoft.Web/sites@2022-09-01' existing = {
   name: webAppName
 }
 
-resource certificateOrder 'Microsoft.CertificateRegistration/certificateOrders@2022-09-01' = {
-  name: '${webAppName}-certificate'
-  location: location
-  properties: {
-    certificates: [
-      {
-        password: 'your-certificate-password'
-        distinguishedName: {
-          commonName: webAppName
-        }
-      }
-    ]
-  }
-  sku: {
-    name: 'Standard_DomainValidation'
-  }
-  dependsOn: [
-    existing_appService
-  ]
-}
+// resource certificateOrder 'Microsoft.CertificateRegistration/certificateOrders@2022-09-01' = {
+//   name: '${webAppName}-certificate'
+//   location: location
+//   properties: {
+//     certificates: {
+//       password: 'your-certificate-password'
+//       distinguishedName: {
+//       commonName: webAppName
+//       }
+//     }
+//   }
+//   sku: {
+//     name: 'Standard_DomainValidation'
+//   }
+//   dependsOn: [
+//     existing_appService
+//   ]
+// }
 
-resource certificateBinding 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
-  parent: existing_appService
-  name: '${webAppName}-certificate-binding'
-  properties: {
-    siteName: existing_appService.name
-    sslState: 'SniEnabled'
-    thumbprint: certificateOrder.properties.certificates[0].thumbprint
-    sslType: 'Standard'
-  }
-  dependsOn: [
-    certificateOrder
-  ]
-}
+// resource certificateBinding 'Microsoft.Web/sites/hostNameBindings@2021-02-01' = {
+//   parent: existing_appService
+//   name: '${webAppName}-certificate-binding'
+//   properties: {
+//     siteName: existing_appService.name
+//     sslState: 'SniEnabled'
+//     thumbprint: certificateOrder.properties.certificates[0].thumbprint
+//     sslType: 'Standard'
+//   }
+//   dependsOn: [
+//     certificateOrder
+//   ]
+// }
+
 
 resource cloudflareDnsRecord 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'cloudflare'
@@ -136,7 +135,7 @@ resource hostName 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
 }
 
 output endpointUri string = existing_appService.properties.defaultHostName
-output certificateThumbprint string = certificateOrder.properties.certificates[0].thumbprint
+//output certificateThumbprint string = certificateOrder.properties.certificates[0].thumbprint
 
 
 // resource cloudflareDnsRecord 'Cloudflare.Provider/dns_records@1.0.0' = {
