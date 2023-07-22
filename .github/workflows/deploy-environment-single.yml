@@ -474,7 +474,45 @@ jobs:
       #    name: MercuryHealth.UITestsResults_TestResults
       #    path: ${{ github.workspace }}/MercuryHealth.UITests/TestResults
       #    retention-days: 30
-          
+
+###################################################################
+# CD Stage - Playwright Testing                         
+###################################################################
+  Playwright_Stage_Application:
+    #if: contains(github.event_name, 'push')
+
+    name: Playwright Testing
+    
+    # The type of runner that the job will run on - windows-latest
+    runs-on: ubuntu-latest
+
+    # Identify any jobs that must complete successfully before this job will run.
+    needs: [deploy_infrastructure, deploy_application]
+    timeout-minutes: 60
+        
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+
 ##################################################################
 # CD Stage - Load and Performance Testing >>> Home Page          #
 ##################################################################
