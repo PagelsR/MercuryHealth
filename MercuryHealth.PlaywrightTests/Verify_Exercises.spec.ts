@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
-  
   await page.goto('https://app-x7vgm47suuyt2.azurewebsites.net/' , { waitUntil: 'load', timeout: 100000 });
 });
 
@@ -11,5 +10,12 @@ test('should allow me to navigate to exercises page', async ({ page }) => {
 
   // Take screenshot
   await page.screenshot({ path: 'screenshot_Home-Exercisespage.png', fullPage: true, timeout: 60000 });
+});
+
+test('should allow me to navigate to exercises page and click on the first exercise', async ({ page }) => {
+
+});
+
+test('should allow me to navigate to exercises page and click on the first exercise', async ({ page }) => {
 
 });

@@ -453,7 +453,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: MercuryHealth.UITestsResults_Playwright
+          name: playwright-report
           path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/screenshot_*.png
           retention-days: 30
 
@@ -462,7 +462,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: MercuryHealth.UITestsResults_Playwright
+          name: playwright-report
           path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/trace_*.zip
           retention-days: 30
 
@@ -505,11 +505,31 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
 
-      - uses: actions/upload-artifact@v3
+      # Upload the test result artifacts
+      - name: 'Upload Playwright Report Files'
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-report
           path: playwright-report/
+          retention-days: 30
+
+      # Upload the test result artifacts
+      - name: 'Upload Playwright Screenshot Files'
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-screenshots
+          path: screenshot_*.png
+          retention-days: 30
+
+      # # Upload the test result artifacts
+      - name: 'Upload Playwright Trace Files'
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-traces
+          path: trace_*.zip
           retention-days: 30
 
 
