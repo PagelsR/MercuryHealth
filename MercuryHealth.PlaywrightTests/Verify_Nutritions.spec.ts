@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto('https://app-okhgzqoexg6jy.azurewebsites.net/' , { waitUntil: 'load', timeout: 100000 });
 });
 
-test('should allow me to navigate to nutritions page', async ({ page }) => {
+test('Allow me to navigate to nutritions page', async ({ page }) => {
   
   await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
   await expect(page).toHaveTitle('Nutrition - Mercury Health');
@@ -16,8 +16,7 @@ test('should allow me to navigate to nutritions page', async ({ page }) => {
 });
 
 
-test('Verify_NavToNutritionDetail', async ({ page }) => {
-
+test('Allow me to navigate to nutritions page and click on details', async ({ page }) => {
 
   const acceptPolicyButton = await page.$('#accept-policy close');
   if (acceptPolicyButton !== null) {
@@ -36,9 +35,8 @@ test('Verify_NavToNutritionDetail', async ({ page }) => {
   expect(detailsPageTitle).toBe('Details - Mercury Health');
 
   await page.screenshot({
-    path: 'screenshot_nutrition_details_25.png',
-    fullPage: true
-  });
+    path: 'screenshot_nutrition_details_25.png', fullPage: true, timeout: 60000 });
+});
 
   // Todo! Convert the following to TypeScript
   // expect(page.url()).toBe(pageURL + 'Nutritions/Details/25');
@@ -66,5 +64,5 @@ test('Verify_NavToNutritionDetail', async ({ page }) => {
   // });
 
   // await browser.close();
-});
+//});
 
