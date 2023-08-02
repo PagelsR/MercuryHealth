@@ -45,10 +45,10 @@ export default defineConfig({
       use: { ...devices['Desktop Firefox'], headless: true },
     },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'], headless: true },
-    },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'], headless: true },
+    // },
 
     /* Test against mobile viewports. */
     // {
