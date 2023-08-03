@@ -22,7 +22,8 @@ test("should be flaky for exercises page", async ({ page }) => {
 });
 
 test('should allow me to navigate to exercises page', async ({ page }) => {
-  await page.getByRole('link', { name: 'Exercises', exact: true }).click();
+  //await page.getByRole('link', { name: 'Exercises', exact: true }).click();
+  await page.locator('#menu_exercises').click();
   await expect(page).toHaveTitle('Exercises - Mercury Health');
 
   // Take screenshot

@@ -10,7 +10,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto(url , { waitUntil: 'load', timeout: 100000 });
 });
 
-test("should be flaky for nutritions page", async ({ page }) => {
+test("Should be flaky for nutritions page", async ({ page }) => {
   if (Math.random() > 0.5) {
     await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
     await expect(page).toHaveTitle('Nutrition - Mercury Health');
@@ -21,15 +21,14 @@ test("should be flaky for nutritions page", async ({ page }) => {
 });
 
 test('Allow me to navigate to nutritions page', async ({ page }) => {
-  
-  await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
+  //await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
+  await page.locator('#menu_nutrition').click();
   await expect(page).toHaveTitle('Nutrition - Mercury Health');
 
   // Take screenshot
   await page.screenshot({ path: 'screenshot_Home-Nutritionspage.png', fullPage: true, timeout: 60000 });
 
 });
-
 
 test('Allow me to navigate to nutritions page and click on details', async ({ page }) => {
 

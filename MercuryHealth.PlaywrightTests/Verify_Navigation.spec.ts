@@ -10,17 +10,26 @@ test.beforeEach(async ({ page }) => {
   await page.goto(url , { waitUntil: 'load', timeout: 100000 });
 });
 
-test('should allow me to navigate to home page', async ({ page }) => {
+test('Allow me to navigate to default page', async ({ page }) => {
     await expect(page).toHaveTitle('Home Page - Mercury Health');
   
     // Take screenshot
-    await page.screenshot({ path: 'screenshot_Home-Homepage.png', fullPage: true, timeout: 60000 });
+    await page.screenshot({ path: 'screenshot_Home-Defaultpage.png', fullPage: true, timeout: 60000 });
 
 });
 
-test('should allow me to navigate to nutritions home page', async ({ page }) => {
-  
-  await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
+test('Allow me to navigate to home page', async ({ page }) => {
+  await page.locator('#menu_home').click();
+  await expect(page).toHaveTitle('Home Page - Mercury Health');
+
+  // Take screenshot
+  await page.screenshot({ path: 'screenshot_Home-Homepage.png', fullPage: true, timeout: 60000 });
+
+});
+
+test('Allow me to navigate to nutritions home page', async ({ page }) => {
+  //await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
+  await page.locator('#menu_nutrition').click();
   await expect(page).toHaveTitle('Nutrition - Mercury Health');
 
   // Take screenshot
@@ -28,8 +37,9 @@ test('should allow me to navigate to nutritions home page', async ({ page }) => 
 
 });
 
-test('should allow me to navigate to exercises home page', async ({ page }) => {
-  await page.getByRole('link', { name: 'Exercises', exact: true }).click();
+test('Allow me to navigate to exercises home page', async ({ page }) => {
+  //await page.getByRole('link', { name: 'Exercises', exact: true }).click();
+  await page.locator('#menu_exercises').click();
   await expect(page).toHaveTitle('Exercises - Mercury Health');
 
   // Take screenshot
@@ -37,7 +47,7 @@ test('should allow me to navigate to exercises home page', async ({ page }) => {
 
 });
 
-test('should allow me to navigate to privacy home page', async ({ page }) => {
+test('Allow me to navigate to privacy home page', async ({ page }) => {
   //await page.getByRole('link', { name: 'Privacy', exact: true }).click();
   await page.locator('#menu_privacy').click();
   await expect(page).toHaveTitle('Privacy Policy - Mercury Health');
@@ -47,9 +57,10 @@ test('should allow me to navigate to privacy home page', async ({ page }) => {
 
 });
 
-test('should allow me to navigate to metrics home page', async ({ page }) => {
-  await page.getByRole('link', { name: 'Metrics', exact: true }).click();
-  await expect(page).toHaveTitle('Metrics TBD - Mercury Health', { timeout: 60000 });
+test('Allow me to navigate to metrics home page', async ({ page }) => {
+  //await page.getByRole('link', { name: 'Metrics', exact: true }).click();
+  await page.locator('#menu_metrics').click();
+  await expect(page).toHaveTitle('Metrics Beta - Mercury Health', { timeout: 3000 });
 
   // Take screenshot
   await page.screenshot({ path: 'screenshot_Home-Metricspage.png', fullPage: true, timeout: 60000 });
