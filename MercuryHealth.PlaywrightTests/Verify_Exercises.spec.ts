@@ -59,6 +59,9 @@ test('Allow me to navigate to exercises page and click on edit', async ({ page }
   await page.getByLabel('Equipment').click();
   await page.getByLabel('Equipment').fill('Playwright Update');
 
+  // Will Fail
+  await page.click('#button_edit_99');
+
   await page.screenshot({
     path: 'screenshot_exercise_details_22.png', fullPage: true, timeout: 60000 });
     fullPage: true
