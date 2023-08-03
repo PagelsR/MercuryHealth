@@ -1,8 +1,23 @@
 import { test, expect } from '@playwright/test';
 
+// test.beforeEach(async ({ page }) => {
+//   await page.goto('https://app-okhgzqoexg6jy.azurewebsites.net/' , { waitUntil: 'load', timeout: 100000 });
+// });
+
+// Dynamicly set the URL from pipeline output
 test.beforeEach(async ({ page }) => {
-  
-  await page.goto('https://app-okhgzqoexg6jy.azurewebsites.net/' , { waitUntil: 'load', timeout: 100000 });
+  const url = process.env.website_URL || 'https://app-okhgzqoexg6jy.azurewebsites.net/';
+  await page.goto(url , { waitUntil: 'load', timeout: 100000 });
+});
+
+test("should be flaky for nutritions page", async ({ page }) => {
+  if (Math.random() > 0.5) {
+    await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
+    await expect(page).toHaveTitle('Nutrition - Mercury Health');
+  } else {
+    await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
+    await expect(page).not.toHaveTitle('Nutrition - Mercury Health');
+  }
 });
 
 test('Allow me to navigate to nutritions page', async ({ page }) => {

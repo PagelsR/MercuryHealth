@@ -1,8 +1,24 @@
 import { test, expect } from '@playwright/test';
-import fs from 'fs/promises';
+//import fs from 'fs/promises';
 
+// test.beforeEach(async ({ page }) => {
+//   await page.goto('https://app-okhgzqoexg6jy.azurewebsites.net/' , { waitUntil: 'load', timeout: 100000 });
+// });
+
+// Dynamicly set the URL from pipeline output
 test.beforeEach(async ({ page }) => {
-  await page.goto('https://app-okhgzqoexg6jy.azurewebsites.net/' , { waitUntil: 'load', timeout: 100000 });
+  const url = process.env.website_URL || 'https://app-okhgzqoexg6jy.azurewebsites.net/';
+  await page.goto(url , { waitUntil: 'load', timeout: 100000 });
+});
+
+test("should be flaky for exercises page", async ({ page }) => {
+  if (Math.random() > 0.5) {
+    await page.getByRole('link', { name: 'Exercises', exact: true }).click();
+    await expect(page).toHaveTitle('Exercises - Mercury Health');
+  } else {
+    await page.getByRole('link', { name: 'Exercises', exact: true }).click();
+    await expect(page).not.toHaveTitle('Exercises - Mercury Health');
+  }
 });
 
 test('should allow me to navigate to exercises page', async ({ page }) => {
@@ -42,7 +58,7 @@ test('Allow me to navigate to exercises page and click on details', async ({ pag
 test('Allow me to navigate to exercises page and click on edit', async ({ page }) => {
 
   // Start recording the trace
-  await page.tracing.start({ screenshots: true, snapshots: true });
+  //await page.tracing.start({ screenshots: true, snapshots: true });
 
   const acceptPolicyButton = await page.$('#accept-policy close');
   if (acceptPolicyButton !== null) {
@@ -68,9 +84,8 @@ test('Allow me to navigate to exercises page and click on edit', async ({ page }
   await page.getByRole('button', { name: 'Save' }).click();
 
   // Stop recording the trace
-  const traceBuffer = await page.tracing.stop();
-
-  await fs.writeFile('trace.json', traceBuffer);
+  //const traceBuffer = await page.tracing.stop();
+  //await fs.writeFile('trace.json', traceBuffer);
 
 });
 
