@@ -193,8 +193,72 @@ jobs:
          echo 'output_appInsightsAPIApplicationId: ${{ steps.Infra.outputs.out_appInsightsAPIApplicationId }}'
          echo 'output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}'
          echo 'output_secretConnectionString: ${{ steps.Infra.outputs.out_secretConnectionString }}'
-
          echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
+
+
+  ###################################################################
+  # Deployment Stage - Infrastructure
+  ###################################################################
+  config_dnsandcertificate:
+    runs-on: ubuntu-latest
+
+    name: Config DNS and Certificate
+    needs: [deploy_infrastructure]
+    env:
+      Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
+      Azure_Resource_GroupLocation: ${{ inputs.resource-group-location}}
+      Deployed_Environment: ${{ inputs.environment-suffix }}
+  
+    permissions:
+      contents: read
+
+    # Identify any jobs that must complete successfully before this job will run.
+    steps:
+    - name: Login to Azure
+      uses: azure/login@v1
+      continue-on-error: false
+      with:
+        creds: ${{ secrets.azure-credentials }}
+
+    - name: Ensure Resource Group is UnLocked
+      #if: contains(github.event_name, 'push')
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
+          
+    - name: Download Build Artifact-Infrastructure
+      uses: actions/download-artifact@v2
+      continue-on-error: false
+      with:
+        name: MercuryHealth.IaC
+        path: ${{ github.workspace }}/MercuryHealth.IaC
+
+    # Deploy ARM Template using Bicep DSL
+    - name: App Service DNS & Certificates
+      id: InfraDNS
+      uses: azure/arm-deploy@v1
+      continue-on-error: false
+      with:
+        resourceGroupName: ${{ env.Azure_Resource_GroupName }}
+        template: ./MercuryHealth.IaC/main-2.bicep
+        parameters: ./MercuryHealth.IaC/main-2.params.json webSiteName=${{ steps.Infra.outputs.out_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }}
+        deploymentMode: Incremental
+        failOnStdErr: false
+
+    - name: Ensure Resource Group is Locked
+      #if: contains(github.event_name, 'push')
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
+
+
+
+
+
 
     ##########################################################
     # DB Deploy during IaC
@@ -546,7 +610,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3.9.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: playwright-report-test/ # This is where index.html will be output
+          publish_dir: playwright-report # This is where index.html will be output
           keep_files: true # Set this to true to make sure we don't wipe out the other content in GitHub Pages
           user_name: 'github-actions[bot]' # This will be the username that gets stamped in the repo commit
           user_email: 'github-actions[bot]@users.noreply.github.com' # This will be the user email that gets stamped in the repo commit
@@ -563,7 +627,7 @@ jobs:
       Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
            
     # Identify any jobs that must complete successfully before this job will run.
-    needs: [deploy_infrastructure, deploy_application, UITesting_Stage_Application]
+    needs: [deploy_infrastructure, deploy_application, UITesting_Stage_Application,Playwright_Stage_Application]
     steps:
       - name: 'Checkout GitHub Actions'
         uses: actions/checkout@v2
