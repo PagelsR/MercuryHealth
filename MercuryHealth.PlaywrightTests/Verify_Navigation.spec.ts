@@ -60,7 +60,7 @@ test('Allow me to navigate to privacy home page', async ({ page }) => {
 test('Allow me to navigate to metrics home page', async ({ page }) => {
   //await page.getByRole('link', { name: 'Metrics', exact: true }).click();
   await page.locator('#menu_metrics').click();
-  await expect(page).toHaveTitle('Metrics Beta - Mercury Health', { timeout: 3000 });
+  await expect(page).toHaveTitle('Metrics - Mercury Health', { timeout: 3000 });
 
   // Take screenshot
   await page.screenshot({ path: 'screenshot_Home-Metricspage.png', fullPage: true, timeout: 60000 });
