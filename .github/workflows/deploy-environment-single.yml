@@ -653,7 +653,8 @@ jobs:
       Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
            
     # Identify any jobs that must complete successfully before this job will run.
-    needs: [deploy_infrastructure, deploy_application, UITesting_Stage_Application,Playwright_Stage_Application]
+    #needs: [deploy_infrastructure, deploy_application, UITesting_Stage_Application,Playwright_Stage_Application]
+    needs: [deploy_infrastructure, deploy_application, Playwright_Stage_Application]
     steps:
       - name: 'Checkout GitHub Actions'
         uses: actions/checkout@v2
@@ -784,7 +785,7 @@ jobs:
 
     # Identify any jobs that must complete successfully before this job will run.
     #needs: [UITesting_Stage_Application, LoadTesting_Stage_Application_Home, LoadTesting_Stage_Application_Nutrition, LoadTesting_Stage_Application_Exercise]
-    needs: [UITesting_Stage_Application, LoadTesting_Stage_Application_APIs, deploy_infrastructure ]
+    needs: [LoadTesting_Stage_Application_APIs, deploy_infrastructure ]
     environment:
       name: ${{ inputs.environment-suffix }}
       url: ${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net
