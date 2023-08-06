@@ -266,11 +266,6 @@ jobs:
              echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
              echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 1e0864e4f38c3847b509fc87d64bbd7c353dedd6
   ###################################################################
   # Deployment Stage - Application / Database 
   ###################################################################
