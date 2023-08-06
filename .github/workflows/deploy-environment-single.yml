@@ -273,8 +273,6 @@ jobs:
   ###################################################################
   deploy_database:
     runs-on: ubuntu-latest
-    outputs:
-      output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
 
     name: Deploy Database
     needs: [deploy_infrastructure]
@@ -310,18 +308,17 @@ jobs:
     
         # Deploy Database *.dacpac file
     - name: 'Deploy the database to Azure'
+      continue-on-error: true
       uses: Azure/sql-action@v1.2
       with:
-        server-name: ${{ steps.Infra.outputs.out_sqlserverFQName }}
-        #connection-string: ${{ secrets.sql-connection-string }}
-        connection-string: ${{ steps.Infra.outputs.out_secretConnectionString }}
+        server-name: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}
+        connection-string: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}
         dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
-
 
     - name: Deploy Database
       run: |
          echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
-         echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
+         echo 'output_sqlserverFQName: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}'
 
     - name: Ensure Resource Group is Locked
       #if: contains(github.event_name, 'push')
