@@ -33,9 +33,12 @@ on:
       cloudflare-zone-id:
         description: 'Credentials used for CloudFlare resources'
         required: true
-      personal-accesstoken:
+      github-accesstoken:
         description: 'Publish HTML report to GitHub Pages'
         required: true
+      personal-accesstoken:
+        description: 'Publish HTML report to GitHub Pages'
+        required: true        
 jobs:
   ###################################################################
   # Deployment Stage - Infrastructure
@@ -557,7 +560,7 @@ jobs:
         if: always() # We want this to always run, even if test fail prior to this step running
         uses: peaceiris/actions-gh-pages@v3.9.3
         with:
-          #github_token: ${{ secrets.GITHUB_TOKEN }}
+          #github_token: ${{ secrets.github-accesstoken }}
           personal_token: ${{ secrets.personal-accesstoken }}
           publish_branch: main
           publish_dir: playwright-report # This is where index.html will be output

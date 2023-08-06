@@ -160,4 +160,4 @@ jobs:
       cloudflare-api-token: ${{ secrets.CLOUDFLARE_API_TOKEN}}
       cloudflare-zone-id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
       personal-accesstoken: ${{ secrets.PERSONAL_ACCESSTOKEN }}
-      
+      github-accesstoken: ${{ secrets.GITHUB_TOKEN }}
