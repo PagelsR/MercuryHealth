@@ -58,7 +58,7 @@ jobs:
       ###########################################
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
@@ -565,7 +565,7 @@ jobs:
     needs: [UITesting_Stage_ApplicationOnChromium, UITesting_Stage_ApplicationOnFireFox]
     steps:
       - name: Checkout GitHub Actions 
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Download Artifacts under $GITHUB_WORKSPACE, so your job can access it
       - name: Download Build Artifacts-Load Tests
@@ -609,7 +609,7 @@ jobs:
     environment: Production
     steps:
       - name: Checkout GitHub Actions 
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
           
       - name: Login to Azure
         uses: azure/login@v1
