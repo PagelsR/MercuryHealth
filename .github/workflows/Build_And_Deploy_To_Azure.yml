@@ -305,7 +305,7 @@ jobs:
     
     # Deploy Database *.dacpac file - Requires windows-latest runner!!!
     - name: 'Deploy the database to Azure'
-      uses: Azure/sql-action@v1.2
+      uses: Azure/sql-action@v2.2
       with:
         server-name: ${{ secrets.SQL_DB_Server_Name }}
         
