@@ -154,7 +154,7 @@ jobs:
         failOnStdErr: false
 
     # DB Deploy during IaC
-    # Note: the output: steps.Infra.outputs.out_secretConnectionString doesn't transfer to stage: deploy_application
+    # Note: the output: steps.Infra.outputs.out_secretConnectionString doesn't transfer to other stages
     ##########################################################
     - name: Download Build Artifact-Database
       uses: actions/download-artifact@v2
@@ -197,16 +197,17 @@ jobs:
          echo 'output_appInsightsAPIApplicationId: ${{ steps.Infra.outputs.out_appInsightsAPIApplicationId }}'
          echo 'output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}'
          echo 'output_secretConnectionString: ${{ steps.Infra.outputs.out_secretConnectionString }}'
-         echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
 
 
 
 
   ###################################################################
-  # Deployment Stage - Infrastructure
+  # Conigure DNS and set SSL Certificate
   ###################################################################
   config_dnsandcertificate:
     runs-on: ubuntu-latest
+    outputs:
+      output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
 
     name: Config DNS and Certificate
     needs: [deploy_infrastructure]
@@ -260,7 +261,10 @@ jobs:
         inlineScript: |
           az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
 
-
+    - name: DEBUG ONLY Display Output Variables
+      run: |
+         echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
+         echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
 
 
   ###################################################################
@@ -297,7 +301,6 @@ jobs:
          echo 'output_appInsightsAPIApplicationId: ${{ needs.deploy_infrastructure.outputs.output_appInsightsAPIApplicationId }}'
          echo 'output_keyvaultName: ${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}'
          echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
-         echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
          echo 'output_apiServiceName: ${{ needs.deploy_infrastructure.outputs.output_apiServiceName }}'
          echo 'output_apimSubscriptionKey: ${{ needs.deploy_infrastructure.outputs.output_apimSubscriptionKey }}'
 
@@ -307,14 +310,6 @@ jobs:
       with:
         creds: ${{ secrets.azure-credentials }}
 
-#    - name: Ensure API Management is Locked
-#      if: contains(github.event_name, 'push')
-#      uses: Azure/CLI@v1
-#      continue-on-error: true
-#      with:
-#        inlineScript: |
-#          az lock create --name DontDeleteMe --lock-type CanNotDelete --resource-group ${{ env.Azure_Resource_GroupName }} --resource-name ${{ steps.Infra.outputs.out_apiServiceName }} --resource-type Microsoft.ApiManagement/service --notes 'Prevent deletion of the resource group'
-        
     - name: Ensure Resource Group is Locked
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
@@ -370,7 +365,6 @@ jobs:
 
     #
     # TODO!!!  Removed this and replace using Azure CLI
-    #              
     - name: 'Generate Temporary API Key For App Insights'
       id: AIKeyGen
       uses: Azure/CLI@v1
@@ -486,20 +480,13 @@ jobs:
          dotnet build MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }}
          dotnet publish MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }} -o './MercuryHealth.UITests'
          dotnet test MercuryHealth.UITests/MercuryHealth.UITests.csproj --filter "TestCategory=Playwright_Tests_Chromium|TestCategory=Playwright_Tests_FireFox" -l "console;verbosity=normal" -l "trx;LogFileName=TestResults.trx" --settings MercuryHealth.UITests/MercuryHealthTests.runsettings
-      #- name: 'Upload Playwright Test Results-ScreenShots'
-      #  uses: actions/upload-artifact@v2
-      #  if: always()
-      #  with:
-      #    name: MercuryHealth.UITestsResults
-      #    path: ${{ github.workspace }}/MercuryHealth.UITests/*.png
-      #    retention-days: 30
 
       # Upload the test result artifacts
       - name: 'Upload Playwright Screenshot Files'
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-report-C#
+          name: playwright-screenshots-C#
           path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/screenshot_*.png
           retention-days: 30
 
@@ -512,14 +499,6 @@ jobs:
           path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/trace_*.zip
           retention-days: 30
 
-      # Add screenshots and Test Attachments
-      #- name: 'Upload Playwright Trace Results-Report'
-      #  uses: actions/upload-artifact@v3
-      #  if: always()
-      #  with:
-      #    name: MercuryHealth.UITestsResults_TestResults
-      #    path: ${{ github.workspace }}/MercuryHealth.UITests/TestResults
-      #    retention-days: 30
 
 ###################################################################
 # CD Stage - Playwright Testing                         
