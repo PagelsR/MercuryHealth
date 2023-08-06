@@ -52,14 +52,11 @@ test('Allow me to navigate to exercises page and click on details', async ({ pag
   expect(detailsPageTitle).toBe('Details - Mercury Health');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_exercise_details_25.png', fullPage: true, timeout: 60000 });
+  await page.screenshot({ path: 'screenshot_exercise_details_25-1.png', fullPage: true, timeout: 60000 });
 
 });
 
 test('Allow me to navigate to exercises page and click on edit', async ({ page }) => {
-
-  // Start recording the trace
-  //await page.tracing.start({ screenshots: true, snapshots: true });
 
   const acceptPolicyButton = await page.$('#accept-policy close');
   if (acceptPolicyButton !== null) {
@@ -72,7 +69,7 @@ test('Allow me to navigate to exercises page and click on edit', async ({ page }
   await page.getByRole('link', { name: 'Exercises', exact: true }).click();
   await expect(page).toHaveTitle('Exercises - Mercury Health');
 
-  await page.click('#button_edit_22');
+  await page.click('#button_edit_25');
   const detailsPageTitle = await page.title();
   expect(detailsPageTitle).toBe('Edit - Mercury Health');
 
@@ -84,9 +81,29 @@ test('Allow me to navigate to exercises page and click on edit', async ({ page }
 
   await page.getByRole('button', { name: 'Save' }).click();
 
-  // Stop recording the trace
-  //const traceBuffer = await page.tracing.stop();
-  //await fs.writeFile('trace.json', traceBuffer);
-
 });
 
+test('Allow me to navigate to exercises page and verify details', async ({ page }) => {
+
+  const acceptPolicyButton = await page.$('#accept-policy close');
+  if (acceptPolicyButton !== null) {
+    await acceptPolicyButton.click();
+  }
+
+  const myPageTitle = await page.title();
+  expect(myPageTitle).toBe('Home Page - Mercury Health');
+
+  await page.getByRole('link', { name: 'Exercises', exact: true }).click();
+  await expect(page).toHaveTitle('Exercises - Mercury Health');
+
+  await page.click('#button_details_25');
+  const detailsPageTitle = await page.title();
+  expect(detailsPageTitle).toBe('Details - Mercury Health');
+
+  // Take screenshot
+  await page.screenshot({ path: 'screenshot_exercise_details_25-2.png', fullPage: true, timeout: 60000 });
+
+  // await page.getByLabel('Equipment').click();
+  // await page.getByLabel('Equipment').fill('Playwright Update');
+
+});

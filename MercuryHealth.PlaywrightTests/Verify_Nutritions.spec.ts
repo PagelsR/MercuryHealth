@@ -48,35 +48,62 @@ test('Allow me to navigate to nutritions page and click on details', async ({ pa
   const detailsPageTitle = await page.title();
   expect(detailsPageTitle).toBe('Details - Mercury Health');
 
-  await page.screenshot({
-    path: 'screenshot_nutrition_details_25.png', fullPage: true, timeout: 60000 });
+  await page.screenshot({ path: 'screenshot_nutrition_details_25.png', fullPage: true, timeout: 60000 });
+  
+  await page.click('#button_back');
+
 });
 
-  // Todo! Convert the following to TypeScript
-  // expect(page.url()).toBe(pageURL + 'Nutritions/Details/25');
+test('Allow me to navigate to nutritions page and click on edit', async ({ page }) => {
 
-  // const myDescription = await page.textContent('id=Description');
-  // myDescription = myDescription.replace(/\n/g, '');
-  // myDescription = myDescription.trim();
+  const acceptPolicyButton = await page.$('#accept-policy close');
+  if (acceptPolicyButton !== null) {
+    await acceptPolicyButton.click();
+  }
 
-  // await page.screenshot({
-  //   path: 'screenshot_Item-Description.png',
-  //   fullPage: true
-  // });
+  const myPageTitle = await page.title();
+  expect(myPageTitle).toBe('Home Page - Mercury Health');
 
-  // const rnd = Math.floor(Math.random() * 2) + 1;
-  // if (rnd === 1) {
-  //   expect(myDescription).toBe('Banana');
-  // } else {
-  //   expect(myDescription).toBe('Strawberry');
-  // }
+  await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
+  await expect(page).toHaveTitle('Nutrition - Mercury Health');
 
-  // await page.click('text=Home');
+  await page.click('#button_edit_25');
+  const detailsPageTitle = await page.title();
+  expect(detailsPageTitle).toBe('Edit - Mercury Health');
 
-  // await context.tracing.stop({
-  //   path: 'trace_Verify_NavToNutritionDetail.zip'
-  // });
+  await page.getByLabel('Tags').click();
+  await page.getByLabel('Tags').fill('Playwright Update');
 
-  // await browser.close();
-//});
+  // Take screenshot
+  await page.screenshot({ path: 'screenshot_nutrition_details_25-1.png', fullPage: true, timeout: 60000 });
 
+  await page.getByRole('button', { name: 'Save' }).click();
+
+});
+
+test('Allow me to navigate to nutritions page and verify details', async ({ page }) => {
+
+  const acceptPolicyButton = await page.$('#accept-policy close');
+  if (acceptPolicyButton !== null) {
+    await acceptPolicyButton.click();
+  }
+
+  const myPageTitle = await page.title();
+  expect(myPageTitle).toBe('Home Page - Mercury Health');
+
+  await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
+  await expect(page).toHaveTitle('Nutrition - Mercury Health');
+
+  await page.click('#button_edit_25');
+  const detailsPageTitle = await page.title();
+  expect(detailsPageTitle).toBe('Edit - Mercury Health');
+
+  await page.getByLabel('Tags').click();
+  // await page.getByLabel('Tags').fill('Playwright Update');
+
+  // Take screenshot
+  await page.screenshot({ path: 'screenshot_nutrition_details_25-2.png', fullPage: true, timeout: 60000 });
+
+  await page.click('#button_back');
+
+});

@@ -549,11 +549,11 @@ jobs:
           path: trace_*.zipf
           retention-days: 30
           
-      # Publish HTML report to GitHub Pages - v3.9.3
+      # Publish HTML report to GitHub Pages
       - name: Publish HTML report to GitHub Pages
         continue-on-error: true
         if: always() # We want this to always run, even if test fail prior to this step running
-        uses: peaceiris/actions-gh-pages@v3.7.3
+        uses: peaceiris/actions-gh-pages@v3.9.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: main
@@ -575,7 +575,7 @@ jobs:
            
     # Identify any jobs that must complete successfully before this job will run.
     #needs: [deploy_infrastructure, deploy_application, UITesting_Stage_Application,Playwright_Stage_Application]
-    needs: [deploy_infrastructure, deploy_application, Playwright_Stage_Application, config_dnsandcertificate]
+    needs: [deploy_infrastructure, deploy_application, Playwright_Stage_Application]
     steps:
       - name: 'Checkout GitHub Actions'
         uses: actions/checkout@v2
