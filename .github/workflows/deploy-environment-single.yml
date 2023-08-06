@@ -52,7 +52,6 @@ jobs:
       output_appInsightsAPIApplicationId: ${{ steps.Infra.outputs.out_appInsightsAPIApplicationId }}
       output_secretConnectionString: ${{ steps.Infra.outputs.out_secretConnectionString }}
       output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}
-      output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
 
     name: Deploy Infrastructure
     env:
