@@ -269,6 +269,70 @@ jobs:
 
 
   ###################################################################
+  # Deploy Database
+  ###################################################################
+  deploy_database:
+    runs-on: ubuntu-latest
+    outputs:
+      output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
+
+    name: Deploy Database
+    needs: [deploy_infrastructure]
+    env:
+      Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
+      Azure_Resource_GroupLocation: ${{ inputs.resource-group-location}}
+  
+    permissions:
+      contents: read
+
+    # Identify any jobs that must complete successfully before this job will run.
+    steps:
+    - name: Login to Azure
+      uses: azure/login@v1
+      continue-on-error: false
+      with:
+        creds: ${{ secrets.azure-credentials }}
+
+    - name: Ensure Resource Group is UnLocked
+      #if: contains(github.event_name, 'push')
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
+          
+    - name: Download Build Artifact-Database
+      uses: actions/download-artifact@v2
+      continue-on-error: false
+      with:
+        name: MercuryHealth.Database
+        path: ${{ github.workspace }}/MercuryHealth.Database
+    
+        # Deploy Database *.dacpac file
+    - name: 'Deploy the database to Azure'
+      uses: Azure/sql-action@v1.2
+      with:
+        server-name: ${{ steps.Infra.outputs.out_sqlserverFQName }}
+        #connection-string: ${{ secrets.sql-connection-string }}
+        connection-string: ${{ steps.Infra.outputs.out_secretConnectionString }}
+        dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
+
+
+    - name: Deploy Database
+      run: |
+         echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
+         echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
+
+    - name: Ensure Resource Group is Locked
+      #if: contains(github.event_name, 'push')
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
+   
+
+  ###################################################################
   # Deployment Stage - Application / Database 
   ###################################################################
   deploy_application:
@@ -436,7 +500,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Identify any jobs that must complete successfully before this job will run.
-    needs: [deploy_infrastructure, deploy_application]
+    needs: [deploy_infrastructure, deploy_application, deploy_database]
     timeout-minutes: 10
         
     steps:
@@ -518,7 +582,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Identify any jobs that must complete successfully before this job will run.
-    needs: [deploy_infrastructure, deploy_application]
+    needs: [deploy_infrastructure, deploy_application, deploy_database]
     timeout-minutes: 60
         
     steps:
