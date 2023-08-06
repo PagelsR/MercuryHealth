@@ -146,7 +146,7 @@ jobs:
       uses: azure/arm-deploy@v1
       continue-on-error: false
       with:
-        scope: resource-group
+        scope: 'resourcegroup'
         resourceGroupName: ${{ env.Azure_Resource_GroupName }}
         template: ./MercuryHealth.IaC/main-1.bicep
         parameters: ./MercuryHealth.IaC/main-1.params.json Deployed_Environment=${{ env.Deployed_Environment }}
@@ -247,7 +247,7 @@ jobs:
       uses: azure/arm-deploy@v1
       continue-on-error: false
       with:
-        scope: resource-group
+        scope: 'resourcegroup'
         resourceGroupName: ${{ env.Azure_Resource_GroupName }}
         template: ./MercuryHealth.IaC/main-2.bicep
         parameters: ./MercuryHealth.IaC/main-2.params.json webSiteName=${{ needs.deploy_infrastructure.outputs.output_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }}
@@ -564,7 +564,7 @@ jobs:
         if: always()
         with:
           name: playwright-traces
-          path: trace_*.zip
+          path: trace_*.zipf
           retention-days: 30
           
       # Publish HTML report to GitHub Pages - v3.9.3
