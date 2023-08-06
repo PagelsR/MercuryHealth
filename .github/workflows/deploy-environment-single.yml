@@ -655,7 +655,7 @@ jobs:
            
     # Identify any jobs that must complete successfully before this job will run.
     #needs: [deploy_infrastructure, deploy_application, UITesting_Stage_Application,Playwright_Stage_Application]
-    needs: [deploy_infrastructure, deploy_application, Playwright_Stage_Application]
+    needs: [deploy_infrastructure, deploy_application, Playwright_Stage_Application, config_dnsandcertificate]
     steps:
       - name: 'Checkout GitHub Actions'
         uses: actions/checkout@v2
