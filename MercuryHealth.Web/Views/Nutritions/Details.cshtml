@@ -1,7 +1,4 @@
-﻿@model IEnumerable<MercuryHealth.Web.Models.Nutrition>
-
-@*@model MercuryHealth.Web.Models.Nutrition*@
-
+﻿@model MercuryHealth.Web.Models.Nutrition
 
 @{
     ViewData["Title"] = "Details";
@@ -9,94 +6,80 @@
 
 <h1>Details</h1>
 
-@foreach (var item in Model)
+@if (Model != null)
 {
 
     <div>
         <h4>Nutrition</h4>
         <hr />
         <dl class="row">
-    @*        <dt class="col-sm-2" id="@Html.DisplayNameFor(model => model.Description)">
+            <dt class="col-sm-2" id="@("DisplayName_" + Html.DisplayNameFor(model => model.Description))">
                 @Html.DisplayNameFor(model => model.Description)
             </dt>
-            <dd class = "col-sm-10" id="@Html.DisplayNameFor(model => model.Description)">
+            <dd class="col-sm-10" id="@("Value_" + Html.DisplayNameFor(model => model.Description))">
                 @Html.DisplayFor(model => model.Description)
-            </dd>*@
-
-            <dt class="col-sm-2" id="@("Description_" + item.Id)">
-                @Html.DisplayNameFor(model => item.Description)
-            </dt>
-            <dd class="col-sm-10" id="@("Description_Value_" + item.Id)">
-                @Html.DisplayFor(model => item.Description)
             </dd>
 
-    @*        <dt class = "col-sm-2">
+            <dt class="col-sm-2" id="@("DisplayName_" + Html.DisplayNameFor(model => model.Quantity))">
                 @Html.DisplayNameFor(model => model.Quantity)
             </dt>
-            <dd class = "col-sm-10" id="@Html.DisplayNameFor(model => model.Quantity)">
+            <dd class="col-sm-10" id="@("Value_" + Html.DisplayNameFor(model => model.Quantity))">
                 @Html.DisplayFor(model => model.Quantity)
-            </dd>*@
-
-            <dt class="col-sm-2" id="@("Quantity_" + item.Id)">
-                @Html.DisplayNameFor(model => item.Quantity)
-            </dt>
-            <dd class="col-sm-10" id="@("Quantity_Value_" + item.Id)">
-                @Html.DisplayFor(model => item.Quantity)
             </dd>
 
             <dt class = "col-sm-2">
                 @Html.DisplayNameFor(model => model.MealTime)
             </dt>
             <dd class = "col-sm-10" id="@Html.DisplayNameFor(model => model.MealTime)">
-                    @Html.DisplayFor(model => item.MealTime)
+                @Html.DisplayFor(model => Model.MealTime)
             </dd>
             <dt class = "col-sm-2">
                 @Html.DisplayNameFor(model => model.Tags)
             </dt>
             <dd class = "col-sm-10" id="@Html.DisplayNameFor(model => model.Tags)">
-                    @Html.DisplayFor(model => item.Tags)
+                @Html.DisplayFor(model => Model.Tags)
             </dd>
             <dt class = "col-sm-2">
                 @Html.DisplayNameFor(model => model.Calories)
             </dt>
             <dd class = "col-sm-10" id="@Html.DisplayNameFor(model => model.Calories)">
-                    @Html.DisplayFor(model => item.Calories)
+                @Html.DisplayFor(model => Model.Calories)
             </dd>
             <dt class = "col-sm-2">
                 @Html.DisplayNameFor(model => model.ProteinInGrams)
             </dt>
             <dd class = "col-sm-10" id="@Html.DisplayNameFor(model => model.ProteinInGrams)">
-                    @Html.DisplayFor(model => item.ProteinInGrams)
+                @Html.DisplayFor(model => Model.ProteinInGrams)
             </dd>
             <dt class = "col-sm-2">
                 @Html.DisplayNameFor(model => model.FatInGrams)
             </dt>
             <dd class = "col-sm-10" id="@Html.DisplayNameFor(model => model.FatInGrams)">
-                    @Html.DisplayFor(model => item.FatInGrams)
+                @Html.DisplayFor(model => Model.FatInGrams)
             </dd>
             <dt class = "col-sm-2">
                 @Html.DisplayNameFor(model => model.CarbohydratesInGrams)
             </dt>
             <dd class = "col-sm-10" id="@Html.DisplayNameFor(model => model.CarbohydratesInGrams)">
-                    @Html.DisplayFor(model => item.CarbohydratesInGrams)
+                @Html.DisplayFor(model => Model.CarbohydratesInGrams)
             </dd>
             <dt class = "col-sm-2">
                 @Html.DisplayNameFor(model => model.SodiumInGrams)
             </dt>
             <dd class = "col-sm-10" id="@Html.DisplayNameFor(model => model.SodiumInGrams)">
-                    @Html.DisplayFor(model => item.SodiumInGrams)
+                @Html.DisplayFor(model => Model.SodiumInGrams)
             </dd>
             <dt class = "col-sm-2">
                 @Html.DisplayNameFor(model => model.Color)
             </dt>
             <dd class = "col-sm-10" id="@Html.DisplayNameFor(model => model.Color)">
-                    @Html.DisplayFor(model => item.Color)
+                @Html.DisplayFor(model => Model.Color)
             </dd>
         </dl>
     </div>
 
     <div>
-        <a asp-action="Edit" id="button_edit" asp-route-id="@item.Id">Edit</a> |
+        <a asp-action="Edit" id="button_edit" asp-route-id="@Model.Id">Edit</a> |
         <a asp-action="Index" id="button_back">Back to List</a>
     </div>
 
