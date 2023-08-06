@@ -200,74 +200,6 @@ jobs:
 
 
 
-
-  ###################################################################
-  # Conigure DNS and set SSL Certificate
-  ###################################################################
-  config_dnsandcertificate:
-    runs-on: ubuntu-latest
-    outputs:
-      output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
-
-    name: Config DNS and Certificate
-    needs: [deploy_infrastructure]
-    env:
-      Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
-      Azure_Resource_GroupLocation: ${{ inputs.resource-group-location}}
-  
-    permissions:
-      contents: read
-
-    # Identify any jobs that must complete successfully before this job will run.
-    steps:
-    - name: Login to Azure
-      uses: azure/login@v1
-      continue-on-error: false
-      with:
-        creds: ${{ secrets.azure-credentials }}
-
-    - name: Ensure Resource Group is UnLocked
-      #if: contains(github.event_name, 'push')
-      uses: Azure/CLI@v1
-      continue-on-error: true
-      with:
-        inlineScript: |
-          az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
-          
-    - name: Download Build Artifact-Infrastructure
-      uses: actions/download-artifact@v2
-      continue-on-error: false
-      with:
-        name: MercuryHealth.IaC
-        path: ${{ github.workspace }}/MercuryHealth.IaC
-
-    # Deploy ARM Template using Bicep DSL
-    - name: App Service DNS & Certificates
-      id: InfraDNS
-      uses: azure/arm-deploy@v1
-      continue-on-error: false
-      with:
-        scope: 'resourcegroup'
-        resourceGroupName: ${{ env.Azure_Resource_GroupName }}
-        template: ./MercuryHealth.IaC/main-2.bicep
-        parameters: ./MercuryHealth.IaC/main-2.params.json webSiteName=${{ needs.deploy_infrastructure.outputs.output_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }}
-        deploymentMode: Incremental
-        failOnStdErr: false
-
-    - name: Ensure Resource Group is Locked
-      #if: contains(github.event_name, 'push')
-      uses: Azure/CLI@v1
-      continue-on-error: true
-      with:
-        inlineScript: |
-          az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
-
-    - name: DEBUG ONLY Display Output Variables
-      run: |
-         echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
-         echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
-
-
   ###################################################################
   # Deploy Database
   ###################################################################
@@ -480,86 +412,74 @@ jobs:
     - name: 'Azure logout'
       run: |
         az logout
-          
-###################################################################
-# CD Stage - UI Testing                         
-###################################################################
-  # UITesting_Stage_Application:
-  #   #if: contains(github.event_name, 'push')
 
-  #   name: Playwright C#
-    
-  #   env:
-  #     dotnet_version: '6.x.x'
-  #     buildConfiguration: 'Release'
-
-  #   # The type of runner that the job will run on - windows-latest
-  #   runs-on: ubuntu-latest
-
-  #   # Identify any jobs that must complete successfully before this job will run.
-  #   needs: [deploy_infrastructure, deploy_application, deploy_database]
-  #   timeout-minutes: 10
         
-  #   steps:
-  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-      
-  #     - name: Setup .NET Core
-  #       uses: actions/setup-dotnet@v1
-  #       with:
-  #         dotnet-version: ${{ env.dotnet_version }}
 
-  #     - name: DEBUG ONLY Display Output Variables
-  #       run: |
-  #          echo 'output_webSiteName: ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}'
-         
-  #     # Download Artifacts under $GITHUB_WORKSPACE, so your job can access it
-  #     - name: Download Build Artifacts-Playwright Tests
-  #       continue-on-error: false
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: MercuryHealth.UITests
-  #         path: ${{ github.workspace }}/MercuryHealth.UITests
+  ###################################################################
+  # Conigure DNS and set SSL Certificate
+  ###################################################################
+  config_dnsandcertificate:
+    runs-on: ubuntu-latest
+    outputs:
+      output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
 
-  #     # Update Runsettings with Website URL
-  #     - name: Update Runsettings with Website URL
-  #       uses: Azure/powershell@v1
-  #       continue-on-error: false
-  #       id: setWebsiteUrl
-  #       env:
-  #         POWERSHELL_TELEMETRY_OPTOUT: 1
-  #       with:
-  #         inlineScript: MercuryHealth.UITests/TransformRunSettings.ps1 -website_url 'https://${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net/'
-  #         # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
-  #         azPSVersion: 3.4.0
-  #         # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
-  #         errorActionPreference: continue
+    name: Config DNS and Certificate
+    needs: [deploy_infrastructure]
+    env:
+      Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
+      Azure_Resource_GroupLocation: ${{ inputs.resource-group-location}}
+  
+    permissions:
+      contents: read
 
-  #     - name: Playwright Tests all on Browsers
-  #       continue-on-error: true
-  #       run: |
-  #        dotnet build MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }}
-  #        dotnet publish MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }} -o './MercuryHealth.UITests'
-  #        dotnet test MercuryHealth.UITests/MercuryHealth.UITests.csproj --filter "TestCategory=Playwright_Tests_Chromium|TestCategory=Playwright_Tests_FireFox" -l "console;verbosity=normal" -l "trx;LogFileName=TestResults.trx" --settings MercuryHealth.UITests/MercuryHealthTests.runsettings
+    # Identify any jobs that must complete successfully before this job will run.
+    steps:
+    - name: Login to Azure
+      uses: azure/login@v1
+      continue-on-error: false
+      with:
+        creds: ${{ secrets.azure-credentials }}
 
-  #     # Upload the test result artifacts
-  #     - name: 'Upload Playwright Screenshot Files'
-  #       uses: actions/upload-artifact@v3
-  #       if: always()
-  #       with:
-  #         name: playwright-screenshots-C#
-  #         path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/screenshot_*.png
-  #         retention-days: 30
+    - name: Ensure Resource Group is UnLocked
+      #if: contains(github.event_name, 'push')
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
+          
+    - name: Download Build Artifact-Infrastructure
+      uses: actions/download-artifact@v2
+      continue-on-error: false
+      with:
+        name: MercuryHealth.IaC
+        path: ${{ github.workspace }}/MercuryHealth.IaC
 
-  #     # Upload the test result artifacts
-  #     - name: 'Upload Playwright Trace Files'
-  #       uses: actions/upload-artifact@v3
-  #       if: always()
-  #       with:
-  #         name: playwright-report-C#
-  #         path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/trace_*.zip
-  #         retention-days: 30
+    # Deploy ARM Template using Bicep DSL
+    - name: App Service DNS & Certificates
+      id: InfraDNS
+      uses: azure/arm-deploy@v1
+      continue-on-error: false
+      with:
+        scope: 'resourcegroup'
+        resourceGroupName: ${{ env.Azure_Resource_GroupName }}
+        template: ./MercuryHealth.IaC/main-2.bicep
+        parameters: ./MercuryHealth.IaC/main-2.params.json webSiteName=${{ needs.deploy_infrastructure.outputs.output_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }}
+        deploymentMode: Incremental
+        failOnStdErr: false
+
+    - name: Ensure Resource Group is Locked
+      #if: contains(github.event_name, 'push')
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
+
+    - name: DEBUG ONLY Display Output Variables
+      run: |
+         echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
+         echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
 
 
 ###################################################################
@@ -795,6 +715,13 @@ jobs:
         run: |
           echo 'Approve Deployment'
 
+
+###################################################################
+###################################################################
+###################################################################
+
+
+
 ###################################################################
 # Swap Deployment Slots - Used for Multiple App Service Deployment Slots                         
 ###################################################################
@@ -823,6 +750,85 @@ jobs:
   #         --slot ${{ inputs.environment-suffix }}
   #         --target-slot 'prod'
 
+###################################################################
+# CD Stage - UI Testing                         
+###################################################################
+  # UITesting_Stage_Application:
+  #   #if: contains(github.event_name, 'push')
+
+  #   name: Playwright C#
+    
+  #   env:
+  #     dotnet_version: '6.x.x'
+  #     buildConfiguration: 'Release'
+
+  #   # The type of runner that the job will run on - windows-latest
+  #   runs-on: ubuntu-latest
+
+  #   # Identify any jobs that must complete successfully before this job will run.
+  #   needs: [deploy_infrastructure, deploy_application, deploy_database]
+  #   timeout-minutes: 10
+        
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+      
+  #     - name: Setup .NET Core
+  #       uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: ${{ env.dotnet_version }}
+
+  #     - name: DEBUG ONLY Display Output Variables
+  #       run: |
+  #          echo 'output_webSiteName: ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}'
+         
+  #     # Download Artifacts under $GITHUB_WORKSPACE, so your job can access it
+  #     - name: Download Build Artifacts-Playwright Tests
+  #       continue-on-error: false
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: MercuryHealth.UITests
+  #         path: ${{ github.workspace }}/MercuryHealth.UITests
+
+  #     # Update Runsettings with Website URL
+  #     - name: Update Runsettings with Website URL
+  #       uses: Azure/powershell@v1
+  #       continue-on-error: false
+  #       id: setWebsiteUrl
+  #       env:
+  #         POWERSHELL_TELEMETRY_OPTOUT: 1
+  #       with:
+  #         inlineScript: MercuryHealth.UITests/TransformRunSettings.ps1 -website_url 'https://${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net/'
+  #         # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
+  #         azPSVersion: 3.4.0
+  #         # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
+  #         errorActionPreference: continue
+
+  #     - name: Playwright Tests all on Browsers
+  #       continue-on-error: true
+  #       run: |
+  #        dotnet build MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }}
+  #        dotnet publish MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }} -o './MercuryHealth.UITests'
+  #        dotnet test MercuryHealth.UITests/MercuryHealth.UITests.csproj --filter "TestCategory=Playwright_Tests_Chromium|TestCategory=Playwright_Tests_FireFox" -l "console;verbosity=normal" -l "trx;LogFileName=TestResults.trx" --settings MercuryHealth.UITests/MercuryHealthTests.runsettings
+
+  #     # Upload the test result artifacts
+  #     - name: 'Upload Playwright Screenshot Files'
+  #       uses: actions/upload-artifact@v3
+  #       if: always()
+  #       with:
+  #         name: playwright-screenshots-C#
+  #         path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/screenshot_*.png
+  #         retention-days: 30
+
+  #     # Upload the test result artifacts
+  #     - name: 'Upload Playwright Trace Files'
+  #       uses: actions/upload-artifact@v3
+  #       if: always()
+  #       with:
+  #         name: playwright-report-C#
+  #         path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/trace_*.zip
+  #         retention-days: 30
           
 
 
