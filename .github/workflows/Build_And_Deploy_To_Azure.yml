@@ -107,56 +107,56 @@ jobs:
       ###########################################
       - name: Upload Build Artifacts-Website
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: MercuryHealth.Website
           path: ${{ github.workspace }}/website
 
       - name: Upload Build Artifacts-FunctionApp
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: MercuryHealth.FunctionApp
           path: ${{ github.workspace }}/functionapp
 
       - name: Upload Build Artifacts-Database
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: MercuryHealth.Database
           path: ${{ github.workspace }}/database
 
       - name: Upload Build Artifacts-API
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: MercuryHealth.API
           path: ${{ github.workspace }}/api
 
       - name: Upload Build Artifacts-UI Tests
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: MercuryHealth.UITests
           path: ${{ github.workspace }}/uitests
 
       - name: Upload Build Artifacts-UI Tests runsettings file
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: MercuryHealth.UITests
           path: ${{ github.workspace }}/MercuryHealth.UITests/MercuryHealthTests.runsettings
             
       - name: Upload Infrastucture Files
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: MercuryHealth.IaC
           path: ${{ github.workspace }}/MercuryHealth.IaC/*.*
 
       - name: Upload Load Test Files
         if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: MercuryHealth.LoadTests
           path: ${{ github.workspace }}/MercuryHealth.LoadTests/*.*
