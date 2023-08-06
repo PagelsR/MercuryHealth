@@ -97,7 +97,7 @@ jobs:
           az lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --resource ${{ steps.Infra.outputs.out_apiServiceName }} --resource-type Microsoft.ApiManagement/service
 
     - name: Download Build Artifact-Infrastructure
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       continue-on-error: false
       with:
         name: MercuryHealth.IaC
@@ -169,7 +169,7 @@ jobs:
     # Note: the output: steps.Infra.outputs.out_secretConnectionString doesn't transfer to stage: deploy_application
     ##########################################################
     - name: Download Build Artifact-Database
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       continue-on-error: false
       with:
         name: MercuryHealth.Database
@@ -249,7 +249,7 @@ jobs:
           az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
 
     #- name: Download Build Artifact-Database
-    #  uses: actions/download-artifact@v2
+    #  uses: actions/download-artifact@v3
     #  continue-on-error: false
     #  with:
     #    name: MercuryHealth.Database
@@ -265,7 +265,7 @@ jobs:
     #    dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
 
     - name: Download Build Artifacts-Website Application
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       continue-on-error: false
       with:
         name: MercuryHealth.Website
@@ -279,7 +279,7 @@ jobs:
           package: './MercuryHealth.Website'
           
     - name: Download Build Artifacts-Function Application
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       continue-on-error: false
       with:
         name: MercuryHealth.FunctionApp
@@ -391,7 +391,7 @@ jobs:
       # Download Artifacts under $GITHUB_WORKSPACE, so your job can access it
       - name: Download Build Artifacts-Playwright Tests
         continue-on-error: false
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: MercuryHealth.UITests
           path: ${{ github.workspace }}/MercuryHealth.UITests
@@ -470,7 +470,7 @@ jobs:
            
       # Download Artifacts under $GITHUB_WORKSPACE, so your job can access it
       - name: 'Download Build Artifacts-Load Tests'
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: MercuryHealth.LoadTests
           path: ${{ github.workspace }}/MercuryHealth.LoadTests
@@ -581,7 +581,7 @@ jobs:
            
       # Download Artifacts under $GITHUB_WORKSPACE, so your job can access it
       - name: 'Download Build Artifacts-Load Tests'
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: MercuryHealth.LoadTests
           path: ${{ github.workspace }}/MercuryHealth.LoadTests
