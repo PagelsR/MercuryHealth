@@ -27,5 +27,6 @@ module dnsRegistration './99-DNSCertificateBindings.bicep' = {
     // ]
 }
 
-output endpointUri string = dnsRegistration.outputs.endpointUri
+output out_endpointUri string = dnsRegistration.outputs.endpointUri
 //output certificateThumbprint string = dnsRegistration.outputs.certificateThumbprint
+
