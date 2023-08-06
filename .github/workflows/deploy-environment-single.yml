@@ -146,6 +146,7 @@ jobs:
       uses: azure/arm-deploy@v1
       continue-on-error: false
       with:
+        scope: resource-group
         resourceGroupName: ${{ env.Azure_Resource_GroupName }}
         template: ./MercuryHealth.IaC/main-1.bicep
         parameters: ./MercuryHealth.IaC/main-1.params.json Deployed_Environment=${{ env.Deployed_Environment }}
@@ -246,6 +247,7 @@ jobs:
       uses: azure/arm-deploy@v1
       continue-on-error: false
       with:
+        scope: resource-group
         resourceGroupName: ${{ env.Azure_Resource_GroupName }}
         template: ./MercuryHealth.IaC/main-2.bicep
         parameters: ./MercuryHealth.IaC/main-2.params.json webSiteName=${{ needs.deploy_infrastructure.outputs.output_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }}
@@ -643,8 +645,10 @@ jobs:
         uses: azure/load-testing@v1
         continue-on-error: true
         with:
-          loadTestConfigFile: './MercuryHealth.LoadTests/API_Testing.yaml'
-          loadTestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
+          loadtestConfigFile: './MercuryHealth.LoadTests/API_Testing.yaml'
+          loadtestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
+          # loadTestConfigFile: './MercuryHealth.LoadTests/API_Testing.yaml'
+          # loadTestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
           resourceGroup: ${{ env.Azure_Resource_GroupName }}
           env: |
             [
@@ -670,8 +674,10 @@ jobs:
         uses: azure/load-testing@v1
         continue-on-error: true
         with:
-          loadTestConfigFile: './MercuryHealth.LoadTests/APIM_Testing.yaml'
-          loadTestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
+          loadtestConfigFile: './MercuryHealth.LoadTests/APIM_Testing.yaml'
+          loadtestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
+          # loadTestConfigFile: './MercuryHealth.LoadTests/APIM_Testing.yaml'
+          # loadTestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
           resourceGroup: ${{ env.Azure_Resource_GroupName }}
           env: |
             [
