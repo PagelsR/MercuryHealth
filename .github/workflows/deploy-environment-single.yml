@@ -539,6 +539,7 @@ jobs:
 
       # Upload the test result artifacts
       - name: 'Upload Playwright Report Files'
+        continue-on-error: true
         uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -548,6 +549,7 @@ jobs:
 
       # Upload the test result artifacts
       - name: 'Upload Playwright Screenshot Files'
+        continue-on-error: true
         uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -557,6 +559,7 @@ jobs:
 
       # Upload the test result artifacts
       - name: 'Upload Playwright Trace Files'
+        continue-on-error: true
         uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -566,6 +569,7 @@ jobs:
           
       # Publish HTML report to GitHub Pages - v3.9.3
       - name: Publish HTML report to GitHub Pages
+        continue-on-error: true
         if: always() # We want this to always run, even if test fail prior to this step running
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
