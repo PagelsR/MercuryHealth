@@ -1,4 +1,4 @@
-name: Deploy-Environment-Single
+name: Deploy-Environment- (2)
 
 on:
   workflow_call:
@@ -52,7 +52,6 @@ jobs:
       output_appInsightsAPIApplicationId: ${{ steps.Infra.outputs.out_appInsightsAPIApplicationId }}
       output_secretConnectionString: ${{ steps.Infra.outputs.out_secretConnectionString }}
       output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}
-      output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
 
     name: Deploy Infrastructure
     env:
@@ -197,18 +196,19 @@ jobs:
          echo 'output_appInsightsAPIApplicationId: ${{ steps.Infra.outputs.out_appInsightsAPIApplicationId }}'
          echo 'output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}'
          echo 'output_secretConnectionString: ${{ steps.Infra.outputs.out_secretConnectionString }}'
-         echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
 
 
 
 
   ###################################################################
-  # Deployment Stage - Infrastructure
+  # Configure DNS and Certificate
   ###################################################################
   config_dnsandcertificate:
     runs-on: ubuntu-latest
+    outputs:
+      output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
 
-    name: Config DNS and Certificate
+    name: DNS and Certificate
     needs: [deploy_infrastructure]
     env:
       Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
@@ -260,8 +260,10 @@ jobs:
         inlineScript: |
           az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
 
-
-
+          - name: DEBUG ONLY Display Output Variables
+          run: |
+             echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
+             echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
 
   ###################################################################
   # Deployment Stage - Application / Database 
@@ -296,7 +298,6 @@ jobs:
          echo 'output_appInsightsApplicationId: ${{ needs.deploy_infrastructure.outputs.output_appInsightsApplicationId }}'
          echo 'output_appInsightsAPIApplicationId: ${{ needs.deploy_infrastructure.outputs.output_appInsightsAPIApplicationId }}'
          echo 'output_keyvaultName: ${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}'
-         echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
          echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
          echo 'output_apiServiceName: ${{ needs.deploy_infrastructure.outputs.output_apiServiceName }}'
          echo 'output_apimSubscriptionKey: ${{ needs.deploy_infrastructure.outputs.output_apimSubscriptionKey }}'
@@ -486,20 +487,13 @@ jobs:
          dotnet build MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }}
          dotnet publish MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }} -o './MercuryHealth.UITests'
          dotnet test MercuryHealth.UITests/MercuryHealth.UITests.csproj --filter "TestCategory=Playwright_Tests_Chromium|TestCategory=Playwright_Tests_FireFox" -l "console;verbosity=normal" -l "trx;LogFileName=TestResults.trx" --settings MercuryHealth.UITests/MercuryHealthTests.runsettings
-      #- name: 'Upload Playwright Test Results-ScreenShots'
-      #  uses: actions/upload-artifact@v2
-      #  if: always()
-      #  with:
-      #    name: MercuryHealth.UITestsResults
-      #    path: ${{ github.workspace }}/MercuryHealth.UITests/*.png
-      #    retention-days: 30
 
       # Upload the test result artifacts
       - name: 'Upload Playwright Screenshot Files'
         uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-report-C#
+          name: playwright-screenshots-C#
           path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/screenshot_*.png
           retention-days: 30
 
@@ -512,14 +506,6 @@ jobs:
           path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/trace_*.zip
           retention-days: 30
 
-      # Add screenshots and Test Attachments
-      #- name: 'Upload Playwright Trace Results-Report'
-      #  uses: actions/upload-artifact@v3
-      #  if: always()
-      #  with:
-      #    name: MercuryHealth.UITestsResults_TestResults
-      #    path: ${{ github.workspace }}/MercuryHealth.UITests/TestResults
-      #    retention-days: 30
 
 ###################################################################
 # CD Stage - Playwright Testing                         
