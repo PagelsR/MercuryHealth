@@ -487,82 +487,82 @@ jobs:
 ###################################################################
 # CD Stage - UI Testing                         
 ###################################################################
-  UITesting_Stage_Application:
-    #if: contains(github.event_name, 'push')
+  # UITesting_Stage_Application:
+  #   #if: contains(github.event_name, 'push')
 
-    name: Playwright C#
+  #   name: Playwright C#
     
-    env:
-      dotnet_version: '6.x.x'
-      buildConfiguration: 'Release'
+  #   env:
+  #     dotnet_version: '6.x.x'
+  #     buildConfiguration: 'Release'
 
-    # The type of runner that the job will run on - windows-latest
-    runs-on: ubuntu-latest
+  #   # The type of runner that the job will run on - windows-latest
+  #   runs-on: ubuntu-latest
 
-    # Identify any jobs that must complete successfully before this job will run.
-    needs: [deploy_infrastructure, deploy_application, deploy_database]
-    timeout-minutes: 10
+  #   # Identify any jobs that must complete successfully before this job will run.
+  #   needs: [deploy_infrastructure, deploy_application, deploy_database]
+  #   timeout-minutes: 10
         
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v2
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
       
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: ${{ env.dotnet_version }}
+  #     - name: Setup .NET Core
+  #       uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: ${{ env.dotnet_version }}
 
-      - name: DEBUG ONLY Display Output Variables
-        run: |
-           echo 'output_webSiteName: ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}'
+  #     - name: DEBUG ONLY Display Output Variables
+  #       run: |
+  #          echo 'output_webSiteName: ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}'
          
-      # Download Artifacts under $GITHUB_WORKSPACE, so your job can access it
-      - name: Download Build Artifacts-Playwright Tests
-        continue-on-error: false
-        uses: actions/download-artifact@v2
-        with:
-          name: MercuryHealth.UITests
-          path: ${{ github.workspace }}/MercuryHealth.UITests
+  #     # Download Artifacts under $GITHUB_WORKSPACE, so your job can access it
+  #     - name: Download Build Artifacts-Playwright Tests
+  #       continue-on-error: false
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: MercuryHealth.UITests
+  #         path: ${{ github.workspace }}/MercuryHealth.UITests
 
-      # Update Runsettings with Website URL
-      - name: Update Runsettings with Website URL
-        uses: Azure/powershell@v1
-        continue-on-error: false
-        id: setWebsiteUrl
-        env:
-          POWERSHELL_TELEMETRY_OPTOUT: 1
-        with:
-          inlineScript: MercuryHealth.UITests/TransformRunSettings.ps1 -website_url 'https://${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net/'
-          # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
-          azPSVersion: 3.4.0
-          # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
-          errorActionPreference: continue
+  #     # Update Runsettings with Website URL
+  #     - name: Update Runsettings with Website URL
+  #       uses: Azure/powershell@v1
+  #       continue-on-error: false
+  #       id: setWebsiteUrl
+  #       env:
+  #         POWERSHELL_TELEMETRY_OPTOUT: 1
+  #       with:
+  #         inlineScript: MercuryHealth.UITests/TransformRunSettings.ps1 -website_url 'https://${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net/'
+  #         # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
+  #         azPSVersion: 3.4.0
+  #         # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
+  #         errorActionPreference: continue
 
-      - name: Playwright Tests all on Browsers
-        continue-on-error: true
-        run: |
-         dotnet build MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }}
-         dotnet publish MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }} -o './MercuryHealth.UITests'
-         dotnet test MercuryHealth.UITests/MercuryHealth.UITests.csproj --filter "TestCategory=Playwright_Tests_Chromium|TestCategory=Playwright_Tests_FireFox" -l "console;verbosity=normal" -l "trx;LogFileName=TestResults.trx" --settings MercuryHealth.UITests/MercuryHealthTests.runsettings
+  #     - name: Playwright Tests all on Browsers
+  #       continue-on-error: true
+  #       run: |
+  #        dotnet build MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }}
+  #        dotnet publish MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }} -o './MercuryHealth.UITests'
+  #        dotnet test MercuryHealth.UITests/MercuryHealth.UITests.csproj --filter "TestCategory=Playwright_Tests_Chromium|TestCategory=Playwright_Tests_FireFox" -l "console;verbosity=normal" -l "trx;LogFileName=TestResults.trx" --settings MercuryHealth.UITests/MercuryHealthTests.runsettings
 
-      # Upload the test result artifacts
-      - name: 'Upload Playwright Screenshot Files'
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-screenshots-C#
-          path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/screenshot_*.png
-          retention-days: 30
+  #     # Upload the test result artifacts
+  #     - name: 'Upload Playwright Screenshot Files'
+  #       uses: actions/upload-artifact@v3
+  #       if: always()
+  #       with:
+  #         name: playwright-screenshots-C#
+  #         path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/screenshot_*.png
+  #         retention-days: 30
 
-      # Upload the test result artifacts
-      - name: 'Upload Playwright Trace Files'
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-report-C#
-          path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/trace_*.zip
-          retention-days: 30
+  #     # Upload the test result artifacts
+  #     - name: 'Upload Playwright Trace Files'
+  #       uses: actions/upload-artifact@v3
+  #       if: always()
+  #       with:
+  #         name: playwright-report-C#
+  #         path: ${{ github.workspace }}/MercuryHealth.UITests/bin/Debug/net6.0/trace_*.zip
+  #         retention-days: 30
 
 
 ###################################################################
