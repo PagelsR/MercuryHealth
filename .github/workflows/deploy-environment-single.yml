@@ -582,7 +582,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Identify any jobs that must complete successfully before this job will run.
-    needs: [deploy_infrastructure, deploy_application, deploy_database]
+    needs: [deploy_infrastructure, deploy_application, deploy_database, config_dnsandcertificate]
     timeout-minutes: 60
         
     steps:
