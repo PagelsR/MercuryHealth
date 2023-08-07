@@ -1,0 +1,17 @@
+﻿@model MercuryHealth.Web.Models.MetricsModel
+
+@{
+    ViewData["Title"] = "Metrics";
+}
+<h1>@ViewData["Title"]</h1>
+
+@* Check for Feature Flag *@
+<feature name="MetricsDashboard">
+    <h2>
+        Welcome to the new and sleek Metrics Dashboard!
+    </h2>
+    <h3>
+        <p>This is the new Metrics page and the title is: @Model.Name</p>
+    </h3>
+    <img src="~/css/Mercury Health Metrics Dashboard-3.png" alt="" height="650" width="857">
+</feature>

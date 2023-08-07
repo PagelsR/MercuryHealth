@@ -1,0 +1,18 @@
+<policies>
+    <inbound>
+        <!-- 'quota-by-key': Policy is not allowed in 'Consumption' sku -->
+        <!-- 'rate-limit-by-key': Policy is not allowed in 'Consumption' sku -->
+        <rate-limit calls="30" renewal-period="60" />
+        <quota calls="500" renewal-period="604800" />
+        <base />
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>
