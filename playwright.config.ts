@@ -14,6 +14,10 @@ export default defineConfig({
   globalTimeout: 60 * 60 * 1000,
   
   testDir: './MercuryHealth.PlaywrightTests',
+  timeout: 30 * 1000,
+  expect: {
+    timeout: 5000,
+  },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

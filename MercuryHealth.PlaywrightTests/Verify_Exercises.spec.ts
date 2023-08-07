@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 // Dynamicly set the URL from pipeline output
 test.beforeEach(async ({ page }) => {
   const url = process.env.website_URL || 'https://app-okhgzqoexg6jy.azurewebsites.net/';
-  await page.goto(url , { waitUntil: 'load', timeout: 100000 });
+  await page.goto(url , { waitUntil: 'load', timeout: 6000 });
 });
 
 test("Should be flaky for exercises page", async ({ page }) => {
@@ -22,7 +22,7 @@ test('Navigate to exercises page', async ({ page }) => {
   await expect(page).toHaveTitle('Exercises - Mercury Health');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_Home-Exercisespage.png', fullPage: true, timeout: 60000 });
+  await page.screenshot({ path: 'screenshot_Home-Exercisespage.png', fullPage: true, timeout: 6000 });
 });
 
 test('Navigate to exercises page and click on details', async ({ page }) => {
@@ -43,7 +43,7 @@ test('Navigate to exercises page and click on details', async ({ page }) => {
   expect(detailsPageTitle).toBe('Details - Mercury Health');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_exercise_details_25-1.png', fullPage: true, timeout: 60000 });
+  await page.screenshot({ path: 'screenshot_exercise_details_25-1.png', fullPage: true, timeout: 6000 });
 
 });
 
@@ -71,7 +71,7 @@ test('Navigate to exercises page and update value', async ({ page }) => {
   await page.getByLabel('Equipment').fill('Update by Playwright');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_exercise_details_25-2.png', fullPage: true, timeout: 60000 });
+  await page.screenshot({ path: 'screenshot_exercise_details_25-2.png', fullPage: true, timeout: 6000 });
 
   await page.getByRole('button', { name: 'Save' }).click();
 
@@ -85,7 +85,7 @@ test('Navigate to exercises page and update value', async ({ page }) => {
   const value = await element?.textContent();
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_exercise_details_25-3.png', fullPage: true, timeout: 60000 });
+  await page.screenshot({ path: 'screenshot_exercise_details_25-3.png', fullPage: true, timeout: 6000 });
 
   // Assert that the value is correct
   expect(value?.trim()).toBe('Update by Playwright');
@@ -101,7 +101,7 @@ test('Navigate to exercises page and update value', async ({ page }) => {
   await page.getByLabel('Tags').fill('API Update');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_exercise_details_25-4.png', fullPage: true, timeout: 60000 });
+  await page.screenshot({ path: 'screenshot_exercise_details_25-4.png', fullPage: true, timeout: 6000 });
 
   await page.getByRole('button', { name: 'Save' }).click();
 
@@ -125,7 +125,7 @@ test('Navigate to exercises page and verify details', async ({ page }) => {
   expect(detailsPageTitle).toBe('Details - Mercury Health');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_exercise_details_25-3.png', fullPage: true, timeout: 60000 });
+  await page.screenshot({ path: 'screenshot_exercise_details_25-3.png', fullPage: true, timeout: 6000 });
 
   // Find the <dd> element by its ID
   const element = await page.$('#Value_Equipment');
