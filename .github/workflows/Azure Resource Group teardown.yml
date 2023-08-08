@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
     # Inputs the workflow accepts.
     inputs:
-      name:
-        # Friendly description to be shown in the UI instead of 'name'
+      azurergname:
+        # Friendly description to be shown in the UI instead of 'azurergname'
         description: 'Name of Resource Group to teardown'
         # Default value if no value is explicitly provided
         default: 'rg-MercuryHealth'
@@ -34,15 +34,15 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         
     # Runs a single command using the runners shell
-    - name: Tear Down Azure RG
-      run: echo "Hello ${{ inputs.name }}"
+    - name: Ready to Tear Down Azure RG ${{ inputs.azurergname }}
+      run: echo "RG = ${{ inputs.azurergname }}"
 
     - name: Ensure Resource Group is UnLocked
       uses: Azure/CLI@v1
       continue-on-error: true
       with:
         inlineScript: |
-          #az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
+          #az group lock delete --name DontDeleteMe --resource-group ${{ inputs.azurergname }}
 
     - name: Delete Resource Group
       uses: Azure/CLI@v1
