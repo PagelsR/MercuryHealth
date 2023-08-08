@@ -27,6 +27,26 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+    - name: Login to Azure
+      uses: azure/login@v1
+      continue-on-error: false
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
     # Runs a single command using the runners shell
     - name: Tear Down Azure RG
       run: echo "Hello ${{ inputs.name }}"
+
+    - name: Ensure Resource Group is UnLocked
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          #az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
+
+    - name: Delete Resource Group
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          #az group delete --name ${{ env.Azure_Resource_GroupName }}
