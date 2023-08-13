@@ -216,7 +216,7 @@ module configstoremod './main-5-configstore.bicep' = {
 //   }
 // }
 
-module portaldashboardmod './main-11-DashboardNEW.bicep' = {
+module portaldashboardmod './main-11-Dashboard.bicep' = {
   name: dashboardName
   params: {
     location: location

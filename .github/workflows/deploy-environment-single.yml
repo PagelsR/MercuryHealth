@@ -64,7 +64,7 @@ jobs:
       Azure_Resource_GroupLocation: ${{ inputs.resource-group-location}}
       Deployed_Environment: ${{ inputs.environment-suffix }}
 
-      # Demos only! Used for Soft Delete Purge
+      # Used for Demos only. Used for Soft Delete Purge
       APIM_SoftDeleted: 'apim-okhgzqoexg6jy'
       APPCS_SoftDeleted: 'appcs-okhgzqoexg6jy'
    
@@ -110,42 +110,27 @@ jobs:
         sudo mv ./bicep /usr/local/bin/bicep
         bicep --version
 
-    - name: Purge soft-deleted instance of APIM, List them
+    - name: Purge soft-deleted instance of APIM
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
       continue-on-error: true
       with:
         inlineScript: |
           az rest --method get --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/deletedservices?api-version=2022-09-01-preview'
-
-    - name: Purge soft-deleted instance of APIM, Delete them
-    #if: contains(github.event_name, 'push')
-      uses: Azure/CLI@v1
-      continue-on-error: true
-      with:
-        inlineScript: |
           az rest --method delete --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/locations/${{ env.Azure_Resource_GroupLocation }}/deletedservices/${{ env.APIM_SoftDeleted }}?api-version=2022-09-01-preview'
 
-    - name: Purge soft-deleted instance of App Config, List them
+    - name: Purge soft-deleted instance of App Config
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
       continue-on-error: true
       with:
         inlineScript: |
           az rest --method get --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/deletedConfigurationStores?api-version=2023-03-01'
-
-    - name: Purge soft-deleted instance of App Config, Delete them
-    #if: contains(github.event_name, 'push')
-      uses: Azure/CLI@v1
-      continue-on-error: true
-      with:
-        inlineScript: |
           az rest --method post --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/locations/${{env.Azure_Resource_GroupLocation}}/deletedConfigurationStores/${{env.APPCS_SoftDeleted}}/purge?api-version=2023-03-01'
 
     ###########################################
     # Deploy ARM Template using Bicep DSL
     ###########################################
-    # parameters: ./MercuryHealth.IaC/main-1.params.json Deployed_Environment=${{ env.Deployed_Environment }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }}
     - name: Infrastructure Deployment
       id: Infra
       uses: azure/arm-deploy@v1
@@ -173,7 +158,6 @@ jobs:
       uses: Azure/sql-action@v1.2
       with:
         server-name: ${{ steps.Infra.outputs.out_sqlserverFQName }}
-        #connection-string: ${{ secrets.sql-connection-string }}
         connection-string: ${{ steps.Infra.outputs.out_secretConnectionString }}
         dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
 
@@ -189,6 +173,7 @@ jobs:
         inlineScript: |
           az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
 
+    # Used for Demos only.
     - name: DEBUG ONLY Display Output Variables
       run: |
          echo 'output_loadTestsName: ${{ steps.Infra.outputs.out_loadTestsName }}'
@@ -202,7 +187,6 @@ jobs:
          echo 'output_appInsightsAPIApplicationId: ${{ steps.Infra.outputs.out_appInsightsAPIApplicationId }}'
          echo 'output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}'
          echo 'output_secretConnectionString: ${{ steps.Infra.outputs.out_secretConnectionString }}'
-
 
 
   ###################################################################
@@ -252,6 +236,7 @@ jobs:
         connection-string: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}
         dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
 
+     # Used for Demos only.
     - name: Deploy Database
       run: |
          echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
@@ -289,6 +274,7 @@ jobs:
     # Identify any jobs that must complete successfully before this job will run.
     steps:
  
+    # Used for Demos only.      
     - name: DEBUG ONLY Display Output Variables
       run: |
          echo 'output_loadTestsName: ${{ needs.deploy_infrastructure.outputs.output_loadTestsName }}'
@@ -316,22 +302,6 @@ jobs:
       with:
         inlineScript: |
           az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
-
-    #- name: Download Build Artifact-Database
-    #  uses: actions/download-artifact@v2
-    #  continue-on-error: false
-    #  with:
-    #    name: MercuryHealth.Database
-    #    path: ${{ github.workspace }}/MercuryHealth.Database
-
-    # Deploy Database *.dacpac file
-    #- name: 'Deploy the database to Azure'
-    #  uses: Azure/sql-action@v1.2
-    #  with:
-    #    server-name: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}
-    #    connection-string: ${{ secrets.sql-connection-string }}
-    #    #connection-string: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}
-    #    dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
 
     - name: Download Build Artifacts-Website Application
       uses: actions/download-artifact@v2
@@ -362,7 +332,7 @@ jobs:
         slot-name: 'production'
         package: './MercuryHealth.FunctionApp'
 
-    #
+    # Used for Demos only.
     # TODO!!!  Removed this and replace using Azure CLI
     - name: 'Generate Temporary API Key For App Insights'
       id: AIKeyGen
@@ -419,7 +389,6 @@ jobs:
         az logout
 
         
-
   ###################################################################
   # Conigure DNS and set SSL Certificate
   ###################################################################
