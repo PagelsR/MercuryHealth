@@ -97,8 +97,8 @@ test('Navigate to exercises page and update value', async ({ page }) => {
   // ///////////////////////////////////////////////
   await page.click('#button_edit_25');
 
-  await page.getByLabel('Tags').click();
-  await page.getByLabel('Tags').fill('API Update');
+  await page.getByLabel('Equipment').click();
+  await page.getByLabel('Equipment').fill('API Update');
 
   // Take screenshot
   await page.screenshot({ path: 'screenshot_exercise_details_25-4.png', fullPage: true, timeout: 6000 });
