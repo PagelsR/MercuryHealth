@@ -3,6 +3,9 @@
 // Region for all resources
 param location string = resourceGroup().location
 param webSiteName string
+param webAppPlanName string
+param keyvaultName string
+param certificateName string
 
 @secure()
 param cloudFlareAPIToken string
@@ -20,6 +23,8 @@ module dnsRegistration './99-DNSCertificateBindings.bicep' = {
     cloudFlareAPIToken: cloudFlareAPIToken
     cloudFlareZoneId: cloudFlareZoneID
     cloudFlareRecordName: 'mercuryhealth.org'
+    keyvaultName: keyvaultName
+    webAppPlanName: webAppPlanName
 
     }
     // dependsOn:  [
