@@ -47,6 +47,33 @@ jobs:
         thumbprint=$(openssl x509 -noout -fingerprint -in certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
         echo "THUMBPRINT=$thumbprint" >> $GITHUB_ENV
 
+
+  
+    - name: Upload SSL certificate to Azure Web App
+      run: |
+        webappname='app-okhgzqoexg6jy'
+        resourcegroup='rg-MercuryHealth-dev'
+        pfxfile=certificate.pfx
+        password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
+        thumbprint=$(openssl x509 -noout -fingerprint -in path/to/your/certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
+
+        # Upload SSL certificate
+        az webapp config ssl upload \
+          --name $webappname \
+          --resource-group $resourcegroup \
+          --certificate-file $pfxfile \
+          --certificate-password $password
+
+        # Bind SSL certificate
+        az webapp config ssl bind \
+          --name $webappname \
+          --resource-group $resourcegroup \
+          --certificate-thumbprint $thumbprint \
+          --ssl-type SNI
+
+    #
+    # Try these already!
+    #
     # - name: Deploy SSL certificate to Azure Web App
     #   run: |
     #     webappname='app-okhgzqoexg6jy'
@@ -57,16 +84,16 @@ jobs:
     #       --certificate-file certificate.pfx \
     #       --certificate-password $certificate_password
 
-    # ${{ github.workspace }}/webapp-ssl-deployment.bicep
-    # ERROR: An error occurred reading file. Could not find file '/home/runner/work/MercuryHealth/MercuryHealth/webapp-ssl-deployment.bicep'
-    - name: Deploy Bicep Template
-      run: |
-        az deployment group create \
-          --resource-group 'rg-MercuryHealth-dev' \
-          --template-file ./MercuryHealth.IaC/webapp-ssl-deployment.bicep \
-          --parameters webAppName='app-okhgzqoexg6jy' resourceGroupName='rg-MercuryHealth-dev' \
-          certificatePfx=@certificate.pfx certificatePassword=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }} \
-          certificateThumbprint=${{ env.THUMBPRINT }}
+    # # ${{ github.workspace }}/webapp-ssl-deployment.bicep
+    # # ERROR: An error occurred reading file. Could not find file '/home/runner/work/MercuryHealth/MercuryHealth/webapp-ssl-deployment.bicep'
+    # - name: Deploy Bicep Template
+    #   run: |
+    #     az deployment group create \
+    #       --resource-group 'rg-MercuryHealth-dev' \
+    #       --template-file ./MercuryHealth.IaC/webapp-ssl-deployment.bicep \
+    #       --parameters webAppName='app-okhgzqoexg6jy' resourceGroupName='rg-MercuryHealth-dev' \
+    #       certificatePfx=@certificate.pfx certificatePassword=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }} \
+    #       certificateThumbprint=${{ env.THUMBPRINT }}
 
     # - name: Deploy Bicep Template
     #   uses: azure/arm-deploy@v1
