@@ -47,29 +47,64 @@ jobs:
         thumbprint=$(openssl x509 -noout -fingerprint -in certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
         echo "THUMBPRINT=$thumbprint" >> $GITHUB_ENV
 
+    - name: 'uploading certificate, getting thumbprint'
+      id: GetThumbprint
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          $thumbprint=$(az webapp config ssl upload \
+            --name 'app-okhgzqoexg6jy' \
+            --resource-group 'rg-MercuryHealth-dev' \
+            --certificate-file certificate.pfx \
+            --certificate-password '${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}' \
+            --query thumbprint \
+            --output tsv)
+          echo "::set-output name=CertThumbprint::$thumbprint"
 
-  
-    - name: Upload SSL certificate to Azure Web App
-      run: |
-        webappname='app-okhgzqoexg6jy'
-        resourcegroup='rg-MercuryHealth-dev'
-        pfxfile=certificate.pfx
-        password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
-        thumbprint=$(openssl x509 -noout -fingerprint -in certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
+    - name: 'adding custom domain'
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az webapp config hostname add \
+          --webapp-name 'app-okhgzqoexg6jy' \
+          --resource-group 'rg-MercuryHealth-dev' \
+          --hostname 'mercuryhealthtest.org'
 
-        # Upload SSL certificate
-        az webapp config ssl upload \
-          --name $webappname \
-          --resource-group $resourcegroup \
-          --certificate-file $pfxfile \
-          --certificate-password $password
-
-        # Bind SSL certificate
-        az webapp config ssl bind \
-          --name $webappname \
-          --resource-group $resourcegroup \
-          --certificate-thumbprint $thumbprint \
+    - name: 'adding certificate'
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az webapp config hostname add \
+          --webapp-name 'app-okhgzqoexg6jy' \
+          --resource-group 'rg-MercuryHealth-dev' \
+          --certificate-thumbprint '${{ steps.GetThumbprint.outputs.CertThumbprint }}' \
           --ssl-type SNI
+
+    # - name: Upload SSL certificate to Azure Web App
+    #   run: |
+    #     webappname='app-okhgzqoexg6jy'
+    #     resourcegroup='rg-MercuryHealth-dev'
+    #     pfxfile=certificate.pfx
+    #     password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
+    #     thumbprint=$(openssl x509 -noout -fingerprint -in certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
+
+    #     # Upload SSL certificate
+    #     az webapp config ssl upload \
+    #       --name $webappname \
+    #       --resource-group $resourcegroup \
+    #       --certificate-file $pfxfile \
+    #       --certificate-password $password
+
+    #     # Bind SSL certificate
+    #     az webapp config ssl bind \
+    #       --name $webappname \
+    #       --resource-group $resourcegroup \
+    #       --certificate-thumbprint $thumbprint \
+    #       --ssl-type SNI
 
     #
     # Try these already!
