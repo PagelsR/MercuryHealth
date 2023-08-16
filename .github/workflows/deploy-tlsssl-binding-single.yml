@@ -21,6 +21,13 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: Download Build Artifact-Infrastructure
+      uses: actions/download-artifact@v2
+      continue-on-error: false
+      with:
+        name: MercuryHealth.IaC
+        path: ${{ github.workspace }}/MercuryHealth.IaC
+
     - name: Generate PFX certificate
       run: |
         echo "${{ secrets.CLOUDFLARE_KEY }}" > private.key
@@ -47,7 +54,18 @@ jobs:
       run: |
         az deployment group create \
           --resource-group 'rg-MercuryHealth-dev' \
-          --template-file webapp-ssl-deployment.bicep \
+          --template-file ./MercuryHealth.IaC/webapp-ssl-deployment.bicep \
           --parameters webAppName='app-okhgzqoexg6jy' resourceGroupName='rg-MercuryHealth-dev' \
           certificatePfx=@certificate.pfx certificatePassword=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }} \
           certificateThumbprint=${{ env.THUMBPRINT }}
+
+    # - name: Deploy Bicep Template
+    #   uses: azure/arm-deploy@v1
+    #   continue-on-error: false
+    #   with:
+    #     scope: 'resourcegroup'
+    #     resourceGroupName: 'rg-MercuryHealth-dev'
+    #     template: ./MercuryHealth.IaCwebapp-ssl-deployment.bicep
+    #     parameters: ./MercuryHealth.IaC/main-1.params.json Deployed_Environment=${{ env.Deployed_Environment }}
+    #     deploymentMode: Incremental
+    #     failOnStdErr: false          
