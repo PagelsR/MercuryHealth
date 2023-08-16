@@ -27,7 +27,9 @@ var record = 'www'
 param existingKeyVaultId string = '/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/MPNRPagelsVault/providers/Microsoft.KeyVault/vaults/kv-mercuryhealth'
 
 resource existing_keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
-  name: existingKeyVaultId
+  //name: existingKeyVaultId
+  name: 'kv-mercuryhealth'
+
 }
 
 @description('Key Vault Secret that contains a PFX certificate, leave this blank if not enabling SSL')
