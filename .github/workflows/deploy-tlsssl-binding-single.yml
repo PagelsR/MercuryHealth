@@ -48,7 +48,7 @@ jobs:
     #     echo "THUMBPRINT=$thumbprint" >> $GITHUB_ENV
 
 
-    
+
     #         az rest --method get --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/deletedservices?api-version=2022-09-01-preview'
 
 
@@ -65,6 +65,9 @@ jobs:
 
         echo "$listDnsResult"
         echo "Done getting all DNS records"
+
+        numEntries=$(echo "$listDnsResult" | jq length)
+        echo "Number of DNS entries: $numEntries"
 
     - name: 'uploading certificate, getting thumbprint'
       id: GetThumbprint
