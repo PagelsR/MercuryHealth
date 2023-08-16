@@ -31,7 +31,7 @@ jobs:
     - name: Generate Certificate Thumbprint
       run: |
         thumbprint=$(openssl x509 -noout -fingerprint -in certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
-        echo "::set-env name=THUMBPRINT::$thumbprint"
+        echo "THUMBPRINT=$thumbprint" >> $GITHUB_ENV
 
     # - name: Deploy SSL certificate to Azure Web App
     #   run: |
