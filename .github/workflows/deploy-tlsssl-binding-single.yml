@@ -57,11 +57,13 @@ jobs:
     #       --certificate-file certificate.pfx \
     #       --certificate-password $certificate_password
 
+    # ${{ github.workspace }}/webapp-ssl-deployment.bicep
+    # ERROR: An error occurred reading file. Could not find file '/home/runner/work/MercuryHealth/MercuryHealth/webapp-ssl-deployment.bicep'
     - name: Deploy Bicep Template
       run: |
         az deployment group create \
           --resource-group 'rg-MercuryHealth-dev' \
-          --template-file ${{ github.workspace }}/webapp-ssl-deployment.bicep \
+          --template-file ./MercuryHealth.IaC/webapp-ssl-deployment.bicep \
           --parameters webAppName='app-okhgzqoexg6jy' resourceGroupName='rg-MercuryHealth-dev' \
           certificatePfx=@certificate.pfx certificatePassword=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }} \
           certificateThumbprint=${{ env.THUMBPRINT }}
