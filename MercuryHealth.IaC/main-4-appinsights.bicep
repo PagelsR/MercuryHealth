@@ -8,7 +8,7 @@ param defaultTags object
 //param releaseAnnotationDateStamp string = utcNow('yyyy-MM-ddTHH:mm:ss')
 
 // Log Analytics workspace for Application Insights
-resource applicationInsightsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
+resource applicationInsightsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: appInsightsWorkspaceName
   location: location
   properties:{
@@ -69,7 +69,7 @@ resource metricAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
   }
 }
 
-resource emailActionGroup 'Microsoft.Insights/actionGroups@2021-09-01' = {
+resource emailActionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = {
   name: 'ag--${uniqueString(resourceGroup().id)}'
   location: 'global'
   properties: {
