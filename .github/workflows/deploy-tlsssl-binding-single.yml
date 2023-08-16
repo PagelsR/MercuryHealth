@@ -28,12 +28,26 @@ jobs:
         certificate_password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
         openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password "pass:$certificate_password"
 
-    - name: Deploy SSL certificate to Azure Web App
+    - name: Generate Certificate Thumbprint
       run: |
-        webappname='app-okhgzqoexg6jy'
-        certificate_password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
-        az webapp config ssl upload \
-          --name $webappname \
+        thumbprint=$(openssl x509 -noout -fingerprint -in certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
+        echo "::set-env name=THUMBPRINT::$thumbprint"
+
+    # - name: Deploy SSL certificate to Azure Web App
+    #   run: |
+    #     webappname='app-okhgzqoexg6jy'
+    #     certificate_password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
+    #     az webapp config ssl upload \
+    #       --name $webappname \
+    #       --resource-group 'rg-MercuryHealth-dev' \
+    #       --certificate-file certificate.pfx \
+    #       --certificate-password $certificate_password
+
+    - name: Deploy Bicep Template
+      run: |
+        az deployment group create \
           --resource-group 'rg-MercuryHealth-dev' \
-          --certificate-file certificate.pfx \
-          --certificate-password $certificate_password
+          --template-file ./webapp-ssl-deployment.bicep \
+          --parameters webAppName='app-okhgzqoexg6jy' resourceGroupName='rg-MercuryHealth-dev' \
+          certificatePfx=@certificate.pfx certificatePassword=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }} \
+          certificateThumbprint=${{ env.THUMBPRINT }}
