@@ -29,6 +29,16 @@ jobs:
 
         openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password pass:$certificate_password
 
+    # - name: Deploy SSL certificate to Azure Web App
+    #   run: |
+    #     webappname='app-okhgzqoexg6jy'
+    #     certificate_password=$certificate_password
+    #     az webapp config ssl upload \
+    #       --name $webappname \
+    #       --resource-group 'rg-MercuryHealth-dev' \
+    #       --certificate-file certificate.pfx \
+    #       --certificate-password $certificate_password
+
     - name: Deploy SSL certificate to Azure Web App
       run: |
         webappname='app-okhgzqoexg6jy'
@@ -37,8 +47,9 @@ jobs:
           --name $webappname \
           --resource-group 'rg-MercuryHealth-dev' \
           --certificate-file certificate.pfx \
-          --certificate-password $certificate_password
+          --certificate-password "$certificate_password"
 
+              
 
 # on:
 #   push:
