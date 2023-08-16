@@ -21,6 +21,13 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: Upload Infrastucture Files
+      if: ${{ github.event_name != 'pull_request' }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: MercuryHealth.IaC
+        path: ${{ github.workspace }}/MercuryHealth.IaC/*.*
+
     - name: Download Build Artifact-Infrastructure
       uses: actions/download-artifact@v2
       continue-on-error: false
@@ -54,7 +61,7 @@ jobs:
       run: |
         az deployment group create \
           --resource-group 'rg-MercuryHealth-dev' \
-          --template-file ./MercuryHealth.IaC/webapp-ssl-deployment.bicep \
+          --template-file ${{ github.workspace }}/webapp-ssl-deployment.bicep \
           --parameters webAppName='app-okhgzqoexg6jy' resourceGroupName='rg-MercuryHealth-dev' \
           certificatePfx=@certificate.pfx certificatePassword=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }} \
           certificateThumbprint=${{ env.THUMBPRINT }}
