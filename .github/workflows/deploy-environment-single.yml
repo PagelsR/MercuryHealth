@@ -50,7 +50,6 @@ jobs:
       output_apiServiceName: ${{ steps.Infra.outputs.out_apiServiceName }}
       output_apimSubscriptionKey: ${{ steps.Infra.outputs.out_apimSubscriptionKey }}
       output_webSiteName: ${{ steps.Infra.outputs.out_webSiteName }}
-      output_webAppPlanName: ${{ steps.Infra.outputs.out_webAppPlanName }}
       output_functionAppName: ${{ steps.Infra.outputs.out_functionAppName }}
       output_sqlserverFQName: ${{ steps.Infra.outputs.out_sqlserverFQName }}
       output_releaseAnnotationGuidID: ${{ steps.Infra.outputs.out_releaseAnnotationGuidID }}

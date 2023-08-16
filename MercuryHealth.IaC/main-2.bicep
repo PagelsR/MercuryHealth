@@ -3,7 +3,6 @@
 // Region for all resources
 param location string = resourceGroup().location
 param webSiteName string
-param webAppPlanName string
 param keyvaultName string
 
 @secure()
