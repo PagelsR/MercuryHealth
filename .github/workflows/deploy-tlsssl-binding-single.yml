@@ -58,7 +58,7 @@ jobs:
             --name 'app-okhgzqoexg6jy' \
             --resource-group 'rg-MercuryHealth-dev' \
             --certificate-file certificate.pfx \
-            --certificate-password '$certificate_password' \
+            --certificate-password '${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}' \
             --query thumbprint \
             --output tsv)
           echo "::set-output name=CertThumbprint::$thumbprint"
