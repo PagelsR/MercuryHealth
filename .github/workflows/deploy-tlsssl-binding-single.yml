@@ -55,7 +55,7 @@ jobs:
         cloudFlareZone=${{ secrets.CLOUDFLARE_ZONE_ID }}
 
         listDnsResult=$(az rest --method GET \
-          --uri "https://api.cloudflare.com/client/v4/zones/$cloudFlareZone/dns_records" \
+          --uri "https://api.cloudflare.com/client/v4/zones/$cloudFlareZones" \
           --headers "X-Auth-Key: $cloudFlareKey" "X-Auth-Email: $cloudFlareEmail" \
           --query 'result')
 
