@@ -21,19 +21,19 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Upload Infrastucture Files
-      if: ${{ github.event_name != 'pull_request' }}
-      uses: actions/upload-artifact@v2
-      with:
-        name: MercuryHealth.IaC
-        path: ${{ github.workspace }}/MercuryHealth.IaC/*.*
+    # - name: Upload Infrastucture Files
+    #   if: ${{ github.event_name != 'pull_request' }}
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: MercuryHealth.IaC
+    #     path: ${{ github.workspace }}/MercuryHealth.IaC/*.*
 
-    - name: Download Build Artifact-Infrastructure
-      uses: actions/download-artifact@v2
-      continue-on-error: false
-      with:
-        name: MercuryHealth.IaC
-        path: ${{ github.workspace }}/MercuryHealth.IaC
+    # - name: Download Build Artifact-Infrastructure
+    #   uses: actions/download-artifact@v2
+    #   continue-on-error: false
+    #   with:
+    #     name: MercuryHealth.IaC
+    #     path: ${{ github.workspace }}/MercuryHealth.IaC
 
     - name: Generate PFX certificate
       run: |
@@ -55,7 +55,7 @@ jobs:
         resourcegroup='rg-MercuryHealth-dev'
         pfxfile=certificate.pfx
         password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
-        thumbprint=$(openssl x509 -noout -fingerprint -in path/to/your/certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
+        thumbprint=$(openssl x509 -noout -fingerprint -in certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
 
         # Upload SSL certificate
         az webapp config ssl upload \
