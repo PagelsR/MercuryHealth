@@ -47,9 +47,6 @@ jobs:
     #     thumbprint=$(openssl x509 -noout -fingerprint -in certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
     #     echo "THUMBPRINT=$thumbprint" >> $GITHUB_ENV
 
-    - name: Install jq Tooling
-      run: sudo apt-get update && sudo apt-get install jq -y
-
     - name: Get Cloudflare DNS Records
       run: |
         echo "Getting all DNS records from Cloudflare..."
@@ -64,10 +61,6 @@ jobs:
 
         echo "$listDnsResult"
         echo "Done getting all DNS records"
-
-        numEntries=$(echo "$listDnsResult" | jq length)
-        echo "Number of DNS entries: $numEntries"
-        echo ""
 
     - name: 'uploading certificate, getting thumbprint'
       id: GetThumbprint
