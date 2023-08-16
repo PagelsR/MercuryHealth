@@ -1,4 +1,4 @@
-name: Add TLS/SSL Binding to Azure Web App
+name: Deploy TLS/SSL Binding to Azure Web App
 
 on:
 # Triggers the workflow on push or pull request events but only for the master branch
