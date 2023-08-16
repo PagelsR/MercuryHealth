@@ -1,0 +1,64 @@
+name: Deploy SSL Certificate to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Retrieve Private Key from Cloudflare
+      run: |
+        # Retrieve your Cloudflare credentials from GitHub secrets
+        cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}
+        account_id=<your-cloudflare-account-id>
+        private_key_id=<your-private-key-id>
+
+        # Fetch the private key using Cloudflare's API
+        private_key=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${account_id}/workers/kv/namespaces/${private_key_id}" \
+          -H "Authorization: Bearer ${cloudflare_api_token}" \
+          | jq -r '.result.value')
+
+        # Save the private key to a file
+        echo "$private_key" > private.key
+
+    - name: Retrieve Certificate from Cloudflare
+      run: |
+        # Retrieve your Cloudflare credentials from GitHub secrets
+        cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}
+        account_id=<your-cloudflare-account-id>
+        certificate_id=<your-certificate-id>
+
+        # Fetch the certificate using Cloudflare's API
+        certificate=$(curl -s -X GET "https://api.cloudflare.com/client/v4/accounts/${account_id}/certificates/${certificate_id}" \
+          -H "Authorization: Bearer ${cloudflare_api_token}" \
+          | jq -r '.result.cert')
+
+        # Save the certificate to a file
+        echo "$certificate" > certificate.crt
+
+    - name: Generate PFX certificate
+      run: |
+        certificate_password=<your-password>
+        openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password pass:$certificate_password
+
+    - name: Deploy SSL certificate to Azure Web App
+      run: |
+        webappname='app-okhgzqoexg6jy'
+        certificate_password=''
+        az webapp config ssl upload \
+          --name $webappname \
+          --resource-group <your-resource-group-name> \
+          --certificate-file certificate.pfx \
+          --certificate-password $certificate_password
