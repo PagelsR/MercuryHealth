@@ -439,7 +439,7 @@ jobs:
         scope: 'resourcegroup'
         resourceGroupName: ${{ env.Azure_Resource_GroupName }}
         template: ./MercuryHealth.IaC/main-2.bicep
-        parameters: ./MercuryHealth.IaC/main-2.params.json webAppPlanName=${{ needs.deploy_infrastructure.outputs.output_webAppPlanName }} webSiteName=${{ needs.deploy_infrastructure.outputs.output_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }} keyvaultName=${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}
+        parameters: ./MercuryHealth.IaC/main-2.params.json webSiteName=${{ needs.deploy_infrastructure.outputs.output_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }} keyvaultName=${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}
         deploymentMode: Incremental
         failOnStdErr: false
 

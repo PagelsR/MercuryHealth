@@ -4,7 +4,6 @@ param cloudFlareRecordName string
 
 param keyvaultName string
 param webAppName string
-param webAppPlanName string
 
 @secure()
 param cloudFlareAPIToken string
@@ -39,10 +38,10 @@ var enableSSL = (!empty(existingKeyVaultId))
 
 
 // Reference Existing resource - App Service Plan
-resource existing_appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
-  name: webAppPlanName
-  location: location
-}
+// resource existing_appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+//   name: webAppPlanName
+//   location: location
+// }
 
 // Reference Existing resource - App Service
 resource existing_appService 'Microsoft.Web/sites@2022-09-01' existing = {
@@ -138,13 +137,13 @@ resource keyVaultSecret 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
 
 
 
-resource certificate 'Microsoft.Web/certificates@2019-08-01' = if (enableSSL) {
+resource certificate 'Microsoft.Web/certificates@2022-09-01' = if (enableSSL) {
   name: certificateName
   location: location
   properties: {
     keyVaultId: existingKeyVaultId
     keyVaultSecretName: existingKeyVaultSecretName
-    serverFarmId: existing_appServicePlan.id
+    serverFarmId: existing_appService.properties.serverFarmId //existing_appServicePlan.id
     password: ''
   }
   dependsOn: [

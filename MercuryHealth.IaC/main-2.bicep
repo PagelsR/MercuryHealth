@@ -23,7 +23,6 @@ module dnsRegistration './99-DNSCertificateBindings.bicep' = {
     cloudFlareZoneId: cloudFlareZoneID
     cloudFlareRecordName: 'mercuryhealth.org'
     keyvaultName: keyvaultName
-    webAppPlanName: webAppPlanName
 
     }
     // dependsOn:  [
