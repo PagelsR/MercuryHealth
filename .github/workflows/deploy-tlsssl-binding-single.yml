@@ -42,10 +42,29 @@ jobs:
         certificate_password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
         openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password "pass:$certificate_password"
 
-    - name: Generate Certificate Thumbprint
+    # - name: Generate Certificate Thumbprint
+    #   run: |
+    #     thumbprint=$(openssl x509 -noout -fingerprint -in certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
+    #     echo "THUMBPRINT=$thumbprint" >> $GITHUB_ENV
+
+    - name: Get Cloudflare DNS Records
       run: |
-        thumbprint=$(openssl x509 -noout -fingerprint -in certificate.crt -sha1 | awk -F'=' '{print $2}' | sed 's/://g')
-        echo "THUMBPRINT=$thumbprint" >> $GITHUB_ENV
+        echo "Getting all DNS records from Cloudflare..."
+        cloudFlareKey=${{ secrets.CLOUDFLARE_API_TOKEN }}
+        cloudFlareEmail='pagelsr@live.com'
+        cloudFlareZone=${{ secrets.CLOUDFLARE_ZONE_ID }}
+
+        listDnsResult=$(az rest --method GET \
+          --uri "https://api.cloudflare.com/client/v4/zones/$cloudFlareZone/dns_records" \
+          --headers "X-Auth-Key: $cloudFlareKey" "X-Auth-Email: $cloudFlareEmail" \
+          --query 'result')
+
+        echo "$listDnsResult"
+        echo "Done getting all DNS records"
+
+        numEntries=$(echo "$listDnsResult" | jq length)
+        echo "Number of DNS entries: $numEntries"
+        echo ""
 
     - name: 'uploading certificate, getting thumbprint'
       id: GetThumbprint
