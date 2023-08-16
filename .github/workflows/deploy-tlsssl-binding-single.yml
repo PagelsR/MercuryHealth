@@ -47,7 +47,7 @@ jobs:
       run: |
         az deployment group create \
           --resource-group 'rg-MercuryHealth-dev' \
-          --template-file ./webapp-ssl-deployment.bicep \
+          --template-file webapp-ssl-deployment.bicep \
           --parameters webAppName='app-okhgzqoexg6jy' resourceGroupName='rg-MercuryHealth-dev' \
           certificatePfx=@certificate.pfx certificatePassword=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }} \
           certificateThumbprint=${{ env.THUMBPRINT }}
