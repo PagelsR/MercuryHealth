@@ -42,12 +42,12 @@ jobs:
     - name: Deploy SSL certificate to Azure Web App
       run: |
         webappname='app-okhgzqoexg6jy'
-        certificate_password=$certificate_password
+        certificate_password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
         az webapp config ssl upload \
           --name $webappname \
           --resource-group 'rg-MercuryHealth-dev' \
           --certificate-file certificate.pfx \
-          --certificate-password "${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}"
+          --certificate-password $certificate_password
 
               
 
