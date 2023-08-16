@@ -27,7 +27,7 @@ jobs:
         echo "${{ secrets.CLOUDFLARE_CRT }}" > certificate.crt
         echo "${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}" > certificate_password
 
-        openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password pass:$certificate_password
+        openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password pass:${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
 
     # - name: Deploy SSL certificate to Azure Web App
     #   run: |
@@ -47,7 +47,7 @@ jobs:
           --name $webappname \
           --resource-group 'rg-MercuryHealth-dev' \
           --certificate-file certificate.pfx \
-          --certificate-password "$certificate_password"
+          --certificate-password "${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}"
 
               
 
