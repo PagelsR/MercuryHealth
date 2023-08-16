@@ -50,22 +50,22 @@ jobs:
     - name: 'uploading certificate, getting thumbprint'
       id: GetThumbprint
       uses: Azure/CLI@v1
-      continue-on-error: true
+      continue-on-error: false
       with:
         inlineScript: |
           az config set extension.use_dynamic_install=yes_without_prompt
-          $thumbprint=$(az webapp config ssl upload \
+          thumbprint=$(az webapp config ssl upload \
             --name 'app-okhgzqoexg6jy' \
             --resource-group 'rg-MercuryHealth-dev' \
             --certificate-file certificate.pfx \
-            --certificate-password '${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}' \
+            --certificate-password $certificate_password \
             --query thumbprint \
             --output tsv)
           echo "::set-output name=CertThumbprint::$thumbprint"
 
     - name: 'adding custom domain'
       uses: Azure/CLI@v1
-      continue-on-error: true
+      continue-on-error: false
       with:
         inlineScript: |
           az webapp config hostname add \
@@ -75,7 +75,7 @@ jobs:
 
     - name: 'adding certificate'
       uses: Azure/CLI@v1
-      continue-on-error: true
+      continue-on-error: false
       with:
         inlineScript: |
           az webapp config hostname add \
