@@ -5,7 +5,6 @@ param location string = resourceGroup().location
 param webSiteName string
 param webAppPlanName string
 param keyvaultName string
-param certificateName string
 
 @secure()
 param cloudFlareAPIToken string

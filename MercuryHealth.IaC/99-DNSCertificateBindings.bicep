@@ -33,7 +33,7 @@ resource existing_keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
 @description('Key Vault Secret that contains a PFX certificate, leave this blank if not enabling SSL')
 param existingKeyVaultSecretName string = 'ExampleCertificateNoPass'
 
-var certificateName = '${webAppName}-cert'
+var certificateName = 'ExampleCertificateNoPass' //'${webAppName}-cert'
 var enableSSL = (!empty(existingKeyVaultId))
 
 

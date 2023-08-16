@@ -48,8 +48,9 @@ jobs:
     outputs:
       output_loadTestsName: ${{ steps.Infra.outputs.out_loadTestsName }}
       output_apiServiceName: ${{ steps.Infra.outputs.out_apiServiceName }}
-      out_apimSubscriptionKey: ${{ steps.Infra.outputs.out_apimSubscriptionKey }}
+      output_apimSubscriptionKey: ${{ steps.Infra.outputs.out_apimSubscriptionKey }}
       output_webSiteName: ${{ steps.Infra.outputs.out_webSiteName }}
+      output_webAppPlanName: ${{ steps.Infra.outputs.out_webAppPlanName }}
       output_functionAppName: ${{ steps.Infra.outputs.out_functionAppName }}
       output_sqlserverFQName: ${{ steps.Infra.outputs.out_sqlserverFQName }}
       output_releaseAnnotationGuidID: ${{ steps.Infra.outputs.out_releaseAnnotationGuidID }}
@@ -438,7 +439,7 @@ jobs:
         scope: 'resourcegroup'
         resourceGroupName: ${{ env.Azure_Resource_GroupName }}
         template: ./MercuryHealth.IaC/main-2.bicep
-        parameters: ./MercuryHealth.IaC/main-2.params.json webSiteName=${{ needs.deploy_infrastructure.outputs.output_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }} keyvaultName=${{ needs.deploy_infrastructure.outputs.output_keyvaultName }} certificateName='ExampleCertificateNoPass'
+        parameters: ./MercuryHealth.IaC/main-2.params.json webAppPlanName=${{ needs.deploy_infrastructure.outputs.output_webAppPlanName }} webSiteName=${{ needs.deploy_infrastructure.outputs.output_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }} keyvaultName=${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}
         deploymentMode: Incremental
         failOnStdErr: false
 

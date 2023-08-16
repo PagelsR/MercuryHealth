@@ -14,7 +14,7 @@
         "keyvaultName": {
             "value": ""
         },
-        "certificateName": {
+        "webAppPlanName": {
             "value": ""
         }
     }
