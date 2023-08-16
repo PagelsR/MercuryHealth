@@ -397,7 +397,7 @@ jobs:
     outputs:
       output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
 
-    name: DNS and Certs
+    name: DNS and SSL
     needs: [deploy_infrastructure]
     env:
       Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}

@@ -1,0 +1,107 @@
+name: Add TLS/SSL Binding to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Azure CLI
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Generate PFX certificate
+      run: |
+        echo "${{ secrets.CLOUDFLARE_KEY }}" > private.key
+        echo "${{ secrets.CLOUDFLARE_CRT }}" > certificate.crt
+        echo "${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}" > certificate_password
+
+        openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password pass:$certificate_password
+
+    - name: Deploy SSL certificate to Azure Web App
+      run: |
+        webappname='app-okhgzqoexg6jy'
+        certificate_password=$certificate_password
+        az webapp config ssl upload \
+          --name $webappname \
+          --resource-group 'rg-MercuryHealth-dev' \
+          --certificate-file certificate.pfx \
+          --certificate-password $certificate_password
+
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout repository
+#       uses: actions/checkout@v2
+
+#     - name: Set up Azure CLI
+#       uses: azure/login@v1
+#       with:
+#         creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+#     - name: Generate PFX certificate
+#       run: |
+#         echo "${{ secrets.PRIVATE_KEY }}" > private.key
+#         echo "${{ secrets.CERTIFICATE }}" > certificate.crt
+
+#         openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password pass:<your-password>
+
+#     - name: Deploy SSL certificate to Azure Web App
+#       run: |
+#         webappname=<your-web-app-name>
+#         certificate_password=<your-password>
+#         az webapp config ssl upload \
+#           --name $webappname \
+#           --resource-group <your-resource-group-name> \
+#           --certificate-file certificate.pfx \
+#           --certificate-password $certificate_password
+
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   add-tls-binding:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout repository
+#       uses: actions/checkout@v2
+
+#     - name: Set up Azure CLI
+#       uses: azure/login@v1
+#       with:
+#         creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+#     - name: Generate PFX certificate
+#       run: |
+#         certificate_password=${{ secrets.CERTIFICATE_PASSWORD }}
+#         openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password pass:$certificate_password
+
+#     - name: Add TLS/SSL binding to Azure Web App
+#       run: |
+#         webappname=<your-web-app-name>
+#         certificate_password=${{ secrets.CERTIFICATE_PASSWORD }}
+#         az webapp config ssl upload \
+#           --name $webappname \
+#           --resource-group <your-resource-group-name> \
+#           --certificate-file certificate.pfx \
+#           --certificate-password $certificate_password
