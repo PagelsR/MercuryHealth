@@ -1,6 +1,5 @@
 param location string
 param cloudFlareRecordName string
-//param cloudFlareProxy bool
 
 param keyvaultName string
 param webAppName string
@@ -11,8 +10,6 @@ param cloudFlareAPIToken string
 @secure()
 param cloudFlareZoneId string
 
-
-
 // var record = 'mercuryhealth.org'
 // var domain = 'naya.ns.cloudflare.com'
 var record = 'www'
@@ -22,23 +19,15 @@ var domain = cloudFlareRecordName
 // param customHostname string = cloudFlareRecordName
 
 // Using a Key Vault from different Resource Group
-@description('Existing Key Vault resource Id for the SSL certificate, leave this blank if not enabling SSL')
-//param existingKeyVaultId string = '/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/MPNRPagelsVault/providers/Microsoft.KeyVault/vaults/${keyvaultName}'
-//param existingKeyVaultId string = '/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/MPNRPagelsVault/providers/Microsoft.KeyVault/vaults/kv-mercuryhealth'
+// @description('Existing Key Vault resource Id for the SSL certificate, leave this blank if not enabling SSL')
+// param existingKeyVaultId string = '/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/rg-mercuryhealth-keyvault/providers/Microsoft.KeyVault/vaults/${keyvaultName}'
 
 // resource existing_keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
 //   //name: existingKeyVaultId
-//   name: 'kv-mercuryhealth'
-
+//   name: 'kv-mercuryhealth-52a8e'
 // }
 
-// @description('Key Vault Secret that contains a PFX certificate, leave this blank if not enabling SSL')
-// param existingKeyVaultSecretName string = 'ExampleCertificateNoPass'
-
-// var certificateName = 'ExampleCertificateNoPass' //'${webAppName}-cert'
-// var enableSSL = (!empty(existingKeyVaultId))
-
-
+var certificateName = 'kv-mercuryhealth-52a8e-ExampleCertificate' //'${webAppName}-cert'
 
 // Reference Existing resource - App Service Plan
 // resource existing_appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
@@ -51,71 +40,24 @@ resource existing_appService 'Microsoft.Web/sites@2022-09-01' existing = {
   name: webAppName
 }
 
-// resource cloudflareDnsRecord 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
-//   name: 'cloudflare'
-//   location: location
-//   kind: 'AzurePowerShell'
-//   properties: {
-//     forceUpdateTag: '1'
-//     azPowerShellVersion: '8.3'
-//     arguments: '-hostname "${record}" -domain "${cloudFlareRecordName}" -destination "${existing_appService.properties.defaultHostName}"'
-//     environmentVariables: [
-//       {
-//         name: 'CLOUDFLARE_API_TOKEN'
-//         secureValue: cloudFlareAPIToken
-//       }
-//       {
-//         name: 'CLOUDFLARE_ZONE_ID'
-//         secureValue: cloudFlareZoneId
-//       }
-//     ]
-//     scriptContent: '''
-//       param([string] $hostname, [string] $cloudFlareRecordName, [string] $destination)
+resource certificateImport 'Microsoft.Web/certificates@2022-09-01' = {
+  name: certificateName
+  location: location
+  properties: {
+    keyVaultId: '/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/rg-mercuryhealth-keyvault/providers/Microsoft.KeyVault/vaults/kv-mercuryhealth-52a8e'
+    keyVaultSecretName: 'ExampleCertificate'
+    serverFarmId: existing_appService.properties.serverFarmId
+  }
+}
 
-//       $zoneid = $Env:CLOUDFLARE_ZONE_ID
-//       $url = "https://api.cloudflare.com/client/v4/zones/$zoneid/dns_records"
-      
-//       $addresses = (
-//           ("awverify.$hostname.$cloudFlareRecordName", "awverify.$destination"),
-//           ("$hostname.$cloudFlareRecordName", "$destination")
-//       )
-      
-//       foreach($address in $addresses)
-//       {
-//           $name = $address[0]
-//           $content = $address[1]
-//           $token = $Env:CLOUDFLARE_API_TOKEN
-      
-//           $existingRecord = Invoke-RestMethod -Method get -Uri "$url/?name=$name" -Headers @{
-//               "Authorization" = "Bearer $token"
-//           }
-      
-//           if($existingRecord.result.Count -eq 0)
-//           {
-//               $Body = @{
-//                   "type" = "CNAME"
-//                   "name" = $name
-//                   "content" = $content
-//                   "ttl" = "120"
-//               }
-              
-//               $Body = $Body | ConvertTo-Json -Depth 10
-//               $result = Invoke-RestMethod -Method Post -Uri $url -Headers @{ "Authorization" = "Bearer $token" } -Body $Body -ContentType "application/json"
-              
-//               Write-Output $result.result
-//           }
-//           else 
-//           {
-//               Write-Output "Record already exists"
-//           }
-//       }    
-//     '''
-//     supportingScriptUris: []
-//     timeout: 'PT30M'
-//     cleanupPreference: 'OnSuccess'
-//     retentionInterval: 'P1D'
-//   }
-// }
+// @description('Key Vault Secret that contains a PFX certificate, leave this blank if not enabling SSL')
+// param existingKeyVaultSecretName string = 'ExampleCertificateNoPass'
+
+// var certificateName = 'ExampleCertificateNoPass' //'${webAppName}-cert'
+// var enableSSL = (!empty(existingKeyVaultId))
+
+
+
 
 resource cloudflareDnsRecord 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'cloudflare'
@@ -198,7 +140,7 @@ resource hostName 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
 //   name: existingKeyVaultSecretName
 //   properties: {
 //     contentType: 'application/x-pkcs12'
-//     // value: 'your-certificate-value'
+//     //value: 'your-certificate-value'
 //   }
 // }
 
@@ -267,7 +209,6 @@ resource hostName 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
 
 
 
-
+output certificateThumbprint string = certificateImport.properties.thumbprint
 output endpointUri string = existing_appService.properties.defaultHostName
-//output certificateThumbprint string = certificateOrder.properties.certificates[0].thumbprint
 
