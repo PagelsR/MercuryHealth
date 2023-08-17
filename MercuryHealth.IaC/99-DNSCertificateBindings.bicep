@@ -51,18 +51,18 @@ resource certificateImport 'Microsoft.Web/certificates@2022-09-01' = {
   }
 }
 
-var customDomainName = '${webAppName}/bindings/${cloudFlareRecordName}'
+// var customDomainName = '${webAppName}/bindings/${cloudFlareRecordName}'
 
-resource customDomain 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
-  name: customDomainName
-  properties: {
-    siteName: existing_appService.name
-    hostNameType: 'Verified'
-    customHostNameDnsRecordType: 'CName'
-    azureResourceType: 'Website'
-    azureResourceName: existing_appService.name
-  }
-}
+// resource customDomain 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
+//   name: customDomainName
+//   properties: {
+//     siteName: existing_appService.name
+//     hostNameType: 'Verified'
+//     customHostNameDnsRecordType: 'CName'
+//     azureResourceType: 'Website'
+//     azureResourceName: existing_appService.name
+//   }
+// }
 
 var sslBindingName = '${webAppName}/bindings/${cloudFlareRecordName}/${certificateName}'
 
