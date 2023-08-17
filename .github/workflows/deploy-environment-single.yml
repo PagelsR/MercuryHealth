@@ -433,15 +433,19 @@ jobs:
     - name: Generate PFX certificate
       run: |
         echo "${{ secrets.CLOUDFLARE_KEY }}" > private.key
+        cat private.key
         echo "${{ secrets.CLOUDFLARE_CRT }}" > certificate.crt
+        cat certificate.crt
         certificate_password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
         openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password "pass:$certificate_password"
-
-    # Convert PFX to Base64
-    - name: Convert PFX to Base64
-      run: |
         base64 -w 0 path/to/certificate.pfx > certificate_base64.txt
       shell: bash
+
+    # # Convert PFX to Base64
+    # - name: Convert PFX to Base64
+    #   run: |
+    #     base64 -w 0 path/to/certificate.pfx > certificate_base64.txt
+    #   shell: bash
 
     # Display Base64 Content
     - name: Display Base64 Content
