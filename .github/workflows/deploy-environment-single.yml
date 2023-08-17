@@ -429,6 +429,33 @@ jobs:
         name: MercuryHealth.IaC
         path: ${{ github.workspace }}/MercuryHealth.IaC
 
+    # Generate PFX certificate
+    - name: Generate PFX certificate
+      run: |
+        echo "${{ secrets.CLOUDFLARE_KEY }}" > private.key
+        echo "${{ secrets.CLOUDFLARE_CRT }}" > certificate.crt
+        certificate_password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
+        openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password "pass:$certificate_password"
+
+    # Convert PFX to Base64
+    - name: Convert PFX to Base64
+      run: |
+        base64 -w 0 path/to/certificate.pfx > certificate_base64.txt
+      shell: bash
+
+    # Display Base64 Content
+    - name: Display Base64 Content
+      run: cat certificate_base64.txt
+
+    # Upload to Base64 Output to Key Vault
+    - name: Upload to Key Vault
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          #!/bin/bash
+          az keyvault secret set --name "ExampleCertificate" --vault-name ${{ needs.deploy_infrastructure.outputs.output_keyvaultName }} --value "$(cat certificate_base64.txt)"
+
     # Deploy ARM Template using Bicep DSL
     - name: App Service DNS & Certificates
       id: InfraDNS
@@ -438,7 +465,7 @@ jobs:
         scope: 'resourcegroup'
         resourceGroupName: ${{ env.Azure_Resource_GroupName }}
         template: ./MercuryHealth.IaC/main-2.bicep
-        parameters: ./MercuryHealth.IaC/main-2.params.json webSiteName=${{ needs.deploy_infrastructure.outputs.output_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }} keyvaultName=${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}
+        parameters: ./MercuryHealth.IaC/main-2.params.json webSiteName=${{ needs.deploy_infrastructure.outputs.output_webSiteName }} cloudFlareAPIToken=${{ secrets.cloudflare-api-token }} cloudFlareZoneID=${{ secrets.cloudflare-zone-id }} keyvaultName=${{ needs.deploy_infrastructure.outputs.output_keyvaultName }} certificateBase64
         deploymentMode: Incremental
         failOnStdErr: false
 
@@ -599,7 +626,7 @@ jobs:
       - name: DEBUG ONLY Display Key Vault Secret
         run: |
            echo 'apimKey: ${{ steps.GetAPIMKey.outputs.apimKey }}'
-           
+
       # Extremely Important. Do not use end slash for webHost value. "/"
       #
       # ${{ steps.GetAPIMKey.outputs.apimKey }}

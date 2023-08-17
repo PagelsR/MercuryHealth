@@ -5,11 +5,28 @@ param location string = resourceGroup().location
 param webSiteName string
 param keyvaultName string
 
+// var kvValue_CertificateName = 'ExampleCertificate'
+// var kvValue_CertificateValue = '<base64-encoded-pfx-content>'
+
 @secure()
 param cloudFlareAPIToken string
 
 @secure()
 param cloudFlareZoneID string
+
+// Reference Existing resource
+// resource existing_keyvault 'Microsoft.KeyVault/vaults@2023-02-01' existing = {
+//   name: keyvaultName
+// }
+
+// Create KeyVault Secret for PFX contents
+// resource secretCert 'Microsoft.KeyVault/vaults/secrets@2023-02-01' = {
+//   name: kvValue_CertificateName
+//   parent: existing_keyvault
+//   properties: {
+//     value: kvValue_CertificateValue
+//   }
+// }
 
 
 // Add DNS Registration for Web App
@@ -24,9 +41,6 @@ module dnsRegistration './99-DNSCertificateBindings.bicep' = {
     keyvaultName: keyvaultName
 
     }
-    // dependsOn:  [
-    //   webappmod
-    // ]
 }
 
 output out_endpointUri string = dnsRegistration.outputs.endpointUri
