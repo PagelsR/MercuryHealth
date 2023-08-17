@@ -27,7 +27,8 @@ var domain = cloudFlareRecordName
 //   name: 'kv-mercuryhealth-52a8e'
 // }
 
-var certificateName = 'kv-mercuryhealth-52a8e-ExampleCertificate' //'${webAppName}-cert'
+//var certificateName = 'kv-mercuryhealth-52a8e-ExampleCertificate' //'${webAppName}-cert'
+var certificateName = '${webAppName}-cert'
 
 // Reference Existing resource - App Service Plan
 // resource existing_appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
@@ -59,7 +60,7 @@ resource customDomain 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
     hostNameType: 'Verified'
     customHostNameDnsRecordType: 'CName'
     azureResourceType: 'Website'
-    azureResourceName: existing_appService.name //webApp.name
+    azureResourceName: existing_appService.name
   }
 }
 
