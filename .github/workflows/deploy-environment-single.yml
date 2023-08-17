@@ -430,20 +430,21 @@ jobs:
         path: ${{ github.workspace }}/MercuryHealth.IaC
 
     # Upload PEM Certificate to Web App 1
-    - name: Upload PEM Certificate to Web App
+    - name: Upload PEM Certificate to Web App 1
       run: |
         echo "${{ secrets.CLOUDFLARE_PEM }}" > temp.pem
-        az webapp config ssl upload --resource-group ${{ env.Azure_Resource_GroupName }} --name ${{ needs.deploy_infrastructure.outputs.output_webSiteName }} --certificate-file temp.pem --certificate-password "${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}"
+        certificate_password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
+        az webapp config ssl upload --resource-group ${{ env.Azure_Resource_GroupName }} --name ${{ needs.deploy_infrastructure.outputs.output_webSiteName }} --certificate-file temp.pem --certificate-password $certificate_password
         rm temp.pem
       shell: bash
 
     # Upload PEM Certificate to Web App 2
-    - name: Upload to Key Vault
+    - name: Upload PEM Certificate to Web App 2
       uses: Azure/CLI@v1
       continue-on-error: true
       with:
         inlineScript: |
-          az webapp config ssl upload --resource-group ${{ env.Azure_Resource_GroupName }} --name ${{ needs.deploy_infrastructure.outputs.output_webSiteName }} --certificate-file <(echo ${{ secrets.CLOUDFLARE_PEM }}) --certificate-password "${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}"
+          az webapp config ssl upload --resource-group ${{ env.Azure_Resource_GroupName }} --name ${{ needs.deploy_infrastructure.outputs.output_webSiteName }} --certificate-file <(echo ${{ secrets.CLOUDFLARE_PEM }}) --certificate-password '${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}'
 
     # Generate PFX certificate
     - name: Generate PFX certificate
