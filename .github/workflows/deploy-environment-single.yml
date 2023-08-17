@@ -434,13 +434,13 @@ jobs:
       continue-on-error: false
       run: |
         # Set the certificate password from the secret
-        certificate_password="${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}"
+        certificate_password='${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}'
 
         # Save the PEM content to a temporary file
         echo "${{ secrets.CLOUDFLARE_PEM}} " > certificate.pem
 
         # Upload the certificate using Azure CLI
-        az webapp config ssl upload --resource-group "${{ env.Azure_Resource_GroupName }}" --name "${{ needs.deploy_infrastructure.outputs.output_webSiteName }}" --certificate-file certificate.pem --certificate-password "${certificate_password}"
+        az webapp config ssl upload --resource-group "${{ env.Azure_Resource_GroupName }}" --name "${{ needs.deploy_infrastructure.outputs.output_webSiteName }}" --certificate-file certificate.pem --certificate-password '${certificate_password}'
 
         # Clean up the temporary file
         rm certificate.pem
