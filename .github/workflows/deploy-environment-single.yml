@@ -443,6 +443,7 @@ jobs:
         echo ${{ env.certificate_password }}
 
         # Upload the certificate using Azure CLI
+        
         az webapp config ssl upload --resource-group "${{ env.Azure_Resource_GroupName }}" --name "${{ needs.deploy_infrastructure.outputs.output_webSiteName }}" --certificate-file certificate.pem --certificate-password "${{ env.certificate_password }}"
 
         # Clean up the temporary file
