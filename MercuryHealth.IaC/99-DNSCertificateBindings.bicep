@@ -52,7 +52,6 @@ resource certificateImport 'Microsoft.Web/certificates@2022-09-01' = {
 }
 
 // var customDomainName = '${webAppName}/bindings/${cloudFlareRecordName}'
-
 // resource customDomain 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
 //   name: customDomainName
 //   properties: {
@@ -64,8 +63,8 @@ resource certificateImport 'Microsoft.Web/certificates@2022-09-01' = {
 //   }
 // }
 
-var sslBindingName = '${webAppName}/bindings/${cloudFlareRecordName}/${certificateName}'
-
+//var sslBindingName = '${webAppName}/bindings/${cloudFlareRecordName}/${certificateName}'
+var sslBindingName = '${webAppName}/${cloudFlareRecordName}'
 resource sslBinding 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
   name: sslBindingName
   properties: {
@@ -76,15 +75,6 @@ resource sslBinding 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
   }
 }
 
-// resource customDomain 'Microsoft.Web/sites/hostNameBindings@2021-01-15' = {
-//   name: '${webAppName}/bindings/${certificateImport.name}'
-//   properties: {
-//     siteName: existing_appService.name
-//     hostNameType: 'Verified'
-//     customHostNameDnsRecordType: 'CName'
-//     thumbprint: certificateImport.properties.thumbprint
-//   }
-// }
 
 // @description('Key Vault Secret that contains a PFX certificate, leave this blank if not enabling SSL')
 // param existingKeyVaultSecretName string = 'ExampleCertificateNoPass'

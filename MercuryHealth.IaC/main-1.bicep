@@ -229,8 +229,8 @@ module portaldashboardmod './main-11-Dashboard.bicep' = {
 // ObjectId of alias RPagels
 param AzObjectIdPagels string = '0aa95253-9e37-4af9-a63a-3b35ed78e98b'
 
-// ObjectId of Service Principal "5934e_ServicePrincipal_..."
-param ADOServiceprincipalObjectId string = '0b8747c1-d320-4d28-85d1-d3c05ae04300'
+// ObjectId of Service Principal "52a8e_ServicePrincipal_FullAccess"
+param ADOServiceprincipalObjectId string = '1681488b-a0ee-4491-a254-728fe9e43d8c'
 
 // Create Configuration Entries
 module configsettingsmod './main-13-configsettings.bicep' = {
