@@ -27,9 +27,6 @@ var domain = cloudFlareRecordName
 //   name: 'kv-mercuryhealth-52a8e'
 // }
 
-//var certificateName = 'kv-mercuryhealth-52a8e-ExampleCertificate' //'${webAppName}-cert'
-var certificateName = '${webAppName}-cert'
-
 // Reference Existing resource - App Service Plan
 // resource existing_appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
 //   name: webAppPlanName
@@ -41,6 +38,10 @@ resource existing_appService 'Microsoft.Web/sites@2022-09-01' existing = {
   name: webAppName
 }
 
+// Name of saved certificate that will be imported
+var certificateName = '${webAppName}-cert'
+
+// Import certificate from Key Vault
 resource certificateImport 'Microsoft.Web/certificates@2022-09-01' = {
   name: certificateName
   location: location
