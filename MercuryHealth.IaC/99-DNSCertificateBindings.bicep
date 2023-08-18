@@ -74,6 +74,9 @@ resource sslBinding 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
     thumbprint: certificateImport.properties.thumbprint
     //virtualIP: existing_appService.properties.defaultHostNameBinding.virtualIP // webApp.properties.outboundIpAddresses[0]
   }
+  dependsOn: [
+    cloudflareDnsRecord
+  ]
 }
 
 
@@ -155,7 +158,6 @@ resource cloudflareDnsRecord 'Microsoft.Resources/deploymentScripts@2020-10-01' 
 resource hostName 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
   name: '${record}.${cloudFlareRecordName}'
   parent: existing_appService
-
   dependsOn: [
     cloudflareDnsRecord
   ]
