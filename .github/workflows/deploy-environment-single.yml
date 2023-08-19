@@ -566,24 +566,24 @@ jobs:
           retention-days: 30
 
       # Upload the test result artifacts
-      - name: 'Upload Playwright Screenshot Files'
-        continue-on-error: true
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-screenshots
-          path: screenshot_*.png
-          retention-days: 30
+      # - name: 'Upload Playwright Screenshot Files'
+      #   continue-on-error: true
+      #   uses: actions/upload-artifact@v3
+      #   if: always()
+      #   with:
+      #     name: playwright-screenshots
+      #     path: screenshot_*.png
+      #     retention-days: 30
 
       # Upload the test result artifacts
-      - name: 'Upload Playwright Trace Files'
-        continue-on-error: true
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-traces
-          path: trace_*.zipf
-          retention-days: 30
+      # - name: 'Upload Playwright Trace Files'
+      #   continue-on-error: true
+      #   uses: actions/upload-artifact@v3
+      #   if: always()
+      #   with:
+      #     name: playwright-traces
+      #     path: trace_*.zip
+      #     retention-days: 30
           
       # Publish HTML report to GitHub Pages
       - name: Publish HTML report to GitHub Pages
