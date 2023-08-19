@@ -26,7 +26,7 @@ test('Navigate to nutritions page', async ({ page }) => {
   await expect(page).toHaveTitle('Nutrition - Mercury Health');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_Home-Nutritionspage.png', fullPage: true, timeout: 6000 });
+  //await page.screenshot({ path: 'screenshot_Home-Nutritionspage.png', fullPage: true, timeout: 6000 });
 
 });
 
@@ -48,7 +48,7 @@ test('Navigate to nutritions page and click on details', async ({ page }) => {
   const detailsPageTitle = await page.title();
   expect(detailsPageTitle).toBe('Details - Mercury Health');
 
-  await page.screenshot({ path: 'screenshot_nutrition_details_25-1.png', fullPage: true, timeout: 6000 });
+  //await page.screenshot({ path: 'screenshot_nutrition_details_25-1.png', fullPage: true, timeout: 6000 });
   
   await page.click('#button_back');
 
@@ -78,7 +78,7 @@ test('Navigate to nutritions page and update value', async ({ page }) => {
   await page.getByLabel('Tags').fill('Update by Playwright');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_nutrition_details_25-2.png', fullPage: true, timeout: 6000 });
+  //await page.screenshot({ path: 'screenshot_nutrition_details_25-2.png', fullPage: true, timeout: 6000 });
 
   await page.getByRole('button', { name: 'Save' }).click();
 
@@ -92,7 +92,7 @@ test('Navigate to nutritions page and update value', async ({ page }) => {
   const value = await element?.textContent();
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_nutrition_details_25-3.png', fullPage: true, timeout: 6000 });
+  //await page.screenshot({ path: 'screenshot_nutrition_details_25-3.png', fullPage: true, timeout: 6000 });
 
   // Assert that the value is correct
   expect(value?.trim()).toBe('Update by Playwright');
@@ -109,7 +109,7 @@ test('Navigate to nutritions page and update value', async ({ page }) => {
   await page.getByLabel('Tags').fill('API Update');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_nutrition_details_25-4.png', fullPage: true, timeout: 6000 });
+  //await page.screenshot({ path: 'screenshot_nutrition_details_25-4.png', fullPage: true, timeout: 6000 });
 
   await page.getByRole('button', { name: 'Save' }).click();
 
@@ -133,7 +133,7 @@ test('Navigate to nutritions page and verify details', async ({ page }) => {
   expect(detailsPageTitle).toBe('Details - Mercury Health');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_nutrition_details_25-3.png', fullPage: true, timeout: 6000 });
+  //await page.screenshot({ path: 'screenshot_nutrition_details_25-3.png', fullPage: true, timeout: 6000 });
 
   // Find the <dd> element by its ID
   const element = await page.$('#Value_Tags');
