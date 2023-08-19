@@ -429,67 +429,6 @@ jobs:
         name: MercuryHealth.IaC
         path: ${{ github.workspace }}/MercuryHealth.IaC
 
-    # Upload PEM Certificate to Web App 1
-    # - name: Upload PEM Certificate to Web App 1
-    #   continue-on-error: false
-    #   env:
-    #     certificate_password: ${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
-    #   run: |
-    #     # Save the PEM content to a temporary file
-    #     echo "${{ secrets.CLOUDFLARE_PEM}}" > certificate.pem
-
-    #     echo ${{ env.Azure_Resource_GroupName }}
-    #     echo ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}
-    #     echo ${{ env.certificate_password }}
-
-    #     # Upload the certificate using Azure CLI
-        
-    #     az webapp config ssl upload --resource-group "${{ env.Azure_Resource_GroupName }}" --name "${{ needs.deploy_infrastructure.outputs.output_webSiteName }}" --certificate-file certificate.pem --certificate-password "${{ env.certificate_password }}"
-
-    #     # Clean up the temporary file
-    #     rm certificate.pem
-
-    #   shell: bash
-
-    # Upload PEM Certificate to Web App 2
-    # - name: Upload PEM Certificate to Web App 2
-    #   uses: Azure/CLI@v1
-    #   continue-on-error: true
-    #   with:
-    #     inlineScript: |
-    #       az webapp config ssl upload --resource-group ${{ env.Azure_Resource_GroupName }} --name ${{ needs.deploy_infrastructure.outputs.output_webSiteName }} --certificate-file <(echo ${{ secrets.CLOUDFLARE_PEM }}) --certificate-password '${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}'
-
-    # Generate PFX certificate
-    # - name: Generate PFX certificate
-    #   run: |
-    #     echo "${{ secrets.CLOUDFLARE_KEY }}" > private.key
-    #     cat private.key
-    #     echo "${{ secrets.CLOUDFLARE_CRT }}" > certificate.crt
-    #     cat certificate.crt
-    #     certificate_password=${{ secrets.CLOUDFLARE_CERTIFICATE_PASSWORD }}
-    #     openssl pkcs12 -export -out certificate.pfx -inkey private.key -in certificate.crt -password "pass:$certificate_password"
-    #     base64 -w 0 path/to/certificate.pfx > certificate_base64.txt
-    #   shell: bash
-
-    # # Convert PFX to Base64
-    # - name: Convert PFX to Base64
-    #   run: |
-    #     base64 -w 0 path/to/certificate.pfx > certificate_base64.txt
-    #   shell: bash
-
-    # Display Base64 Content
-    # - name: Display Base64 Content
-    #   run: cat certificate_base64.txt
-
-    # # Upload to Base64 Output to Key Vault
-    # - name: Upload to Key Vault
-    #   uses: Azure/CLI@v1
-    #   continue-on-error: true
-    #   with:
-    #     inlineScript: |
-    #       #!/bin/bash
-    #       az keyvault secret set --name "ExampleCertificate" --vault-name ${{ needs.deploy_infrastructure.outputs.output_keyvaultName }} --value "$(cat certificate_base64.txt)"
-
     # Deploy ARM Template using Bicep DSL
     - name: App Service DNS & Certificates
       id: InfraDNS
@@ -548,15 +487,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
+      # Install Playwright browsers and dependencies
+      - name: Install Playwright browsers and dependencies
         run: npx playwright install --with-deps
 
+      # Run Playwright tests
       - name: Run Playwright tests
         continue-on-error: true
         run: npx playwright test --reporter=html
 
-      # Upload the test result artifacts
-      - name: 'Upload Playwright Report Files'
+      # Upload the Playwright test result artifacts
+      - name: Upload Playwright Report Files
         continue-on-error: true
         uses: actions/upload-artifact@v3
         if: always()
@@ -585,7 +526,7 @@ jobs:
       #     path: trace_*.zip
       #     retention-days: 30
           
-      # Publish HTML report to GitHub Pages
+      # Publish HTML report to GitHub Pages to host static HTML report
       - name: Publish HTML report to GitHub Pages
         continue-on-error: true
         if: always() # We want this to always run, even if test fail prior to this step running
@@ -637,14 +578,6 @@ jobs:
         with:
           creds: ${{ secrets.azure-credentials }}
 
-      #- name: 'Get Key Vault Values'
-      #  uses: Azure/get-keyvault-secrets@v1
-      #  continue-on-error: true
-      #  with:
-      #    keyvault: ${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}
-      #    secrets: 'ApimSubscriptionKey'
-      #    id: myKeyVaultValue # ID for secrets that you will reference
-
       - name: 'Get Key Vault Value'
         id: GetAPIMKey
         uses: Azure/CLI@v1
@@ -657,17 +590,13 @@ jobs:
                         --vault-name "${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}" \
                         --query "value" --output tsv)
             echo "::set-output name=apimKey::$result"
-            echo "apimKey: $apimKey"
+            echo "apimKey = ${$apimKey}"
 
       - name: DEBUG ONLY Display Key Vault Secret
         run: |
            echo 'apimKey: ${{ steps.GetAPIMKey.outputs.apimKey }}'
 
-      # Extremely Important. Do not use end slash for webHost value. "/"
-      #
-      # ${{ steps.GetAPIMKey.outputs.apimKey }}
-      #
-      # Testing the Web App API
+      # Testing the Web App API. Do not use end slash for webHost value. "/"
       - name: 'Azure Load Testing, API'
         uses: azure/load-testing@v1
         continue-on-error: true
@@ -689,12 +618,8 @@ jobs:
                 "value": "${{ steps.GetAPIMKey.outputs.apimKey }}"
               }
             ]
-      # Extremely Important. Do not use end slash for webHost value. "/"
-      #
-      # Testing the API Management Layer that calls the Web App API
-      #
-      # ?
-      #
+
+      # Testing the Web App API. Do not use end slash for webHost value. "/"
       - name: 'Azure Load Testing, APIM'
         uses: azure/load-testing@v1
         continue-on-error: true
@@ -716,13 +641,14 @@ jobs:
                 "value": "${{ steps.GetAPIMKey.outputs.apimKey }}"
               }
             ]
-      - name: 'Upload Load Test Results'
-        uses: actions/upload-artifact@v2
-        continue-on-error: true
-        with:
-          name: MercuryHealth.LoadTestsResults
-          path: ${{ github.workspace }}/MercuryHealth.LoadTests
-          retention-days: 30
+
+      # - name: 'Upload Load Test Results'
+      #   uses: actions/upload-artifact@v2
+      #   continue-on-error: true
+      #   with:
+      #     name: MercuryHealth.LoadTestsResults
+      #     path: ${{ github.workspace }}/MercuryHealth.LoadTests
+      #     retention-days: 30
           
       - name: 'Azure logout'
         run: |
