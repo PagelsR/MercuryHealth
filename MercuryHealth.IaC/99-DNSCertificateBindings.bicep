@@ -47,7 +47,7 @@ resource certificateImport 'Microsoft.Web/certificates@2022-09-01' = {
   location: location
   properties: {
     keyVaultId: '/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/rg-mercuryhealth-keyvault/providers/Microsoft.KeyVault/vaults/kv-mercuryhealth-52a8e'
-    keyVaultSecretName: 'ExampleCertificate'
+    keyVaultSecretName: 'SSLCertificate'
     serverFarmId: existing_appService.properties.serverFarmId
   }
 }
