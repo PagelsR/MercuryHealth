@@ -476,7 +476,7 @@ jobs:
       node_version: '16.x.x'
       buildConfiguration: 'Release'
       website_URL: 'https://${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net/'
-      #website_URL: 'http://www.mercuryhealth.org//'
+      #website_URL: 'https://www.mercuryhealth.org//'
 
     # The type of runner that the job will run on - windows-latest
     runs-on: ubuntu-latest
