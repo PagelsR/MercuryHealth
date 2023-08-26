@@ -5,11 +5,11 @@ The mission of Mercury Health is to help improve longevity and quality of life t
 
 ## Security Scan Status
 - Code QL: [![CodeQL](https://github.com/PagelsR/MercuryHealth/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/PagelsR/MercuryHealth/actions/workflows/codeql-analysis.yml)
-- Microsoft Defender for DevOps: [![Microsoft Defender For DevOps](https://github.com/PagelsR/MercuryHealth/actions/workflows/defender-for-devops.yml/badge.svg)](https://github.com/PagelsR/MercuryHealth/actions/workflows/defender-for-devops.yml)
 
 ## Build & Deploy Status
-- Full Deployment, Dev, QA, Prod: [![Deploy-Main-Full](https://github.com/PagelsR/MercuryHealth/actions/workflows/deploy-main-full.yml/badge.svg)](https://github.com/PagelsR/MercuryHealth/actions/workflows/deploy-main-full.yml)
 - Single Deployment, Dev only: [![Deploy-Main-Single](https://github.com/PagelsR/MercuryHealth/actions/workflows/deploy-main-single.yml/badge.svg)](https://github.com/PagelsR/MercuryHealth/actions/workflows/deploy-main-single.yml)
+- Full Deployment, Dev, QA, Prod: [![Deploy-Main-Full](https://github.com/PagelsR/MercuryHealth/actions/workflows/deploy-main-full.yml/badge.svg)](https://github.com/PagelsR/MercuryHealth/actions/workflows/deploy-main-full.yml)
+
 
 
 ## Overview of DevOps
