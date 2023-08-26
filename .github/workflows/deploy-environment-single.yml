@@ -334,19 +334,14 @@ jobs:
 
 # Release annotations can be automatically created for Application Insights
 # You’re using one of the following Azure DevOps pipeline tasks:
-#   AzureAppServiceSettings
-#   AzureRmWebAppDeployment
-#   AzureFunctionApp
-#   AzureFunctionAppContainer
-#   AzureWebAppContainer
-#   AzureWebApp
-
+#   AzureAppServiceSettings, AzureRmWebAppDeployment, AzureFunctionApp, AzureFunctionAppContainer, AzureWebAppContainer, AzureWebApp
+#
 # Retiring on 31 August 2024!!!
 # Azure Application Insights Release annotations using API keys are retiring on 31 August 2024 #175
-#
 # This ONLY works from ADO Pipelines, NOT GitHub Actions. :(
+#
     # Used for Demos only.
-    # TODO!!!  Removed this and replace using Azure CLI
+    # TODO!!!  Replace using Azure CLI after 8/31/2023!
     - name: 'Generate Temporary API Key For App Insights'
       id: AIKeyGen
       uses: Azure/CLI@v1
@@ -684,7 +679,6 @@ jobs:
 ###################################################################
 ###################################################################
 ###################################################################
-
 
 
 ###################################################################
