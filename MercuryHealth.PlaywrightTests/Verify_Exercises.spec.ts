@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 // Dynamicly set the URL from pipeline output
 test.beforeEach(async ({ page }) => {
   const url = process.env.website_URL || 'https://app-okhgzqoexg6jy.azurewebsites.net/';
-  await page.goto(url , { waitUntil: 'load', timeout: 6000 });
+  await page.goto(url , { waitUntil: 'load', timeout: 5000 });
 });
 
 test("Should be flaky for exercises page", async ({ page }) => {
@@ -132,7 +132,7 @@ test('Navigate to exercises page and verify details', async ({ page }) => {
   const value = await element?.textContent();
 
   // Assert that the value is correct
-  expect(value?.trim()).toBe('Update by Randy');
+  expect(value?.trim()).toBe('API Update');
 
   await page.click('#button_back');
 
