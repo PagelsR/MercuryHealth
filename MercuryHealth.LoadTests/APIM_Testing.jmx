@@ -34,7 +34,7 @@
 				<stringProp name="ThreadGroup.num_threads">5</stringProp>
 				<stringProp name="ThreadGroup.ramp_time">10</stringProp>
 				<boolProp name="ThreadGroup.scheduler">true</boolProp>
-				<stringProp name="ThreadGroup.duration">120</stringProp>
+				<stringProp name="ThreadGroup.duration">60</stringProp>
 				<stringProp name="ThreadGroup.delay">5</stringProp>
 				<boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
 			</ThreadGroup>
@@ -78,7 +78,7 @@
 				<stringProp name="ThreadGroup.num_threads">5</stringProp>
 				<stringProp name="ThreadGroup.ramp_time">10</stringProp>
 				<boolProp name="ThreadGroup.scheduler">true</boolProp>
-				<stringProp name="ThreadGroup.duration">120</stringProp>
+				<stringProp name="ThreadGroup.duration">60</stringProp>
 				<stringProp name="ThreadGroup.delay">5</stringProp>
 				<boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
 			</ThreadGroup>
@@ -129,7 +129,7 @@
 				<stringProp name="ThreadGroup.num_threads">10</stringProp>
 				<stringProp name="ThreadGroup.ramp_time">10</stringProp>
 				<boolProp name="ThreadGroup.scheduler">true</boolProp>
-				<stringProp name="ThreadGroup.duration">120</stringProp>
+				<stringProp name="ThreadGroup.duration">60</stringProp>
 				<stringProp name="ThreadGroup.delay">5</stringProp>
 				<stringProp name="Start users count">5</stringProp>
 				<stringProp name="Start users period">5</stringProp>
