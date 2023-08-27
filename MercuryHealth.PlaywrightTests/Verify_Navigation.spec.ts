@@ -59,6 +59,6 @@ test('Allow me to navigate to metrics home page', async ({ page }) => {
   await expect(page).toHaveTitle('Metrics - Mercury Health', { timeout: 3000 });
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_Home-Metricspage.png', fullPage: true, timeout: 6000 });
+  // await page.screenshot({ path: 'screenshot_Home-Metricspage.png', fullPage: true, timeout: 6000 });
 
 });
