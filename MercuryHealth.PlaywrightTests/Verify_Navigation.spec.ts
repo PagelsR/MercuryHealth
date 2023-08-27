@@ -1,9 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-// test.beforeEach(async ({ page }) => {
-//   await page.goto('https://app-okhgzqoexg6jy.azurewebsites.net/' , { waitUntil: 'load', timeout: 100000 });
-// });
-
 // Dynamicly set the URL from pipeline output
 test.beforeEach(async ({ page }) => {
   const url = process.env.website_URL || 'https://app-okhgzqoexg6jy.azurewebsites.net/';
