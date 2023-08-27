@@ -14,7 +14,7 @@ test('Allow me to navigate to default page', async ({ page }) => {
     await expect(page).toHaveTitle('Home Page - Mercury Health');
   
     // Take screenshot
-    await page.screenshot({ path: 'screenshot_Home-Defaultpage.png', fullPage: true, timeout: 6000 });
+    //await page.screenshot({ path: 'screenshot_Home-Defaultpage.png', fullPage: true, timeout: 6000 });
 
 });
 
@@ -23,7 +23,7 @@ test('Allow me to navigate to home page', async ({ page }) => {
   await expect(page).toHaveTitle('Home Page - Mercury Health');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_Home-Homepage.png', fullPage: true, timeout: 6000 });
+  //await page.screenshot({ path: 'screenshot_Home-Homepage.png', fullPage: true, timeout: 6000 });
 
 });
 
@@ -33,7 +33,7 @@ test('Allow me to navigate to nutritions home page', async ({ page }) => {
   await expect(page).toHaveTitle('Nutrition - Mercury Health');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_Home-Nutritionspage.png', fullPage: true, timeout: 6000 });
+  //await page.screenshot({ path: 'screenshot_Home-Nutritionspage.png', fullPage: true, timeout: 6000 });
 
 });
 
@@ -43,7 +43,7 @@ test('Allow me to navigate to exercises home page', async ({ page }) => {
   await expect(page).toHaveTitle('Exercises - Mercury Health');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_Home-Exercisespage.png', fullPage: true, timeout: 6000 });
+  //await page.screenshot({ path: 'screenshot_Home-Exercisespage.png', fullPage: true, timeout: 6000 });
 
 });
 
@@ -53,7 +53,7 @@ test('Allow me to navigate to privacy home page', async ({ page }) => {
   await expect(page).toHaveTitle('Privacy Policy - Mercury Health');
 
   // Take screenshot
-  await page.screenshot({ path: 'screenshot_Home-Privacypage.png', fullPage: true, timeout: 6000 });
+  //await page.screenshot({ path: 'screenshot_Home-Privacypage.png', fullPage: true, timeout: 6000 });
 
 });
 
