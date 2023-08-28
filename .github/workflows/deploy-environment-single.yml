@@ -301,7 +301,7 @@ jobs:
       continue-on-error: true
       with:
         inlineScript: |
-          az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
+          az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} && sleep 10
 
     - name: Download Build Artifacts-Website Application
       uses: actions/download-artifact@v2
