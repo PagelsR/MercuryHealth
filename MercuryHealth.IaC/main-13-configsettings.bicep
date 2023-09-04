@@ -43,7 +43,6 @@ param kvValue_ApimSubscriptionKeyValue string
 
 param tenant string = subscription().tenantId
 
-
 @secure()
 param ADOServiceprincipalObjectId string
 
