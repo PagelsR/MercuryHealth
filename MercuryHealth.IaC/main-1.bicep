@@ -168,13 +168,13 @@ module loadtestsmod './main-9-loadtests.bicep' = {
   }
 }
 
-module blogstoragemod './main-12-blobstorage.bicep' = {
-  name: blobstorageName
-  params: {
-    location: location
-     storageAccountName: blobstorageName
-  }
-}
+// module blogstoragemod './main-12-blobstorage.bicep' = {
+//   name: blobstorageName
+//   params: {
+//     location: location
+//      storageAccountName: blobstorageName
+//   }
+// }
 
 module configstoremod './main-5-configstore.bicep' = {
   name: configStoreName
