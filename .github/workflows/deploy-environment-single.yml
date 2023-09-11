@@ -618,27 +618,27 @@ jobs:
             ]
 
       # Testing the Web App API. Do not use end slash for webHost value. "/"
-      - name: 'Load Testing, APIM'
-        uses: azure/load-testing@v1
-        continue-on-error: true
-        with:
-          loadtestConfigFile: './MercuryHealth.LoadTests/APIM_Testing.yaml'
-          loadtestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
-          resourceGroup: ${{ env.Azure_Resource_GroupName }}
-          env: |
-            [
-               {
-                 "name": "webapp",
-                 "value": "${{needs.deploy_infrastructure.outputs.output_apiServiceName}}.azure-api.net"
-               }
-            ]
-          secrets: |
-            [
-              {
-                "name": "appToken",
-                "value": "${{ steps.GetAPIMKey.outputs.apimKey }}"
-              }
-            ]
+      # - name: 'Load Testing, APIM'
+      #   uses: azure/load-testing@v1
+      #   continue-on-error: true
+      #   with:
+      #     loadtestConfigFile: './MercuryHealth.LoadTests/APIM_Testing.yaml'
+      #     loadtestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
+      #     resourceGroup: ${{ env.Azure_Resource_GroupName }}
+      #     env: |
+      #       [
+      #          {
+      #            "name": "webapp",
+      #            "value": "${{needs.deploy_infrastructure.outputs.output_apiServiceName}}.azure-api.net"
+      #          }
+      #       ]
+      #     secrets: |
+      #       [
+      #         {
+      #           "name": "appToken",
+      #           "value": "${{ steps.GetAPIMKey.outputs.apimKey }}"
+      #         }
+      #       ]
 
       # - name: 'Upload Load Test Results'
       #   uses: actions/upload-artifact@v2
