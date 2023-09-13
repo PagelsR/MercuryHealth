@@ -2,7 +2,7 @@ version: v0.1
 testName: API_Testing
 testPlan: API_Testing.jmx
 description: Testing website pages through API
-engineInstances: 2
+engineInstances: 1
 configurationFiles:
   - 'SampleData.csv'
 failureCriteria:
