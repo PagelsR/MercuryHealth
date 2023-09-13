@@ -54,14 +54,13 @@ resource configStore 'Microsoft.AppConfiguration/configurationStores@2022-05-01'
     enablePurgeProtection: false
     softDeleteRetentionInDays: 7
     publicNetworkAccess: 'Enabled'
-    createMode: 'Default'
   }
   sku: {
     name: 'Standard'
   }
-  // identity: {
-  //   type:'SystemAssigned'
-  // }
+  identity: {
+    type: 'None'
+  }
 }
 
 // Feature Flag 1
