@@ -59,9 +59,9 @@ resource configStore 'Microsoft.AppConfiguration/configurationStores@2022-05-01'
   sku: {
     name: 'Standard'
   }
-  identity: {
-    type:'SystemAssigned'
-  }
+  // identity: {
+  //   type:'SystemAssigned'
+  // }
 }
 
 // Feature Flag 1
