@@ -46,13 +46,15 @@ var FeatureFlagValue4 = {
 
 // Create AppConfiguration configuration Store
 // enableSoftDelete: false
-resource config 'Microsoft.AppConfiguration/configurationStores@2023-03-01' = {
+resource configStore 'Microsoft.AppConfiguration/configurationStores@2023-03-01' = {
   name: configStoreName
   location: location
   tags: defaultTags
   properties: {
     enablePurgeProtection: false
     softDeleteRetentionInDays: 7
+    publicNetworkAccess: 'Enabled'
+    createMode: 'Default'
   }
   sku: {
     name: 'Standard'
@@ -61,6 +63,79 @@ resource config 'Microsoft.AppConfiguration/configurationStores@2023-03-01' = {
     type:'SystemAssigned'
   }
 }
+
+// Feature Flag 1
+resource configStoreName_featureflags_1 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
+  parent: configStore
+  name: '.appconfig.featureflag~2F${FeatureFlagKey1}$${FeatureFlagLabel1}'
+  properties: {
+    value: string(FeatureFlagValue1)
+    contentType: contentType
+  }
+}
+
+// Feature Flag 2
+resource configStoreName_featureflags_2 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
+  parent: configStore
+  name: '.appconfig.featureflag~2F${FeatureFlagKey2}$${FeatureFlagLabel2}'
+  properties: {
+    value: string(FeatureFlagValue2)
+    contentType: contentType
+  }
+}
+
+// Feature Flag 3
+resource configStoreName_featureflags_3 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
+  parent: configStore
+  name: '.appconfig.featureflag~2F${FeatureFlagKey3}$${FeatureFlagLabel3}'
+  properties: {
+    value: string(FeatureFlagValue3)
+    contentType: contentType
+  }
+}
+
+// Feature Flag 4
+resource configStoreName_featureflags_4 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
+  parent: configStore
+  name: '.appconfig.featureflag~2F${FeatureFlagKey4}$${FeatureFlagLabel4}'
+  properties: {
+    value: string(FeatureFlagValue4)
+    contentType: contentType
+  }
+}
+
+// Add App Configuration Settings
+resource appConfigStoreName_FontNameKey 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
+  parent: configStore
+  name: FontNameKey
+  properties: {
+    value: FontNameValue
+    contentType: 'application/json'
+  }
+}
+resource appConfigStoreName_FontColorKey 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
+  parent: configStore
+  name: FontColorKey
+  properties: {
+    value: FontColorValue
+    contentType: 'application/json'
+  }
+}
+resource appConfigStoreName_FontSizeKey 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
+  parent: configStore
+  name: FontSizeKey
+  properties: {
+    value: FontSizeValue
+    contentType: 'application/json'
+  }
+}
+
+//var configStoreConnectionString = listKeys(configStore.id, configStore.apiVersion).value[0].connectionString
+var configStoreConnectionString = configStore.listKeys().value[0].connectionString
+output out_configStoreConnectionString string = configStoreConnectionString
+output out_configStoreEndPoint string = configStore.properties.endpoint
+
+
 
 // resource configStoreName_Values1 'Microsoft.AppConfiguration/configurationStores/keyValues@2022-05-01' = {
 //   name: ConfigName1
@@ -99,72 +174,3 @@ resource config 'Microsoft.AppConfiguration/configurationStores@2023-03-01' = {
 //   }
 // }
 
-// Feature Flag 1
-resource configStoreName_featureflags_1 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
-  parent: config
-  name: '.appconfig.featureflag~2F${FeatureFlagKey1}$${FeatureFlagLabel1}'
-  properties: {
-    value: string(FeatureFlagValue1)
-    contentType: contentType
-  }
-}
-
-// Feature Flag 2
-resource configStoreName_featureflags_2 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
-  parent: config
-  name: '.appconfig.featureflag~2F${FeatureFlagKey2}$${FeatureFlagLabel2}'
-  properties: {
-    value: string(FeatureFlagValue2)
-    contentType: contentType
-  }
-}
-
-// Feature Flag 3
-resource configStoreName_featureflags_3 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
-  parent: config
-  name: '.appconfig.featureflag~2F${FeatureFlagKey3}$${FeatureFlagLabel3}'
-  properties: {
-    value: string(FeatureFlagValue3)
-    contentType: contentType
-  }
-}
-
-// Feature Flag 4
-resource configStoreName_featureflags_4 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
-  parent: config
-  name: '.appconfig.featureflag~2F${FeatureFlagKey4}$${FeatureFlagLabel4}'
-  properties: {
-    value: string(FeatureFlagValue4)
-    contentType: contentType
-  }
-}
-
-// Add App Configuration Settings
-resource appConfigStoreName_FontNameKey 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
-  parent: config
-  name: FontNameKey
-  properties: {
-    value: FontNameValue
-    contentType: 'application/json'
-  }
-}
-resource appConfigStoreName_FontColorKey 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
-  parent: config
-  name: FontColorKey
-  properties: {
-    value: FontColorValue
-    contentType: 'application/json'
-  }
-}
-resource appConfigStoreName_FontSizeKey 'Microsoft.AppConfiguration/configurationStores/keyValues@2023-03-01' = {
-  parent: config
-  name: FontSizeKey
-  properties: {
-    value: FontSizeValue
-    contentType: 'application/json'
-  }
-}
-
-var configStoreConnectionString = listKeys(config.id, config.apiVersion).value[0].connectionString
-output out_configStoreConnectionString string = configStoreConnectionString
-output out_configStoreEndPoint string = config.properties.endpoint
