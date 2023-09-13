@@ -144,7 +144,7 @@ jobs:
       continue-on-error: true
       with:
         inlineScript: |
-          az rest --method delete --header "Accept=application/json" --url 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/rg-MercuryHealth-dev/providers/Microsoft.AppConfiguration/configurationStores/appcs-okhgzqoexg6jy?api-version=2023-03-01'
+          az rest --method delete --header "Accept=application/json" --url 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/rg-MercuryHealth-dev/providers/Microsoft.AppConfiguration/configurationStores/appcs-okhgzqoexg6jy-v2?api-version=2023-03-01'
 
           
         # az rest --method get --header "Accept=application/json" --url 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/locations/${{ env.Azure_Resource_GroupLocation }}/deletedConfigurationStores?api-version=2023-03-01'
