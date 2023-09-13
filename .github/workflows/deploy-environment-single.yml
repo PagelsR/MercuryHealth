@@ -118,16 +118,20 @@ jobs:
         inlineScript: |
           az rest --method get --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/deletedservices?api-version=2022-09-01-preview'
           az rest --method delete --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/locations/${{ env.Azure_Resource_GroupLocation }}/deletedservices/${{ env.APIM_SoftDeleted }}?api-version=2022-09-01-preview'
-
+         
     - name: Purge soft-deleted instance of App Config
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
       continue-on-error: true
       with:
         inlineScript: |
-          az rest --method get --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/deletedConfigurationStores?api-version=2023-03-01'
-          az rest --method delete --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/locations/${{env.Azure_Resource_GroupLocation}}/deletedConfigurationStores/${{env.APPCS_SoftDeleted}}/purge?api-version=2023-03-01'
+          az rest --method get --header "Accept=application/json" --url 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/locations/${{ env.Azure_Resource_GroupLocation }}/deletedConfigurationStores?api-version=2023-03-01'
+          az rest --method delete --header "Accept=application/json" --url 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/${{ env.Azure_Resource_GroupLocation }}/providers/Microsoft.AppConfiguration/configurationStores/${{env.APPCS_SoftDeleted}}?api-version=2023-03-01'
 
+    # az rest --method get --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/deletedConfigurationStores?api-version=2023-03-01'
+    # az rest --method delete --header "Accept=application/json" -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/locations/${{env.Azure_Resource_GroupLocation}}/deletedConfigurationStores/${{env.APPCS_SoftDeleted}}/purge?api-version=2023-03-01'
+
+    
     ###########################################
     # Deploy ARM Template using Bicep DSL
     ###########################################
