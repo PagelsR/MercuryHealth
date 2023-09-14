@@ -143,7 +143,9 @@ jobs:
       continue-on-error: true
       with:
         inlineScript: |
-          az rest --method get --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/deletedConfigurationStores?api-version=2022-05-01'
+          az appconfig list-deleted
+          
+#az rest --method get --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/deletedConfigurationStores?api-version=2022-05-01'
 
     - name: Purge soft-deleted instance of App Config
       #if: contains(github.event_name, 'push')
@@ -151,8 +153,10 @@ jobs:
       continue-on-error: true
       with:
         inlineScript: |
-          az rest --method post --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/locations/eastus2/deletedConfigurationStores/appcs-okhgzqoexg6jy/purge?api-version=2022-05-01'
-          sleep 10                                                  
+          az appconfig purge --name ${{ env.APPCS_SoftDeleted }} --location ${{ inputs.resource-group-location }} --yes
+
+#az rest --method post --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/locations/eastus2/deletedConfigurationStores/appcs-okhgzqoexg6jy/purge?api-version=2022-05-01'
+#sleep 10                                                
 
     ###########################################
     # Deploy ARM Template using Bicep DSL
