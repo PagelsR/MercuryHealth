@@ -124,8 +124,12 @@ jobs:
       continue-on-error: true
       with:
         inlineScript: |
-          az rest --method delete --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/rg-MercuryHealth-dev/providers/Microsoft.ApiManagement/service/apim-okhgzqoexg6jy?api-version=2022-09-01-preview'
+          az rest --method delete --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/locations/eastus/deletedservices/apim-okhgzqoexg6jy?api-version=2022-09-01-preview'
+          az rest --method delete --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/locations/eastus2/deletedservices/apim-okhgzqoexg6jy?api-version=2022-09-01-preview'
           sleep 10
+
+# az rest --method delete --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/rg-MercuryHealth-dev/providers/Microsoft.ApiManagement/service/apim-okhgzqoexg6jy?api-version=2022-09-01-preview'
+# sleep 10
 
     - name: List soft-deleted instance of App Config
       #if: contains(github.event_name, 'push')
