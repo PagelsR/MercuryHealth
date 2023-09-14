@@ -30,7 +30,20 @@ param cloudFlareZoneID string
 
 
 // Add DNS Registration for Web App
-module dnsRegistration './99-DNSCertificateBindings.bicep' = {
+// module dnsRegistration './99-DNSCertificateBindings.bicep' = {
+//   name: 'dnsRegistration'
+//   params: {
+//     webAppName: webSiteName
+//     location: location
+//     cloudFlareAPIToken: cloudFlareAPIToken
+//     cloudFlareZoneId: cloudFlareZoneID
+//     cloudFlareRecordName: 'mercuryhealth.org'
+//     keyvaultName: keyvaultName
+
+//     }
+// }
+
+module dnsRegistration './99-DNSCertificateBindingsV2.bicep' = {
   name: 'dnsRegistration'
   params: {
     webAppName: webSiteName
@@ -38,8 +51,6 @@ module dnsRegistration './99-DNSCertificateBindings.bicep' = {
     cloudFlareAPIToken: cloudFlareAPIToken
     cloudFlareZoneId: cloudFlareZoneID
     cloudFlareRecordName: 'mercuryhealth.org'
-    keyvaultName: keyvaultName
-
     }
 }
 
