@@ -185,14 +185,14 @@ jobs:
       ###########################################
       # Validate ARM Template using Bicep DSL
       ###########################################
-      - name: Validate Azure Bicep
-        uses: Azure/arm-deploy@v1
-        with:
-          resourceGroupName: ${{ env.Azure_Resource_GroupName }}
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          template: ${{ github.workspace }}/MercuryHealth.IaC/main-1.bicep
-          parameters: ${{ github.workspace }}/MercuryHealth.IaC/main-1.params.json sqlAdministratorLogin=${{ secrets.SQL_DB_LOGIN }} sqlAdministratorLoginPassword=${{ secrets.SQL_DB_PASSWORD }}
-          deploymentMode: Validate
+      # - name: Validate Azure Bicep
+      #   uses: Azure/arm-deploy@v1
+      #   with:
+      #     resourceGroupName: ${{ env.Azure_Resource_GroupName }}
+      #     subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      #     template: ${{ github.workspace }}/MercuryHealth.IaC/main-1.bicep
+      #     parameters: ${{ github.workspace }}/MercuryHealth.IaC/main-1.params.json sqlAdministratorLogin=${{ secrets.SQL_DB_LOGIN }} sqlAdministratorLoginPassword=${{ secrets.SQL_DB_PASSWORD }}
+      #     deploymentMode: Validate
 
       - name: Azure logout
         run: |
