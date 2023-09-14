@@ -4,12 +4,6 @@
     "parameters": {
         "Deployed_Environment": {
             "value": ""
-        },
-        "cloudFlareAPIToken": {
-            "value": ""
-        },
-        "cloudFlareZoneID": {
-            "value": ""
         }
     }
 }
