@@ -90,7 +90,7 @@ resource sslBinding 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
 
 
 resource cloudflareDnsRecord 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
-  name: 'Cloudflare DNS Setup'
+  name: 'CloudflareDNSSetup'
   location: location
   kind: 'AzurePowerShell'
   properties: {

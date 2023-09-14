@@ -152,8 +152,8 @@ jobs:
     uses: ./.github/workflows/deploy-environment-single.yml
     with:
       resource-group-base-name: 'rg-MercuryHealth'
-      environment-suffix: 'dev'
-      resource-group-location: 'eastus2'
+      environment-suffix: 'dev-east'
+      resource-group-location: 'eastus'
       approval-required: true
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}

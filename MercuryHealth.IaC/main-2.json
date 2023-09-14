@@ -1,0 +1,177 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.21.1.54444",
+      "templateHash": "4556577513037351465"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
+    },
+    "webSiteName": {
+      "type": "string"
+    },
+    "keyvaultName": {
+      "type": "string"
+    },
+    "cloudFlareAPIToken": {
+      "type": "securestring"
+    },
+    "cloudFlareZoneID": {
+      "type": "securestring"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2022-09-01",
+      "name": "dnsRegistration",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "webAppName": {
+            "value": "[parameters('webSiteName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "cloudFlareAPIToken": {
+            "value": "[parameters('cloudFlareAPIToken')]"
+          },
+          "cloudFlareZoneId": {
+            "value": "[parameters('cloudFlareZoneID')]"
+          },
+          "cloudFlareRecordName": {
+            "value": "mercuryhealth.org"
+          },
+          "keyvaultName": {
+            "value": "[parameters('keyvaultName')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.21.1.54444",
+              "templateHash": "7411698115475326282"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string"
+            },
+            "cloudFlareRecordName": {
+              "type": "string"
+            },
+            "keyvaultName": {
+              "type": "string"
+            },
+            "webAppName": {
+              "type": "string"
+            },
+            "cloudFlareAPIToken": {
+              "type": "securestring"
+            },
+            "cloudFlareZoneId": {
+              "type": "securestring"
+            }
+          },
+          "variables": {
+            "record": "www",
+            "domain": "[parameters('cloudFlareRecordName')]",
+            "certificateName": "[format('{0}-cert', parameters('webAppName'))]",
+            "sslBindingName": "[format('{0}/{1}', parameters('webAppName'), parameters('cloudFlareRecordName'))]"
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Web/certificates",
+              "apiVersion": "2022-09-01",
+              "name": "[variables('certificateName')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "keyVaultId": "/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/rg-mercuryhealth-keyvault/providers/Microsoft.KeyVault/vaults/kv-mercuryhealth-52a8e",
+                "keyVaultSecretName": "SSLCertificate",
+                "serverFarmId": "[reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2022-09-01').serverFarmId]"
+              }
+            },
+            {
+              "type": "Microsoft.Web/sites/hostNameBindings",
+              "apiVersion": "2022-09-01",
+              "name": "[variables('sslBindingName')]",
+              "properties": {
+                "siteName": "[parameters('webAppName')]",
+                "sslState": "SniEnabled",
+                "thumbprint": "[reference(resourceId('Microsoft.Web/certificates', variables('certificateName')), '2022-09-01').thumbprint]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/certificates', variables('certificateName'))]",
+                "[resourceId('Microsoft.Resources/deploymentScripts', 'Cloudflare DNS Setup')]"
+              ]
+            },
+            {
+              "type": "Microsoft.Resources/deploymentScripts",
+              "apiVersion": "2020-10-01",
+              "name": "Cloudflare DNS Setup",
+              "location": "[parameters('location')]",
+              "kind": "AzurePowerShell",
+              "properties": {
+                "forceUpdateTag": "1",
+                "azPowerShellVersion": "8.3",
+                "arguments": "[format('-hostname \"{0}\" -domain \"{1}\" -destination \"{2}\"', variables('record'), variables('domain'), reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2022-09-01').defaultHostName)]",
+                "environmentVariables": [
+                  {
+                    "name": "CLOUDFLARE_API_TOKEN",
+                    "secureValue": "[parameters('cloudFlareAPIToken')]"
+                  },
+                  {
+                    "name": "CLOUDFLARE_ZONE_ID",
+                    "secureValue": "[parameters('cloudFlareZoneId')]"
+                  }
+                ],
+                "scriptContent": "      param([string] $hostname, [string] $domain, [string] $destination)\r\n\r\n      $zoneid = $Env:CLOUDFLARE_ZONE_ID\r\n      $url = \"https://api.cloudflare.com/client/v4/zones/$zoneid/dns_records\"\r\n      \r\n      $addresses = (\r\n          (\"awverify.$hostname.$domain\", \"awverify.$destination\"),\r\n          (\"$hostname.$domain\", \"$destination\")\r\n      )\r\n      \r\n      foreach($address in $addresses)\r\n      {\r\n          $name = $address[0]\r\n          $content = $address[1]\r\n          $token = $Env:CLOUDFLARE_API_TOKEN\r\n      \r\n          $existingRecord = Invoke-RestMethod -Method get -Uri \"$url/?name=$name\" -Headers @{\r\n              \"Authorization\" = \"Bearer $token\"\r\n          }\r\n      \r\n          if($existingRecord.result.Count -eq 0)\r\n          {\r\n              $Body = @{\r\n                  \"type\" = \"CNAME\"\r\n                  \"name\" = $name\r\n                  \"content\" = $content\r\n                  \"ttl\" = \"120\"\r\n              }\r\n              \r\n              $Body = $Body | ConvertTo-Json -Depth 10\r\n              $result = Invoke-RestMethod -Method Post -Uri $url -Headers @{ \"Authorization\" = \"Bearer $token\" } -Body $Body -ContentType \"application/json\"\r\n              \r\n              Write-Output $result.result\r\n          }\r\n          else \r\n          {\r\n              Write-Output \"Record already exists\"\r\n          }\r\n      }    \r\n    ",
+                "supportingScriptUris": [],
+                "timeout": "PT30M",
+                "cleanupPreference": "OnSuccess",
+                "retentionInterval": "P1D"
+              }
+            },
+            {
+              "type": "Microsoft.Web/sites/hostNameBindings",
+              "apiVersion": "2022-09-01",
+              "name": "[format('{0}/{1}', parameters('webAppName'), format('{0}.{1}', variables('record'), parameters('cloudFlareRecordName')))]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Resources/deploymentScripts', 'Cloudflare DNS Setup')]"
+              ]
+            }
+          ],
+          "outputs": {
+            "certificateThumbprint": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/certificates', variables('certificateName')), '2022-09-01').thumbprint]"
+            },
+            "endpointUri": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2022-09-01').defaultHostName]"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "out_endpointUri": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', 'dnsRegistration'), '2022-09-01').outputs.endpointUri.value]"
+    }
+  }
+}
