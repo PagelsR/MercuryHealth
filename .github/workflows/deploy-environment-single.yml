@@ -132,7 +132,7 @@ jobs:
       continue-on-error: true
       with:
         inlineScript: |
-          az rest --method get --header 'Accept=application/json' --url 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/locations/eastus/deletedConfigurationStores?api-version=2022-05-01'
+          az rest --method get --header 'Accept=application/json' --url 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/locations/eastus2/deletedConfigurationStores?api-version=2022-05-01'
 
     - name: Purge soft-deleted instance of App Config
       #if: contains(github.event_name, 'push')
