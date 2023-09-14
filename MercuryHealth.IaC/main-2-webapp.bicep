@@ -1,7 +1,7 @@
 param skuName string = 'S1'
 //param skuCapacity int = 1
 param location string = resourceGroup().location
-param Deployed_Environment string
+// param Deployed_Environment string
 param sqlserverName string
 param sqlserverfullyQualifiedDomainName string
 param sqlDBName string
@@ -17,8 +17,8 @@ param webSiteName string
 param webAppDevSlotName string
 param resourceGroupName string
 param appInsightsName string
-param appInsightsInstrumentationKey string
-param appInsightsConnectionString string
+// param appInsightsInstrumentationKey string
+// param appInsightsConnectionString string
 param defaultTags object
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {

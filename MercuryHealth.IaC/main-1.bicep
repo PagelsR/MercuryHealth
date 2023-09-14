@@ -8,11 +8,11 @@ param costCenter string = '74f644d3e665'
 param releaseAnnotationGuid string = newGuid()
 param Deployed_Environment string
 
-@secure()
-param cloudFlareAPIToken string
+// @secure()
+// param cloudFlareAPIToken string
 
-@secure()
-param cloudFlareZoneID string
+// @secure()
+// param cloudFlareZoneID string
 
 // Generate Azure SQL Credentials
 var sqlAdminLoginName = 'AzureAdmin'
@@ -85,11 +85,11 @@ module webappmod './main-2-webapp.bicep' = {
     webSiteName: webSiteName
     webAppDevSlotName: webAppDevSlotName
     resourceGroupName: resourceGroup().name
-    Deployed_Environment: Deployed_Environment
+    //Deployed_Environment: Deployed_Environment
     appInsightsName: appInsightsName
     location: location
-    appInsightsInstrumentationKey: appinsightsmod.outputs.out_appInsightsInstrumentationKey
-    appInsightsConnectionString: appinsightsmod.outputs.out_appInsightsConnectionString
+    //appInsightsInstrumentationKey: appinsightsmod.outputs.out_appInsightsInstrumentationKey
+    //appInsightsConnectionString: appinsightsmod.outputs.out_appInsightsConnectionString
     defaultTags: defaultTags
     sqlAdminLoginName: sqlAdminLoginName
     sqlAdminLoginPassword: sqlAdminLoginPassword
