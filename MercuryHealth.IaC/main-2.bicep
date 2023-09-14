@@ -43,7 +43,7 @@ param cloudFlareZoneID string
 //     }
 // }
 
-module dnsRegistration './99-DNSCertificateBindingsV2.bicep' = {
+module dnsRegistration './main-99-DNSCertificateBindings.bicep' = {
   name: 'dnsRegistration'
   params: {
     webAppName: webSiteName

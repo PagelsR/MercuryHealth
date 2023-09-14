@@ -20,7 +20,7 @@ resource existing_appService 'Microsoft.Web/sites@2022-09-01' existing = {
 }
 
 resource cloudflare 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
-  name: 'cloudflare'
+  name: 'cloudflare-dnssetup'
   location: location
   kind: 'AzurePowerShell'
   properties: {
