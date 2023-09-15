@@ -60,7 +60,13 @@ jobs:
           azPSVersion: '3.4.0'
           # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
           errorActionPreference: continue
-          
+
+        # - name: .NET Build
+        #   run: dotnet build MercuryHealth.Web/MercuryHealth.Web.csproj --configuration Release --no-restore
+  
+        # - name: .NET Publish
+        #   run: dotnet publish MercuryHealth.Web/MercuryHealth.Web.csproj --configuration Release --no-build --no-restore --output ./publish
+
       # Run dotnet build and publish
       - name: dotnet build unit test and publish
         run: |
