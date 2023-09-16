@@ -134,7 +134,7 @@ jobs:
         with:
           name: MercuryHealth.UITests
           path: ${{ github.workspace }}/MercuryHealth.UITests/TransformRunSettings.ps1
-          
+ 
       - name: Upload Infrastucture Files
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v2
