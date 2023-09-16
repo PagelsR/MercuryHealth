@@ -97,6 +97,9 @@ resource emailActionGroup 'Microsoft.Insights/actionGroups@2023-01-01' = {
 //   }
 // }
 
+output out_resourceId  string = applicationInsights.id
+
+
 output out_applicationInsightsID string = applicationInsights.id
 output out_appInsightsInstrumentationKey string = applicationInsights.properties.InstrumentationKey
 output out_appInsightsConnectionString string = applicationInsights.properties.ConnectionString
