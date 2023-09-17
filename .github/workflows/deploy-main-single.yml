@@ -100,6 +100,13 @@ jobs:
           name: MercuryHealth.Website
           path: ${{ github.workspace }}/web
 
+      - name: Upload Build Artifacts-CreateReleaseAnnotation PS file
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: MercuryHealth.Website
+          path: ${{ github.workspace }}/MercuryHealth.Website/CreateReleaseAnnotation.ps1
+  
       - name: Upload Build Artifacts-FunctionApp
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v2
