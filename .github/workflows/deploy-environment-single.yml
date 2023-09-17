@@ -256,14 +256,34 @@ jobs:
       with:
         name: MercuryHealth.Database
         path: ${{ github.workspace }}/MercuryHealth.Database
-    
+
+    - name: 'Get Key Vault Value'
+      id: GetDBConnectionString
+      uses: Azure/CLI@v1
+      continue-on-error: true
+      with:
+        inlineScript: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          result=$(az keyvault secret show \
+                      --name "ConnectionStringsMercuryHealthWebContext" \
+                      --vault-name "${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}" \
+                      --query "value" --output tsv)
+          echo "::set-output name=databaseConnection::$result"
+
+# echo "::add-mask::databaseConnection" 
+# echo "::set-output name=databaseConnection::$result"
+
+    - name: DEBUG ONLY Display Key Vault Secret
+      run: |
+          echo 'apimKey: ${{ steps.GetDBConnectionString.outputs.databaseConnection }}'
+
         # Deploy Database *.dacpac file
     - name: 'Deploy the database to Azure'
       continue-on-error: true
       uses: Azure/sql-action@v1.2
       with:
         server-name: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}
-        connection-string: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}
+        connection-string: ${{ steps.GetDBConnectionString.outputs.databaseConnection }}
         dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
 
      # Used for Demos only.
