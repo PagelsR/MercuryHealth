@@ -257,6 +257,22 @@ jobs:
         name: MercuryHealth.Database
         path: ${{ github.workspace }}/MercuryHealth.Database
 
+    # - name: 'Get Key Vault Value'
+    #   id: GetDBConnectionString
+    #   uses: Azure/CLI@v1
+    #   continue-on-error: true
+    #   with:
+    #     inlineScript: |
+    #       az config set extension.use_dynamic_install=yes_without_prompt
+    #       result_key=$(az keyvault secret show \
+    #                   --name "ConnectionStringsMercuryHealthWebContext" \
+    #                   --vault-name "${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}" \
+    #                   --query "value" --output tsv)
+    #       echo "::add-mask::databaseConnection" 
+    #       echo "::set-output name=databaseConnection::$result_key"
+
+    # ${{ steps.GetDBConnectionString.outputs.databaseConnection }}
+
     - name: 'Get Key Vault Value'
       id: GetDBConnectionString
       uses: Azure/CLI@v1
@@ -264,12 +280,15 @@ jobs:
       with:
         inlineScript: |
           az config set extension.use_dynamic_install=yes_without_prompt
-          result=$(az keyvault secret show \
+          result_key=$(az keyvault secret show \
                       --name "ConnectionStringsMercuryHealthWebContext" \
                       --vault-name "${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}" \
                       --query "value" --output tsv)
-          echo "::add-mask::databaseConnection" 
-          echo "::set-output name=databaseConnection::$result"
+          echo "::add-mask::$result_key"
+          echo "databaseConnection=$result_key" >> $GITHUB_ENV
+
+        #echo "cosmosDBKey=$primary_key" >> $GITHUB_ENV
+        #${{ env.databaseConnection }} 
 
         # Deploy Database *.dacpac file
     - name: 'Deploy the database to Azure'
@@ -277,13 +296,13 @@ jobs:
       uses: Azure/sql-action@v1.2
       with:
         server-name: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}
-        connection-string: ${{ steps.GetDBConnectionString.outputs.databaseConnection }}
+        connection-string: ${{ env.databaseConnection }}
         dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
 
      # Used for Demos only.
     - name: DEBUG ONLY Display Output Variables
       run: |
-         echo 'output_secretConnectionString: ${{ steps.GetDBConnectionString.outputs.databaseConnection }}'
+         echo 'output_secretConnectionString: ${{ env.databaseConnection }}'
          echo 'output_sqlserverFQName: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}'
 
     - name: Ensure Resource Group is Locked
