@@ -75,12 +75,15 @@ jobs:
           dotnet publish MercuryHealth.Web/MercuryHealth.Web.csproj --configuration ${{ env.buildConfiguration }} -o './web' /p:FileVersion="${{ steps.setBuildNumber.outputs.BuildNumber }}" /p:Version="${{ steps.setBuildNumber.outputs.BuildNumber }}" /p:AssemblyVersion="${{ steps.setBuildNumber.outputs.BuildNumber }}"
           #dotnet build MercuryHealth.API/MercuryHealth.API.csproj --configuration ${{ env.buildConfiguration }} --no-restore
           #dotnet publish MercuryHealth.API/MercuryHealth.API.csproj --configuration ${{ env.buildConfiguration }} -o './api' /p:FileVersion="${{ steps.setBuildNumber.outputs.BuildNumber }}" /p:Version="${{ steps.setBuildNumber.outputs.BuildNumber }}" /p:AssemblyVersion="${{ steps.setBuildNumber.outputs.BuildNumber }}"
-          dotnet build MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }} --no-restore
-          dotnet publish MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }} -o './uitests'
           dotnet build MercuryHealth.FunctionApp/MercuryHealth.FunctionApp.csproj --configuration ${{ env.buildConfiguration }} --no-restore
           dotnet publish MercuryHealth.FunctionApp/MercuryHealth.FunctionApp.csproj --configuration ${{ env.buildConfiguration }} -o './functionapp'
+
+        # dotnet build MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }} --no-restore
+        # dotnet publish MercuryHealth.UITests/MercuryHealth.UITests.csproj --configuration ${{ env.buildConfiguration }} -o './uitests'
+
       - name: dotnet retore database
         run: dotnet restore MercuryHealth.Database/MercuryHealth.Database.csproj
+
       - name: dotnet build database
         run: dotnet build MercuryHealth.Database/MercuryHealth.Database.csproj --configuration ${{ env.buildConfiguration }} --no-restore --output './database'
 
@@ -121,26 +124,26 @@ jobs:
           name: MercuryHealth.Database
           path: ${{ github.workspace }}/database
 
-      - name: Upload Build Artifacts-UI Tests
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: MercuryHealth.UITests
-          path: ${{ github.workspace }}/uitests
+      # - name: Upload Build Artifacts-UI Tests
+      #   if: ${{ github.event_name != 'pull_request' }}
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: MercuryHealth.UITests
+      #     path: ${{ github.workspace }}/uitests
 
-      - name: Upload Build Artifacts-UI Tests runsettings file
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: MercuryHealth.UITests
-          path: ${{ github.workspace }}/MercuryHealth.UITests/MercuryHealthTests.runsettings
+      # - name: Upload Build Artifacts-UI Tests runsettings file
+      #   if: ${{ github.event_name != 'pull_request' }}
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: MercuryHealth.UITests
+      #     path: ${{ github.workspace }}/MercuryHealth.UITests/MercuryHealthTests.runsettings
 
-      - name: Upload Build Artifacts-UI Tests runsettings Transform PS file
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: MercuryHealth.UITests
-          path: ${{ github.workspace }}/MercuryHealth.UITests/TransformRunSettings.ps1
+      # - name: Upload Build Artifacts-UI Tests runsettings Transform PS file
+      #   if: ${{ github.event_name != 'pull_request' }}
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: MercuryHealth.UITests
+      #     path: ${{ github.workspace }}/MercuryHealth.UITests/TransformRunSettings.ps1
  
       - name: Upload Infrastucture Files
         if: ${{ github.event_name != 'pull_request' }}
