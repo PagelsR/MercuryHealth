@@ -55,7 +55,6 @@ jobs:
       output_releaseAnnotationGuidID: ${{ steps.Infra.outputs.out_releaseAnnotationGuidID }}
       output_appInsightsApplicationId: ${{ steps.Infra.outputs.out_appInsightsApplicationId }}
       output_appInsightsAPIApplicationId: ${{ steps.Infra.outputs.out_appInsightsAPIApplicationId }}
-      output_secretConnectionString: ${{ steps.Infra.outputs.out_secretConnectionString }}
       output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}
 
     name: Deploy Infrastructure
@@ -182,8 +181,6 @@ jobs:
          echo 'output_appInsightsApplicationId: ${{ steps.Infra.outputs.out_appInsightsApplicationId }}'
          echo 'output_appInsightsAPIApplicationId: ${{ steps.Infra.outputs.out_appInsightsAPIApplicationId }}'
          echo 'output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}'
-         echo 'output_secretConnectionString: ${{ steps.Infra.outputs.out_secretConnectionString }}'
-
 
   ###################################################################
   # Deploy Database
@@ -296,7 +293,6 @@ jobs:
          echo 'output_appInsightsApplicationId: ${{ needs.deploy_infrastructure.outputs.output_appInsightsApplicationId }}'
          echo 'output_appInsightsAPIApplicationId: ${{ needs.deploy_infrastructure.outputs.output_appInsightsAPIApplicationId }}'
          echo 'output_keyvaultName: ${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}'
-         echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
          echo 'output_apiServiceName: ${{ needs.deploy_infrastructure.outputs.output_apiServiceName }}'
          echo 'output_apimSubscriptionKey: ${{ needs.deploy_infrastructure.outputs.output_apimSubscriptionKey }}'
 
@@ -451,7 +447,6 @@ jobs:
 
     - name: DEBUG ONLY Display Output Variables
       run: |
-         echo 'output_secretConnectionString: ${{ needs.deploy_infrastructure.outputs.output_secretConnectionString }}'
          echo 'output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}'
 
 ###################################################################
