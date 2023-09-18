@@ -643,16 +643,16 @@ jobs:
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            result=$(az keyvault secret show \
+            result_key=$(az keyvault secret show \
                         --name "ApimSubscriptionKey" \
                         --vault-name "${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}" \
                         --query "value" --output tsv)
-            echo "::set-output name=apimKey::$result"
-            echo "apimKey = ${$apimKey}"
+            echo "::add-mask::$result_key"
+            echo "apimKey=$result_key" >> $GITHUB_ENV
 
       - name: DEBUG ONLY Display Key Vault Secret
         run: |
-           echo 'apimKey: ${{ steps.GetAPIMKey.outputs.apimKey }}'
+           echo 'apimKey: ${{ env.apimKey }}'
 
       # Testing the Web App API. Do not use end slash for webHost value. "/"
       - name: 'Load Testing, API'
@@ -673,7 +673,7 @@ jobs:
             [
               {
                 "name": "appToken",
-                "value": "${{ steps.GetAPIMKey.outputs.apimKey }}"
+                "value": "${{ env.apimKey }}"
               }
             ]
 
