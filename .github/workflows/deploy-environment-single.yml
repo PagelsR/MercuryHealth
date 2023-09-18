@@ -208,7 +208,7 @@ jobs:
       with:
         creds: ${{ secrets.azure-credentials }}
 
-    - name: Ensure Resource Group is UnLocked
+    - name: Resource Group UnLocked
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
       continue-on-error: true
@@ -216,7 +216,7 @@ jobs:
         inlineScript: |
           az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
           
-    - name: Download Build Artifact-Database
+    - name: Download Artifacts for Database
       uses: actions/download-artifact@v2
       continue-on-error: false
       with:
@@ -224,7 +224,7 @@ jobs:
         path: ${{ github.workspace }}/MercuryHealth.Database
 
     # Get Key Vault Value
-    - name: 'Get Key Vault Value'
+    - name: Get Key Vault Value for DB Connection String
       id: GetDBConnectionString
       uses: Azure/CLI@v1
       continue-on-error: true
@@ -239,7 +239,7 @@ jobs:
           echo "databaseConnection=$result_key" >> $GITHUB_ENV
 
     # Deploy Database *.dacpac file
-    - name: 'Deploy the database to Azure'
+    - name: Deploy Database to Azure
       continue-on-error: true
       uses: Azure/sql-action@v1.2
       with:
@@ -253,7 +253,7 @@ jobs:
          echo 'output_secretConnectionString: ${{ env.databaseConnection }}'
          echo 'output_sqlserverFQName: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}'
 
-    - name: Ensure Resource Group is Locked
+    - name: Resource Group Locked
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
       continue-on-error: true
@@ -306,7 +306,7 @@ jobs:
       with:
         creds: ${{ secrets.azure-credentials }}
 
-    - name: Ensure Resource Group is UnLocked
+    - name: Resource Group UnLocked
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
       continue-on-error: true
@@ -314,28 +314,28 @@ jobs:
         inlineScript: |
           az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} && sleep 10
 
-    - name: Download Build Artifacts-Website Application
+    - name: Download Artifacts for Application
       uses: actions/download-artifact@v2
       continue-on-error: false
       with:
         name: MercuryHealth.Website
         path: ${{ github.workspace }}/MercuryHealth.Website
 
-    - name: Download Build Artifacts-Function Application
+    - name: Download Artifacts for Functions
       uses: actions/download-artifact@v2
       continue-on-error: false
       with:
         name: MercuryHealth.FunctionApp
         path: ${{ github.workspace }}/MercuryHealth.FunctionApp
 
-    - name: Deploy Website Application
+    - name: Deploy Website to Azure
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}
         package: './MercuryHealth.Website'
         #slot-name: ${{ inputs.environment-suffix }}
 
-    - name: Deploy Function Application
+    - name: Deploy Functions to Azure
       uses: Azure/functions-action@v1
       with:
         app-name: ${{ needs.deploy_infrastructure.outputs.output_functionAppName }}
@@ -345,7 +345,7 @@ jobs:
     # Release annotations can be automatically created for Application Insights ONLY if:using ADO Pipelines, NOT GitHub Actions. :(
     # You’re using one of the following Azure DevOps pipeline tasks:
     # AzureAppServiceSettings, AzureRmWebAppDeployment, AzureFunctionApp, AzureFunctionAppContainer, AzureWebAppContainer, AzureWebApp
-    - name: Download Build Artifact-Infrastructure
+    - name: Download Artifacts for Infrastructure
       uses: actions/download-artifact@v2
       continue-on-error: false
       with:
@@ -359,7 +359,7 @@ jobs:
          echo 'releaseName: ${{ github.run_id }}-${{ github.run_number }}'
 
     # github.run_id, github_run_number, github.workflow
-    - name: Create release annotations using API
+    - name: Create Release Annotations for Monitoring
       uses: Azure/powershell@v1
       continue-on-error: true
       env:
@@ -371,7 +371,7 @@ jobs:
         # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
         errorActionPreference: continue   
 
-    - name: Ensure Resource Group is Locked
+    - name: Resource Group Locked
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
       continue-on-error: true
@@ -379,7 +379,7 @@ jobs:
         inlineScript: |
           az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
 
-    - name: Perform a Health Check on App Service (check for 60 min max!)
+    - name: Health Check on Azure App Service
       continue-on-error: false
       run: |
         curl --retry 60 --retry-delay 60 'https://${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net/healthy'
@@ -396,7 +396,7 @@ jobs:
     outputs:
       output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
 
-    name: Set DNS and SSL
+    name: Configure DNS and SSL Certificate
     needs: [deploy_infrastructure, deploy_application]
     env:
       Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
@@ -413,7 +413,7 @@ jobs:
       with:
         creds: ${{ secrets.azure-credentials }}
 
-    - name: Ensure Resource Group is UnLocked
+    - name: Resource Group UnLock
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
       continue-on-error: true
@@ -421,7 +421,7 @@ jobs:
         inlineScript: |
           az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
           
-    - name: Download Build Artifact-Infrastructure
+    - name: Download Artifacts for Infrastructure
       uses: actions/download-artifact@v2
       continue-on-error: false
       with:
@@ -429,7 +429,7 @@ jobs:
         path: ${{ github.workspace }}/MercuryHealth.IaC
 
     # Deploy ARM Template using Bicep DSL
-    - name: App Service DNS & Certificates
+    - name: Setup DNS & SSL Certificates
       id: InfraDNS
       uses: azure/arm-deploy@v1
       continue-on-error: true
@@ -441,7 +441,7 @@ jobs:
         deploymentMode: Incremental
         failOnStdErr: false
 
-    - name: Ensure Resource Group is Locked
+    - name: Resource Group Locked
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
       continue-on-error: true
@@ -534,7 +534,7 @@ jobs:
     # Identify any jobs that must complete successfully before this job will run.
     runs-on: ubuntu-latest
     #if: contains(github.event_name, 'push')
-    name: 'Load Testing'   
+    name: Load Testing 
     env:
       Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
            
@@ -552,19 +552,19 @@ jobs:
            echo 'output_keyvaultName: ${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}'
            
       # Download Artifacts under $GITHUB_WORKSPACE, so your job can access it
-      - name: 'Download Build Artifacts-Load Tests'
+      - name: Download Artifacts for Load Tests
         uses: actions/download-artifact@v2
         with:
           name: MercuryHealth.LoadTests
           path: ${{ github.workspace }}/MercuryHealth.LoadTests
           
-      - name: 'Login to Azure'
+      - name: Login to Azure
         uses: azure/login@v1
         continue-on-error: false
         with:
           creds: ${{ secrets.azure-credentials }}
 
-      - name: 'Get Key Vault Value'
+      - name: Get Key Vault Value for APIM Key
         id: GetAPIMKey
         uses: Azure/CLI@v1
         continue-on-error: true
@@ -583,7 +583,7 @@ jobs:
            echo 'apimKey: ${{ env.apimKey }}'
 
       # Testing the Web App API. Do not use end slash for webHost value. "/"
-      - name: 'Load Testing, API'
+      - name: Perform Load Testing through App APIs
         uses: azure/load-testing@v1
         continue-on-error: true
         with:
@@ -605,36 +605,36 @@ jobs:
               }
             ]
 
-      # Testing the Web App API. Do not use end slash for webHost value. "/"
-      # - name: 'Load Testing, APIM'
-      #   uses: azure/load-testing@v1
-      #   continue-on-error: true
-      #   with:
-      #     loadtestConfigFile: './MercuryHealth.LoadTests/APIM_Testing.yaml'
-      #     loadtestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
-      #     resourceGroup: ${{ env.Azure_Resource_GroupName }}
-      #     env: |
-      #       [
-      #          {
-      #            "name": "webapp",
-      #            "value": "${{needs.deploy_infrastructure.outputs.output_apiServiceName}}.azure-api.net"
-      #          }
-      #       ]
-      #     secrets: |
-      #       [
-      #         {
-      #           "name": "appToken",
-      #           "value": "${{ steps.GetAPIMKey.outputs.apimKey }}"
-      #         }
-      #       ]
+      #Testing the Web App API. Do not use end slash for webHost value. "/"
+      - name: Perform Load Testing through APIM
+        uses: azure/load-testing@v1
+        continue-on-error: true
+        with:
+          loadtestConfigFile: './MercuryHealth.LoadTests/APIM_Testing.yaml'
+          loadtestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
+          resourceGroup: ${{ env.Azure_Resource_GroupName }}
+          env: |
+            [
+               {
+                 "name": "webapp",
+                 "value": "${{needs.deploy_infrastructure.outputs.output_apiServiceName}}.azure-api.net"
+               }
+            ]
+          secrets: |
+            [
+              {
+                "name": "appToken",
+                "value": "${{ steps.GetAPIMKey.outputs.apimKey }}"
+              }
+            ]
 
-      # - name: 'Upload Load Test Results'
-      #   uses: actions/upload-artifact@v2
-      #   continue-on-error: true
-      #   with:
-      #     name: MercuryHealth.LoadTestsResults
-      #     path: ${{ github.workspace }}/MercuryHealth.LoadTests
-      #     retention-days: 30
+      - name: Upload Load Test Results
+        uses: actions/upload-artifact@v2
+        continue-on-error: true
+        with:
+          name: MercuryHealth.LoadTestsResults
+          path: ${{ github.workspace }}/MercuryHealth.LoadTests
+          retention-days: 30
           
       - name: 'Azure logout'
         run: |
