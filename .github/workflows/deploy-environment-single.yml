@@ -118,8 +118,6 @@ jobs:
         inlineScript: |
           az apim deletedservice list
 
-# az rest --method get --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/deletedservices?api-version=2022-09-01-preview'
-    
     - name: Purge soft-deleted instance of APIM
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
@@ -127,15 +125,6 @@ jobs:
       with:
         inlineScript: |
           az apim deletedservice purge --service-name ${{ env.APIM_SoftDeleted }} --location ${{ inputs.resource-group-location }}
-
-# az rest --method delete --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/locations/eastus/deletedservices/apim-jdb6rlzbrxvza?api-version=2022-09-01-preview'
-# az rest --method delete --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/locations/eastus2/deletedservices/apim-c2xw5a2tks7hy?api-version=2022-09-01-preview'
-# az rest --method delete --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/locations/eastus/deletedservices/apim-okhgzqoexg6jy?api-version=2022-09-01-preview'
-# az rest --method delete --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.ApiManagement/locations/eastus2/deletedservices/apim-okhgzqoexg6jy?api-version=2022-09-01-preview'
-# sleep 10
-
-# az rest --method delete --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/rg-MercuryHealth-dev/providers/Microsoft.ApiManagement/service/apim-okhgzqoexg6jy?api-version=2022-09-01-preview'
-# sleep 10
 
     - name: List soft-deleted instance of App Config
       #if: contains(github.event_name, 'push')
@@ -145,8 +134,6 @@ jobs:
         inlineScript: |
           az appconfig list-deleted
           
-#az rest --method get --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/deletedConfigurationStores?api-version=2022-05-01'
-
     - name: Purge soft-deleted instance of App Config
       #if: contains(github.event_name, 'push')
       uses: Azure/CLI@v1
@@ -154,9 +141,6 @@ jobs:
       with:
         inlineScript: |
           az appconfig purge --name ${{ env.APPCS_SoftDeleted }} --location ${{ inputs.resource-group-location }} --yes
-
-#az rest --method post --header 'Accept=application/json' -u 'https://management.azure.com/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/providers/Microsoft.AppConfiguration/locations/eastus2/deletedConfigurationStores/appcs-okhgzqoexg6jy/purge?api-version=2022-05-01'
-#sleep 10                                                
 
     ###########################################
     # Deploy ARM Template using Bicep DSL
@@ -257,22 +241,7 @@ jobs:
         name: MercuryHealth.Database
         path: ${{ github.workspace }}/MercuryHealth.Database
 
-    # - name: 'Get Key Vault Value'
-    #   id: GetDBConnectionString
-    #   uses: Azure/CLI@v1
-    #   continue-on-error: true
-    #   with:
-    #     inlineScript: |
-    #       az config set extension.use_dynamic_install=yes_without_prompt
-    #       result_key=$(az keyvault secret show \
-    #                   --name "ConnectionStringsMercuryHealthWebContext" \
-    #                   --vault-name "${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}" \
-    #                   --query "value" --output tsv)
-    #       echo "::add-mask::databaseConnection" 
-    #       echo "::set-output name=databaseConnection::$result_key"
-
-    # ${{ steps.GetDBConnectionString.outputs.databaseConnection }}
-
+    # Get Key Vault Value
     - name: 'Get Key Vault Value'
       id: GetDBConnectionString
       uses: Azure/CLI@v1
@@ -287,10 +256,7 @@ jobs:
           echo "::add-mask::$result_key"
           echo "databaseConnection=$result_key" >> $GITHUB_ENV
 
-        #echo "cosmosDBKey=$primary_key" >> $GITHUB_ENV
-        #${{ env.databaseConnection }} 
-
-        # Deploy Database *.dacpac file
+    # Deploy Database *.dacpac file
     - name: 'Deploy the database to Azure'
       continue-on-error: true
       uses: Azure/sql-action@v1.2
@@ -299,7 +265,7 @@ jobs:
         connection-string: ${{ env.databaseConnection }}
         dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
 
-     # Used for Demos only.
+    # Used for Demos only.
     - name: DEBUG ONLY Display Output Variables
       run: |
          echo 'output_secretConnectionString: ${{ env.databaseConnection }}'
@@ -373,13 +339,6 @@ jobs:
         name: MercuryHealth.Website
         path: ${{ github.workspace }}/MercuryHealth.Website
 
-    - name: 'Deploy Website Application'
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}
-        package: './MercuryHealth.Website'
-        #slot-name: ${{ inputs.environment-suffix }}
-
     - name: Download Build Artifacts-Function Application
       uses: actions/download-artifact@v2
       continue-on-error: false
@@ -387,8 +346,14 @@ jobs:
         name: MercuryHealth.FunctionApp
         path: ${{ github.workspace }}/MercuryHealth.FunctionApp
 
-    # Deploy Function Application
-    - name: 'Deploy Function Application'
+    - name: Deploy Website Application
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ needs.deploy_infrastructure.outputs.output_webSiteName }}
+        package: './MercuryHealth.Website'
+        #slot-name: ${{ inputs.environment-suffix }}
+
+    - name: Deploy Function Application
       uses: Azure/functions-action@v1
       with:
         app-name: ${{ needs.deploy_infrastructure.outputs.output_functionAppName }}
@@ -445,6 +410,25 @@ jobs:
     # Create release annotations
     # "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MyRGName/providers/microsoft.insights/components/MyResourceName"
     #
+    - name: Download Build Artifact-Infrastructure
+      uses: actions/download-artifact@v2
+      continue-on-error: false
+      with:
+        name: MercuryHealth.IaC
+        path: ${{ github.workspace }}/MercuryHealth.IaC
+
+    - name: Create release annotations
+      uses: Azure/powershell@v1
+      continue-on-error: true
+      env:
+        POWERSHELL_TELEMETRY_OPTOUT: 1
+      with:
+        inlineScript: ./MercuryHealth.IaC/CreateReleaseAnnotation.ps1 -aiResourceId '${{ needs.deploy_infrastructure.outputs.output_appInsightsApplicationId }}' -releaseName '${{ github.run_id }}-${{ github.run_number }}'
+        # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
+        azPSVersion: latest
+        # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
+        errorActionPreference: continue   
+
     - name: Create release annotations
       uses: Azure/powershell@v1
       continue-on-error: true

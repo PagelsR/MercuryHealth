@@ -149,6 +149,13 @@ jobs:
           name: MercuryHealth.IaC
           path: ${{ github.workspace }}/MercuryHealth.IaC/*.*
 
+      - name: Upload CreateReleaseAnnotation PS file
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: MercuryHealth.IaC
+          path: ${{ github.workspace }}/MercuryHealth.Website/*.ps1
+
       - name: Upload Load Test Files
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v2
