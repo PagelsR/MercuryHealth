@@ -424,13 +424,15 @@ jobs:
          echo 'releaseName: ${{ github.run_id }}-${{ github.run_number }}'
 
         
+  # Example: "/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/${{ Azure_Resource_GroupName }}/providers/microsoft.insights/components/${{ needs.deploy_infrastructure.outputs.output_appInsightsApplicationId }}"
+
     - name: Create release annotations using API
       uses: Azure/powershell@v1
       continue-on-error: true
       env:
         POWERSHELL_TELEMETRY_OPTOUT: 1
       with:
-        inlineScript: ./MercuryHealth.IaC/CreateReleaseAnnotation.ps1 -aiResourceId "${{ needs.deploy_infrastructure.outputs.output_appInsightsApplicationId }}" -releaseName "${{ github.run_id }}-${{ github.run_number }}"
+        inlineScript: ./MercuryHealth.IaC/CreateReleaseAnnotation.ps1 -releaseName "${{ github.run_id }}-${{ github.run_number }}" -aiResourceId "/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/${{ env.Azure_Resource_GroupName }}/providers/microsoft.insights/components/${{ needs.deploy_infrastructure.outputs.output_appInsightsApplicationId }}"
         # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
         azPSVersion: latest
         # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
