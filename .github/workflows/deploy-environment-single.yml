@@ -385,20 +385,20 @@ jobs:
         az logout
 
   ###################################################################
-  # Deployment Stage - Application / Database 
+  # Deployment Stage - Function App + Functions 
   ###################################################################
   deploy_functions:
     runs-on: ubuntu-latest
-    name: Deploy Application
+    name: Deploy Functions
     needs: [deploy_infrastructure]
     env:
       Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
       Deployed_Environment: ${{ inputs.environment-suffix }}
-      url: 'https://${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net/' 
+      url: 'https://${{needs.deploy_infrastructure.outputs.output_functionAppName}}.azurewebsites.net/' 
 
     environment:
       name: Azure #${{ inputs.environment-suffix }}
-      url: 'https://${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net/' 
+      url: 'https://${{needs.deploy_infrastructure.outputs.output_functionAppName}}.azurewebsites.net/' 
       
     permissions:
       contents: read
