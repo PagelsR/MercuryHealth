@@ -59,7 +59,7 @@ resource configStore 'Microsoft.AppConfiguration/configurationStores@2023-03-01'
     name: 'Standard'
   }
   identity: {
-    type: 'None'
+    type: 'SystemAssigned'
   }
 }
 
@@ -129,8 +129,8 @@ resource appConfigStoreName_FontSizeKey 'Microsoft.AppConfiguration/configuratio
   }
 }
 
-//var configStoreConnectionString = listKeys(configStore.id, configStore.apiVersion).value[0].connectionString
-var configStoreConnectionString = configStore.listKeys().value[0].connectionString
+var configStoreConnectionString = listKeys(configStore.id, configStore.apiVersion).value[0].connectionString
+//var configStoreConnectionString = configStore.listKeys().value[0].connectionString
 output out_configStoreConnectionString string = configStoreConnectionString
 output out_configStoreEndPoint string = configStore.properties.endpoint
 
