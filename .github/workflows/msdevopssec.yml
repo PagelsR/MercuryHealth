@@ -1,12 +1,9 @@
 name: MSDO windows-latest
-
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-    
+    branches:
+      - main
+
 jobs:
   sample:
     name: Microsoft Security DevOps Analysis
@@ -18,19 +15,12 @@ jobs:
     steps:
 
       # Checkout your code repository to scan
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-      # Install dotnet, used by MSDO
-    - uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: |
-          6.0.x
       # Run analyzers
     - name: Run Microsoft Security DevOps Analysis
       uses: microsoft/security-devops-action@preview
       id: msdo
-      with:
-        categories: 'IaC'
 
       # Upload alerts to the Security tab
     - name: Upload alerts to Security tab
