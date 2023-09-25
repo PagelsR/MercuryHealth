@@ -14,22 +14,10 @@ jobs:
 
     steps:
 
-<<<<<<< HEAD
       # Checkout your code repository to scan
     - uses: actions/checkout@v3
 
       # Run analyzers
-=======
-    # Checkout your code repository to scan
-    - uses: actions/checkout@v2
-
-    # Install dotnet, used by MSDO
-    - uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: |
-          6.0.x
-    # Run analyzers
->>>>>>> b0ca5ba24d72b55747c98671c3e0eacc57c85b68
     - name: Run Microsoft Security DevOps Analysis
       uses: microsoft/security-devops-action@preview
       id: msdo
