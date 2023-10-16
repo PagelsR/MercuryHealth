@@ -523,6 +523,15 @@ jobs:
           user_name: 'github-actions[bot]' # This will be the username that gets stamped in the repo commit
           user_email: 'github-actions[bot]@users.noreply.github.com' # This will be the user email that gets stamped in the repo commit
 
+      - name: Run Playwright Service tests
+        #working-directory: path/to/playwright/folder # update accordingly
+        env:
+          # Access token and regional endpoint for Microsoft Playwright Testing
+          PLAYWRIGHT_SERVICE_ACCESS_TOKEN: ${{ secrets.PLAYWRIGHT_SERVICE_ACCESS_TOKEN }}
+          PLAYWRIGHT_SERVICE_URL: ${{ secrets.PLAYWRIGHT_SERVICE_URL }}
+          PLAYWRIGHT_SERVICE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
+        run: npx playwright test -c playwright.service.config.ts --workers=20
+
 ##################################################################
 # CD Stage - Load and Performance Testing >>> Home Page          #
 ##################################################################
