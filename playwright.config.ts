@@ -10,11 +10,11 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  /* Timeout for each all tests */
-  globalTimeout: 60 * 60 * 1000,
-  
+
   testDir: './MercuryHealth.PlaywrightTests',
-  timeout: 30 * 1000,
+
+  /* Maximum time one test can run for. */
+  timeout: 15000,
   expect: {
     timeout: 5000,
   },
