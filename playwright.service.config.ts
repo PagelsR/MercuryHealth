@@ -29,7 +29,7 @@ export default defineConfig(config, {
   // expect: {
   //   timeout: 10000,
   // },
-  workers: 20,
+  workers: 30,
 
   // Enable screenshot testing and configure directory with expectations.
   // https://learn.microsoft.com/azure/playwright-testing/how-to-configure-visual-comparisons
