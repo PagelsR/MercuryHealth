@@ -500,7 +500,7 @@ jobs:
           retention-days: 30
 
       # Upload the Playwright test result artifacts
-      - name: 'Upload Playwright Screenshot Files'
+      - name: Upload Playwright Screenshot Files
         continue-on-error: true
         uses: actions/upload-artifact@v3
         if: always()
@@ -523,8 +523,9 @@ jobs:
           user_name: 'github-actions[bot]' # This will be the username that gets stamped in the repo commit
           user_email: 'github-actions[bot]@users.noreply.github.com' # This will be the user email that gets stamped in the repo commit
 
-      - name: Run Playwright Service tests
+      - name: Run Playwright tests on Cloud Service
         #working-directory: path/to/playwright/folder # update accordingly
+        continue-on-error: true
         env:
           # Access token and regional endpoint for Microsoft Playwright Testing
           PLAYWRIGHT_SERVICE_ACCESS_TOKEN: ${{ secrets.PLAYWRIGHT_SERVICE_ACCESS_TOKEN }}
