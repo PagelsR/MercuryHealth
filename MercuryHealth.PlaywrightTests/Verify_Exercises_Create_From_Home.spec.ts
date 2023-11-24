@@ -26,7 +26,13 @@ test('Delete an exercise record from home page', async ({ page }) => {
   await page.getByRole('link', { name: 'Exercises', exact: true }).click();
   await expect(page).toHaveTitle('Exercises - Mercury Health');
 
-  await page.click('#button_delete_30');
+  // Find the last delete button and click it
+  // 1st, get all delete buttons
+  const deleteButtons = await page.$$('text=Delete');
+
+  // 2nd, click the last delete button
+  await deleteButtons[deleteButtons.length - 1].click();
+
   const detailsPageTitle = await page.title();
   expect(detailsPageTitle).toBe('Delete - Mercury Health');
 
