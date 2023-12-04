@@ -1,5 +1,6 @@
 param location string
 param cloudFlareRecordName string
+param resourceGroup string
 
 param keyvaultName string
 param webAppName string
@@ -88,7 +89,9 @@ resource sslBinding 'Microsoft.Web/sites/hostNameBindings@2022-09-01' = {
 
 
 
-
+// ///////////////////////////////////////////////
+// TEST   TEST   TEST   TEST   TEST
+// ///////////////////////////////////////////////
 resource cloudflareDnsRecord 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: 'CloudflareDNSSetup'
   location: location
@@ -149,6 +152,31 @@ resource cloudflareDnsRecord 'Microsoft.Resources/deploymentScripts@2020-10-01' 
       }    
     '''
     supportingScriptUris: []
+    timeout: 'PT30M'
+    cleanupPreference: 'OnSuccess'
+    retentionInterval: 'P1D'
+  }
+}
+
+// ///////////////////////////////////////////////
+// TEST   TEST   TEST   TEST   TEST
+// ///////////////////////////////////////////////
+resource customDomainBinding 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
+  name: 'customDomainBinding'
+  location: location
+  kind: 'AzureCLI'
+  properties: {
+    forceUpdateTag: '1'
+    azCliVersion: '2.26.1'
+    scriptContent: '''
+      # Variables
+      resourceGroup="${resourceGroup}"
+      webAppName="${webAppName}"
+      customDomain="${domain}"
+
+      # Bind the custom domain
+      az webapp config hostname add --webapp-name $webAppName --resource-group $resourceGroup --hostname $customDomain
+    '''
     timeout: 'PT30M'
     cleanupPreference: 'OnSuccess'
     retentionInterval: 'P1D'

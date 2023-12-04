@@ -2,6 +2,7 @@
 
 param location string
 param cloudFlareRecordName string
+param resourceGroup string
 
 param webAppName string
 
@@ -85,6 +86,7 @@ resource cloudflare 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   }
 }
 
+// ?????????????????????????????????????????
 resource hostName 'Microsoft.Web/sites/hostNameBindings@2022-03-01' = {
   name: '${record}.${domain}'
   parent: existing_appService
@@ -92,6 +94,28 @@ resource hostName 'Microsoft.Web/sites/hostNameBindings@2022-03-01' = {
   dependsOn: [
     cloudflare
   ]
+}
+
+resource customDomainBinding 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
+  name: 'customDomainBinding'
+  location: location
+  kind: 'AzureCLI'
+  properties: {
+    forceUpdateTag: '1'
+    azCliVersion: '2.26.1'
+    scriptContent: '''
+      # Variables
+      resourceGroup="${resourceGroup}"
+      webAppName="${webAppName}"
+      customDomain="${domain}"
+
+      # Bind the custom domain
+      az webapp config hostname add --webapp-name $webAppName --resource-group $resourceGroup --hostname $customDomain
+    '''
+    timeout: 'PT30M'
+    cleanupPreference: 'OnSuccess'
+    retentionInterval: 'P1D'
+  }
 }
 
 //output certificateThumbprint string = certificateImport.properties.thumbprint

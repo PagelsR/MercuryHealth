@@ -3,7 +3,8 @@
 // Region for all resources
 param location string = resourceGroup().location
 param webSiteName string
-param keyvaultName string
+//param keyvaultName string
+param resourceGroup string resourceGroup().name
 
 // var kvValue_CertificateName = 'ExampleCertificate'
 // var kvValue_CertificateValue = '<base64-encoded-pfx-content>'
@@ -51,6 +52,8 @@ module dnsRegistration './main-99-DNSCertificateBindings.bicep' = {
     cloudFlareAPIToken: cloudFlareAPIToken
     cloudFlareZoneId: cloudFlareZoneID
     cloudFlareRecordName: 'mercuryhealth.org'
+    resourceGroup: resourceGroup
+
     }
 }
 
