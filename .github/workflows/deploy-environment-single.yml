@@ -588,35 +588,34 @@ jobs:
         run: |
            echo 'apimKey: ${{ env.apimKey }}'
 
-      - name: Perform Load Testing
-        run: |
-          echo 'Perform Load Testing'
-          sleep 30
-
       # Commented out due to Azure Spend...keeping costs under control. :)
-      #
+      # - name: Perform Load Testing
+      # run: |
+      #   echo 'Perform Load Testing'
+      #   sleep 30
+
       # Testing the Web App API. Do not use end slash for webHost value. "/"
-      # - name: Perform Load Testing through App APIs
-      #   uses: azure/load-testing@v1
-      #   continue-on-error: true
-      #   with:
-      #     loadtestConfigFile: './MercuryHealth.LoadTests/API_Testing.yaml'
-      #     loadtestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
-      #     resourceGroup: ${{ env.Azure_Resource_GroupName }}
-      #     env: |
-      #       [
-      #          {
-      #            "name": "webapp",
-      #            "value": "${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net"
-      #          }
-      #       ]
-      #     secrets: |
-      #       [
-      #         {
-      #           "name": "appToken",
-      #           "value": "${{ env.apimKey }}"
-      #         }
-      #       ]
+      - name: Perform Load Testing through App APIs
+        uses: azure/load-testing@v1
+        continue-on-error: true
+        with:
+          loadtestConfigFile: './MercuryHealth.LoadTests/API_Testing.yaml'
+          loadtestResource: ${{needs.deploy_infrastructure.outputs.output_loadTestsName}}
+          resourceGroup: ${{ env.Azure_Resource_GroupName }}
+          env: |
+            [
+               {
+                 "name": "webapp",
+                 "value": "${{needs.deploy_infrastructure.outputs.output_webSiteName}}.azurewebsites.net"
+               }
+            ]
+          secrets: |
+            [
+              {
+                "name": "appToken",
+                "value": "${{ env.apimKey }}"
+              }
+            ]
 
       #Testing the Web App API. Do not use end slash for webHost value. "/"
       # - name: Perform Load Testing through APIM
