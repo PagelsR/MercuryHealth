@@ -1,5 +1,7 @@
 # Mercury Health
 
+### Demo Push Protection - PAT Token for GitHub
+
 ## Introduction
 The mission of Mercury Health is to help improve longevity and quality of life through healthy activity. The Mercury Health development team has embraced a DevOps approach and is using continuous integration for builds and unit tests. If everything passes they use continuous deployment that deploys to various environments.  Then UI Automation tests are run to ensure usability and key functionally works as designed.  Lastly, Load and Performance tests are run from various locations around the world at the expected peak load to ensure there are no challenges around performance or stability when operating at full capacity.
 
