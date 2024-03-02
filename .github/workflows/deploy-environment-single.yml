@@ -509,14 +509,15 @@ jobs:
       #     path: screenshot_*.png
       #     retention-days: 30
 
+      # ${{ secrets.GITHUB_TOKEN }} is a GitHub Actions token that is automatically generated and used to authenticate with GitHub
       # Publish HTML report to GitHub Pages to host static HTML report
       - name: Publish HTML report to GitHub Pages
         continue-on-error: true
         if: always() # We want this to always run, even if test fail prior to this step running
         uses: peaceiris/actions-gh-pages@v3.9.3
         with:
-          #github_token: ${{ secrets.github-accesstoken }}
-          personal_token: ${{ secrets.personal-accesstoken }}
+          github_token: ${{ secrets.github-accesstoken }}
+          #personal_token: ${{ secrets.personal-accesstoken }}
           publish_branch: gh-pages
           publish_dir: playwright-report # This is where index.html will be output
           keep_files: true # Set this to true to make sure we don't wipe out the other content in GitHub Pages
