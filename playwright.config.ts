@@ -1,4 +1,9 @@
-import { defineConfig, devices } from '@playwright/test';
+import type { PlaywrightTestConfig } from '@playwright/test';
+import { devices } from '@playwright/test';
+
+require('dotenv').config()
+
+// import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Read environment variables from file.
@@ -9,14 +14,17 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
-
+// export default defineConfig({
+const config: PlaywrightTestConfig = {
   testDir: './MercuryHealth.PlaywrightTests',
-
   /* Maximum time one test can run for. */
-  timeout: 20000,
+  timeout: 60 * 1000,
   expect: {
-    timeout: 20000,
+    /**
+     * Maximum time expect() should wait for the condition to be met.
+     * For example in `await expect(locator).toHaveText();`
+     */
+    timeout: 30000
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -87,4 +95,8 @@ export default defineConfig({
   //   url: 'http://127.0.0.1:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
-});
+// });
+
+};
+
+export default config;

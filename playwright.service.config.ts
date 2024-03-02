@@ -1,4 +1,7 @@
-// playwright.service.config.ts
+/*
+* This file enables Playwright client to connect to remote browsers.
+* It should be placed in the same directory as playwright.config.ts.
+*/
 
 import { defineConfig } from '@playwright/test';
 import config from './playwright.config';
@@ -27,9 +30,9 @@ export default defineConfig(config, {
   // Define more generous timeout for the service operation if necessary.
   // timeout: 60000,
   // expect: {
-  //   timeout: 10000,
+  //   timeout: 20000,
   // },
-  workers: 30,
+  workers: 40,
 
   // Enable screenshot testing and configure directory with expectations.
   // https://learn.microsoft.com/azure/playwright-testing/how-to-configure-visual-comparisons
@@ -44,12 +47,14 @@ export default defineConfig(config, {
         os,
         runId: process.env.PLAYWRIGHT_SERVICE_RUN_ID
       })}`,
-      timeout: 30000,
+      timeout: 20000,
       headers: {
         'x-mpt-access-key': process.env.PLAYWRIGHT_SERVICE_ACCESS_TOKEN!
       },
       // Allow service to access the localhost.
       exposeNetwork: '<loopback>'
     }
-  }
+  },
+  // Tenmp workaround for config merge bug in OSS https://github.com/microsoft/playwright/pull/28224
+  projects: config.projects? config.projects : [{}]
 });
