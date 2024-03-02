@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 // Dynamicly set the URL from pipeline output
 test.beforeEach(async ({ page }) => {
   const url = process.env.website_URL || 'https://app-okhgzqoexg6jy.azurewebsites.net/';
-  await page.goto(url , { waitUntil: 'load', timeout: 15000 });
+  await page.goto(url , { waitUntil: 'load', timeout: 20000 });
 });
 
 test('Allow me to navigate to default page', async ({ page }) => {

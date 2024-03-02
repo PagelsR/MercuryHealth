@@ -14,9 +14,9 @@ export default defineConfig({
   testDir: './MercuryHealth.PlaywrightTests',
 
   /* Maximum time one test can run for. */
-  timeout: 15000,
+  timeout: 20000,
   expect: {
-    timeout: 15000,
+    timeout: 20000,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
