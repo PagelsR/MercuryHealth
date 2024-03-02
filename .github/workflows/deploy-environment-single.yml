@@ -506,17 +506,6 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-      # Upload the Playwright test result artifacts
-      # - name: Upload Playwright Screenshot Files
-      #   continue-on-error: true
-      #   uses: actions/upload-artifact@v3
-      #   if: always()
-      #   with:
-      #     name: playwright-screenshots
-      #     path: screenshot_*.png
-      #     retention-days: 30
-
-      # ${{ secrets.GITHUB_TOKEN }} is a GitHub Actions token that is automatically generated and used to authenticate with GitHub
       # Publish HTML report to GitHub Pages to host static HTML report
       - name: Publish HTML report to GitHub Pages
         continue-on-error: true
@@ -656,15 +645,7 @@ jobs:
       #           "value": "${{ steps.GetAPIMKey.outputs.apimKey }}"
       #         }
       #       ]
-
-      # - name: Upload Load Test Results
-      #   uses: actions/upload-artifact@v2
-      #   continue-on-error: true
-      #   with:
-      #     name: MercuryHealth.LoadTestsResults
-      #     path: ${{ github.workspace }}/MercuryHealth.LoadTests
-      #     retention-days: 30
-          
+         
       - name: 'Azure logout'
         run: |
           az logout
