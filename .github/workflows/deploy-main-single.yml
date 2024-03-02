@@ -193,3 +193,6 @@ jobs:
       cloudflare-zone-id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
       personal-accesstoken: ${{ secrets.PERSONAL_ACCESSTOKEN_GHPages }}
       github-accesstoken: ${{ secrets.GITHUB_TOKEN }}
+      playwright-serviceaccesstoken: ${{ secrets.PLAYWRIGHT_SERVICE_ACCESS_TOKEN }}
+      playwright-serviceurl: ${{ secrets.PLAYWRIGHT_SERVICE_URL }}
+
