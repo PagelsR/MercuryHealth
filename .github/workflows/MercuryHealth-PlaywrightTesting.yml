@@ -64,10 +64,10 @@ jobs:
           user_email: 'github-actions[bot]@users.noreply.github.com' # This will be the user email that gets stamped in the repo commit
 
       # Upload the test result artifacts
-      - name: 'Upload Playwright Trace Files'
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-report
-          path: ${{ github.workspace }}
-          retention-days: 10          
+      #- name: 'Upload Playwright Trace Files'
+      #  uses: actions/upload-artifact@v3
+      #  if: always()
+      #  with:
+      #    name: playwright-report
+      #    path: ${{ github.workspace }}
+      #    retention-days: 10          
