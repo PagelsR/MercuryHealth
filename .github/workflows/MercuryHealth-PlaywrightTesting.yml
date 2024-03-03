@@ -1,0 +1,61 @@
+name: Run Playwright Tests
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 */12 * * *'
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.41.2-jammy
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Run Playwright tests
+      - name: Run Playwright tests
+        continue-on-error: true
+        run: npx playwright test --reporter=html
+
+        # Upload the Playwright test result artifacts
+      - name: Upload Playwright Report Files
+        continue-on-error: true
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+            name: playwright-report
+            path: playwright-report/
+            retention-days: 30
+
+      # Publish HTML report to GitHub Pages to host static HTML report
+      - name: Publish HTML report to GitHub Pages
+        continue-on-error: true
+        if: always() # We want this to always run, even if test fail prior to this step running
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          #github_token: ${{ secrets.GITHUB_TOKEN }}
+          personal_token: ${{ secrets.PERSONAL_ACCESSTOKEN_GHPages }}
+          publish_branch: gh-pages
+          publish_dir: playwright-report # This is where index.html will be output
+          keep_files: true # Set this to true to make sure we don't wipe out the other content in GitHub Pages
+          user_name: 'github-actions[bot]' # This will be the username that gets stamped in the repo commit
+          user_email: 'github-actions[bot]@users.noreply.github.com' # This will be the user email that gets stamped in the repo commit
+
+      # Upload the test result artifacts
+      - name: 'Upload Playwright Trace Files'
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: ${{ github.workspace }}
+          retention-days: 10          
