@@ -18,9 +18,10 @@ jobs:
     name: Playwright Testing
 
     env:
-        node_version: '16.x.x'
+        node_version: '18.x.x'
         buildConfiguration: 'Release'
         website_URL: 'https://app-okhgzqoexg6jy.azurewebsites.net/'
+        HOME: /root
 
     steps:
       - name: Checkout code
