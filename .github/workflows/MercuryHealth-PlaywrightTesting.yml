@@ -1,9 +1,9 @@
 name: Run Playwright Tests
 
 on:
-  push:
-    branches:
-      - main
+#   push:
+#     branches:
+#       - main
   schedule:
     - cron: '0 */12 * * *'
 
@@ -13,11 +13,22 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.41.2-jammy
+      image: mcr.microsoft.com/playwright:v1.42.1-jammy
+
+    name: Playwright Testing
+
+    env:
+        node_version: '16.x.x'
+        buildConfiguration: 'Release'
+        website_URL: 'https://app-okhgzqoexg6jy.azurewebsites.net/'
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
       - name: Install dependencies
         run: npm ci
