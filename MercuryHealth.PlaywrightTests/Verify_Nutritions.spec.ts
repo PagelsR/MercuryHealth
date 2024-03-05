@@ -12,7 +12,7 @@ test("Should be flaky for nutritions page", async ({ page }) => {
     await expect(page).toHaveTitle('Nutrition - Mercury Health');
   } else {
     await page.getByRole('link', { name: 'Nutrition', exact: true }).click();
-    await expect(page).not.toHaveTitle('Nutrition - Mercury Health');
+    await expect(page).not.toHaveTitle('(Flaky) Nutrition - Mercury Health');
   }
 });
 
