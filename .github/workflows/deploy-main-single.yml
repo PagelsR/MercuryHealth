@@ -22,7 +22,6 @@ env:
   buildConfiguration: 'Release'
   buildPlatform: 'Any CPU'
   dotnet_version: '6.x.x'
-  Azure_Resource_GroupName: 'rg-MercuryHealth'
   
 jobs:
   Build_Application:
@@ -183,7 +182,7 @@ jobs:
     uses: ./.github/workflows/deploy-environment-single.yml
     with:
       resource-group-base-name: 'rg-MercuryHealth'
-      environment-suffix: 'qa'
+      environment-suffix: 'dev'
       resource-group-location: 'eastus'
       approval-required: true
     secrets:
