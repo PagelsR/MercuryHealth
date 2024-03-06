@@ -23,7 +23,6 @@ env:
   buildPlatform: 'Any CPU'
   dotnet_version: '6.x.x'
   Azure_Resource_GroupName: 'rg-MercuryHealth'
-  Azure_Resource_GroupLocation: 'eastus'
   
 jobs:
   Build_Application:
@@ -185,7 +184,7 @@ jobs:
     with:
       resource-group-base-name: 'rg-MercuryHealth'
       environment-suffix: 'dev'
-      resource-group-location: ${{ env.Azure_Resource_GroupLocation }}
+      resource-group-location: 'eastus'
       approval-required: true
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
