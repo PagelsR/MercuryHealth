@@ -171,10 +171,6 @@ jobs:
         inlineScript: |
           az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
 
-    - name: 'Azure logout'
-      run: |
-        az logout
-
     # Used for Demos only.
     - name: DEBUG ONLY Display Output Variables
       run: |
@@ -188,6 +184,13 @@ jobs:
          echo 'output_appInsightsApplicationId: ${{ steps.Infra.outputs.out_appInsightsApplicationId }}'
          echo 'output_appInsightsAPIApplicationId: ${{ steps.Infra.outputs.out_appInsightsAPIApplicationId }}'
          echo 'output_keyvaultName: ${{ steps.Infra.outputs.out_keyvaultName }}'
+
+    - name: 'Azure logout'
+      run: |
+        az logout
+
+    - name: Pause Stage for 30 secs
+      run: sleep 30
 
   ###################################################################
   # Deploy Database
