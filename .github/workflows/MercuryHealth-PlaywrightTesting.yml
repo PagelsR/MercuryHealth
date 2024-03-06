@@ -21,6 +21,7 @@ jobs:
         node_version: '18.x.x'
         buildConfiguration: 'Release'
         website_URL: 'https://app-okhgzqoexg6jy.azurewebsites.net/'
+        website_URL_QA: 'https://app-jdb6rlzbrxvza.azurewebsites.net/'
         HOME: /root
 
     steps:
