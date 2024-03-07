@@ -1,9 +1,8 @@
 // Deploy Azure infrastructure for app + data + monitoring
 
-//targetScope = 'subscription'
 // Region for all resources
 param location string = resourceGroup().location
-param createdBy string = 'Randy Pagels' // resourceGroup().managedBy
+param createdBy string = 'Randy Pagels'
 param costCenter string = '74f644d3e665'
 param releaseAnnotationGuid string = newGuid()
 param Deployed_Environment string
@@ -32,8 +31,6 @@ var keyvaultName = 'kv-${uniqueString(resourceGroup().id)}'
 //var blobstorageName = 'stablob${uniqueString(resourceGroup().id)}'
 var dashboardName = 'dashboard-${uniqueString(resourceGroup().id)}'
 // var frontDoorName = 'fd-${uniqueString(resourceGroup().id)}'
-// var logicAppName = 'logic-${uniqueString(resourceGroup().id)}'
-// var cognitiveServiceName = 'cog-${uniqueString(resourceGroup().id)}'
 
 // Slot names
 //var functionAppDevSlotName = 'dev'
@@ -82,8 +79,6 @@ module webappmod './main-2-webapp.bicep' = {
     //Deployed_Environment: Deployed_Environment
     appInsightsName: appInsightsName
     location: location
-    //appInsightsInstrumentationKey: appinsightsmod.outputs.out_appInsightsInstrumentationKey
-    //appInsightsConnectionString: appinsightsmod.outputs.out_appInsightsConnectionString
     defaultTags: defaultTags
     sqlAdminLoginName: sqlAdminLoginName
     sqlAdminLoginPassword: sqlAdminLoginPassword
@@ -198,15 +193,6 @@ module configstoremod './main-5-configstore.bicep' = {
 //     // connections_office365_externalid: connections_office365_externalid
 //     // connections_sql_externalid: connections_sql_externalid
 //     // connections_teams_externalid: connections_teams_externalid
-//   }
-// }
-
-// module cognitiveservicemod 'main-16-cognitiveservice.bicep' = {
-//   name: cognitiveServiceName
-//   params: {
-//     defaultTags: defaultTags
-//     cognitiveServiceName: cognitiveServiceName
-//     location: location
 //   }
 // }
 
