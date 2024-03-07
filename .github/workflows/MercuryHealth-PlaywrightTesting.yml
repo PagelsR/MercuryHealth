@@ -20,8 +20,8 @@ jobs:
     env:
         node_version: '18.x.x'
         buildConfiguration: 'Release'
-        website_URL: 'https://app-okhgzqoexg6jy.azurewebsites.net/'
-        website_URL_QA: 'https://app-jdb6rlzbrxvza.azurewebsites.net/'
+        website_URL_Dev: 'https://app-okhgzqoexg6jy.azurewebsites.net/'
+        website_URL: 'https://app-jdb6rlzbrxvza.azurewebsites.net/'
         HOME: /root
 
     steps:
@@ -39,6 +39,8 @@ jobs:
       - name: Run Playwright tests
         continue-on-error: true
         run: npx playwright test --reporter=html
+        env:
+          WEBSITE_URL: ${{ env.website_URL }}
 
         # Upload the Playwright test result artifacts
       - name: Upload Playwright Report Files
