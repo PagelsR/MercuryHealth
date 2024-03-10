@@ -195,84 +195,83 @@ jobs:
   ###################################################################
   # Deploy Database
   ###################################################################
-  deploy_database:
-    runs-on: ubuntu-latest
+  # deploy_database:
+  #   runs-on: ubuntu-latest
 
-    name: Deploy Database
-    needs: [deploy_infrastructure]
-    env:
-      Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
-      Azure_Resource_GroupLocation: ${{ inputs.resource-group-location}}
+  #   name: Deploy Database
+  #   needs: [deploy_infrastructure]
+  #   env:
+  #     Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
+  #     Azure_Resource_GroupLocation: ${{ inputs.resource-group-location}}
   
-    permissions:
-      contents: read
+  #   permissions:
+  #     contents: read
 
-    # Identify any jobs that must complete successfully before this job will run.
-    steps:
-    - name: Login to Azure
-      uses: azure/login@v1
-      continue-on-error: false
-      with:
-        creds: ${{ secrets.azure-credentials }}
+  #   # Identify any jobs that must complete successfully before this job will run.
+  #   steps:
+  #   - name: Login to Azure
+  #     uses: azure/login@v1
+  #     continue-on-error: false
+  #     with:
+  #       creds: ${{ secrets.azure-credentials }}
 
-    - name: Resource Group UnLocked
-      #if: contains(github.event_name, 'push')
-      uses: Azure/CLI@v1
-      continue-on-error: true
-      with:
-        inlineScript: |
-          az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
+  #   - name: Resource Group UnLocked
+  #     #if: contains(github.event_name, 'push')
+  #     uses: Azure/CLI@v1
+  #     continue-on-error: true
+  #     with:
+  #       inlineScript: |
+  #         az group lock delete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }}
           
-    - name: Download Artifacts for Database
-      uses: actions/download-artifact@v2
-      continue-on-error: false
-      with:
-        name: MercuryHealth.Database
-        path: ${{ github.workspace }}/MercuryHealth.Database
+  #   - name: Download Artifacts for Database
+  #     uses: actions/download-artifact@v2
+  #     continue-on-error: false
+  #     with:
+  #       name: MercuryHealth.Database
+  #       path: ${{ github.workspace }}/MercuryHealth.Database
 
-    # Get Key Vault Value
-    - name: Get Key Vault Value for DB Connection String
-      id: GetDBConnectionString
-      uses: Azure/CLI@v1
-      continue-on-error: true
-      with:
-        inlineScript: |
-          az config set extension.use_dynamic_install=yes_without_prompt
-          result_key=$(az keyvault secret show \
-                      --name "ConnectionStringsMercuryHealthWebContext" \
-                      --vault-name "${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}" \
-                      --query "value" --output tsv)
-          echo "::add-mask::$result_key"
-          echo "databaseConnection=$result_key" >> $GITHUB_ENV
+  #   # Get Key Vault Value
+  #   - name: Get Key Vault Value for DB Connection String
+  #     id: GetDBConnectionString
+  #     uses: Azure/CLI@v1
+  #     continue-on-error: true
+  #     with:
+  #       inlineScript: |
+  #         az config set extension.use_dynamic_install=yes_without_prompt
+  #         result_key=$(az keyvault secret show \
+  #                     --name "ConnectionStringsMercuryHealthWebContext" \
+  #                     --vault-name "${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}" \
+  #                     --query "value" --output tsv)
+  #         echo "::add-mask::$result_key"
+  #         echo "databaseConnection=$result_key" >> $GITHUB_ENV
 
-    # Deploy Database *.dacpac file
-    - name: Deploy Database to Azure
-      continue-on-error: true
-      uses: Azure/sql-action@v1.2
-      with:
-        server-name: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}
-        connection-string: ${{ env.databaseConnection }}
-        dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
+  #   # Deploy Database *.dacpac file
+  #   - name: Deploy Database to Azure
+  #     continue-on-error: true
+  #     uses: Azure/sql-action@v1.2
+  #     with:
+  #       server-name: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}
+  #       connection-string: ${{ env.databaseConnection }}
+  #       dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
 
-    # Used for Demos only.
-    - name: DEBUG ONLY Display Output Variables
-      run: |
-         echo 'output_secretConnectionString: ${{ env.databaseConnection }}'
-         echo 'output_sqlserverFQName: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}'
+  #   # Used for Demos only.
+  #   - name: DEBUG ONLY Display Output Variables
+  #     run: |
+  #        echo 'output_secretConnectionString: ${{ env.databaseConnection }}'
+  #        echo 'output_sqlserverFQName: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}'
 
-    - name: Resource Group Locked
-      #if: contains(github.event_name, 'push')
-      uses: Azure/CLI@v1
-      continue-on-error: true
-      with:
-        inlineScript: |
-          az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
-   
+  #   - name: Resource Group Locked
+  #     #if: contains(github.event_name, 'push')
+  #     uses: Azure/CLI@v1
+  #     continue-on-error: true
+  #     with:
+  #       inlineScript: |
+  #         az group lock create --lock-type CanNotDelete --name DontDeleteMe --resource-group ${{ env.Azure_Resource_GroupName }} --notes 'Prevent deletion of the resource group'
 
   ###################################################################
   # Deployment Stage - Application / Database 
   ###################################################################
-  deploy_application:
+  deploy_application_database:
     runs-on: ubuntu-latest
     name: Deploy Application
     needs: [deploy_infrastructure]
@@ -334,6 +333,13 @@ jobs:
         name: MercuryHealth.FunctionApp
         path: ${{ github.workspace }}/MercuryHealth.FunctionApp
 
+    - name: Download Artifacts for Database
+      uses: actions/download-artifact@v2
+      continue-on-error: false
+      with:
+        name: MercuryHealth.Database
+        path: ${{ github.workspace }}/MercuryHealth.Database
+
     - name: Deploy Website to Azure
       uses: azure/webapps-deploy@v2
       with:
@@ -348,22 +354,52 @@ jobs:
         slot-name: 'production'
         package: './MercuryHealth.FunctionApp'
 
-    # Release annotations can be automatically created for Application Insights ONLY if:using ADO Pipelines, NOT GitHub Actions. :(
-    # You’re using one of the following Azure DevOps pipeline tasks:
-    # AzureAppServiceSettings, AzureRmWebAppDeployment, AzureFunctionApp, AzureFunctionAppContainer, AzureWebAppContainer, AzureWebApp
-    - name: Download Artifacts for Infrastructure
-      uses: actions/download-artifact@v2
-      continue-on-error: false
+# Randy Pagels - Look here! WHY!!! Download IaC Files???
+
+    # - name: Download Artifacts for Infrastructure
+    #   uses: actions/download-artifact@v2
+    #   continue-on-error: false
+    #   with:
+    #     name: MercuryHealth.IaC
+    #     path: ${{ github.workspace }}/MercuryHealth.IaC
+
+      # Get Key Vault Value
+    - name: Get KeyVault Value for DB Connection String
+      id: GetDBConnectionString
+      uses: Azure/CLI@v1
+      continue-on-error: true
       with:
-        name: MercuryHealth.IaC
-        path: ${{ github.workspace }}/MercuryHealth.IaC
+        inlineScript: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          result_key=$(az keyvault secret show \
+                      --name "ConnectionStringsMercuryHealthWebContext" \
+                      --vault-name "${{ needs.deploy_infrastructure.outputs.output_keyvaultName }}" \
+                      --query "value" --output tsv)
+          echo "::add-mask::$result_key"
+          echo "databaseConnection=$result_key" >> $GITHUB_ENV
+  
+    # Deploy Database *.dacpac file
+    - name: Deploy Database to Azure
+      continue-on-error: true
+      uses: Azure/sql-action@v1.2
+      with:
+        server-name: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}
+        connection-string: ${{ env.databaseConnection }}
+        dacpac-package: './MercuryHealth.Database/MercuryHealth.Database.dacpac'
 
     # Used for Demos only.      
     - name: DEBUG ONLY Display Output Variables
       run: |
          echo 'aiResourceId: ${{ needs.deploy_infrastructure.outputs.output_appInsightsApplicationId }}'
          echo 'releaseName: ${{ github.run_id }}-${{ github.run_number }}'
+         echo 'output_secretConnectionString: ${{ env.databaseConnection }}'
+         echo 'output_sqlserverFQName: ${{ needs.deploy_infrastructure.outputs.output_sqlserverFQName }}'
 
+    # Release annotations can be automatically created for Application Insights ONLY
+    # if:using ADO Pipelines, NOT GitHub Actions!!! :(
+    # If ADO, you must use one of the following Azure DevOps pipeline tasks:
+    # AzureAppServiceSettings, AzureRmWebAppDeployment, AzureFunctionApp, AzureFunctionAppContainer, AzureWebAppContainer, AzureWebApp
+      
     # github.run_id, github_run_number, github.workflow
     - name: Create Release Annotations for Monitoring
       uses: Azure/powershell@v1
@@ -393,7 +429,6 @@ jobs:
     - name: 'Azure logout'
       run: |
         az logout
-
        
   ###################################################################
   # Conigure DNS and set SSL Certificate
@@ -404,7 +439,7 @@ jobs:
       output_endpointUri: ${{ steps.InfraDNS.outputs.out_endpointUri }}
 
     name: Configure DNS and SSL Certificate
-    needs: [deploy_infrastructure, deploy_application]
+    needs: [deploy_infrastructure, deploy_application_database]
     env:
       Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
       Azure_Resource_GroupLocation: ${{ inputs.resource-group-location}}
@@ -478,7 +513,7 @@ jobs:
     runs-on: ubuntu-latest
 
     # Identify any jobs that must complete successfully before this job will run.
-    needs: [deploy_infrastructure, deploy_application, deploy_database, config_dnsandcertificate]
+    needs: [deploy_infrastructure, deploy_application_database, config_dnsandcertificate]
     timeout-minutes: 60
         
     steps:
@@ -554,7 +589,7 @@ jobs:
       Azure_Resource_GroupName: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
            
     # Identify any jobs that must complete successfully before this job will run.
-    needs: [deploy_infrastructure, deploy_application, Playwright_Stage_Application]
+    needs: [deploy_infrastructure, deploy_application_database, Playwright_Stage_Application]
     steps:
       - name: 'Checkout GitHub Actions'
         uses: actions/checkout@v2

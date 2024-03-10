@@ -10,7 +10,40 @@ param sqlAdminLoginPassword string
 param location string = resourceGroup().location
 param defaultTags object
 
-resource sqlServer 'Microsoft.Sql/servers@2022-08-01-preview' = {
+// resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
+//   name: sqlserverName
+//   location: location
+//   tags: defaultTags
+//   properties: {
+//     administratorLogin: sqlAdminLoginName
+//     administratorLoginPassword: sqlAdminLoginPassword
+//     version: '12.0'
+//     minimalTlsVersion: '1.2'
+//     publicNetworkAccess: 'Enabled'
+//     restrictOutboundNetworkAccess: 'Enabled'
+//   }
+// }
+
+// resource sqlDB 'Microsoft.Sql/servers/databases@2023-05-01-preview' = {
+//   parent: sqlServer
+//   name: sqlDBName
+//   location: location
+//   tags: defaultTags
+//   sku: {
+//     name:'GP_S_Gen5'
+//     tier: 'GeneralPurpose'
+//     family: 'Gen5'
+//     capacity: 1
+//   }
+//   properties: {
+//     requestedBackupStorageRedundancy: 'Local'
+//     zoneRedundant: false
+//     autoPauseDelay: 60
+//     minCapacity: 1
+//   }
+// }
+
+resource sqlServer 'Microsoft.Sql/servers@2023-05-01-preview' = {
   name: sqlserverName
   location: location
   tags: defaultTags
@@ -18,36 +51,38 @@ resource sqlServer 'Microsoft.Sql/servers@2022-08-01-preview' = {
     administratorLogin: sqlAdminLoginName
     administratorLoginPassword: sqlAdminLoginPassword
     version: '12.0'
-    minimalTlsVersion: '1.2'
+    minimalTlsVersion: 'none'
     publicNetworkAccess: 'Enabled'
-    restrictOutboundNetworkAccess: 'Enabled'
+    restrictOutboundNetworkAccess: 'Disabled'
   }
 }
 
-resource sqlDB 'Microsoft.Sql/servers/databases@2022-08-01-preview' = {
+resource sqlDB 'Microsoft.Sql/servers/databases@2023-05-01-preview' = {
   parent: sqlServer
   name: sqlDBName
   location: location
   tags: defaultTags
   sku: {
-    name:'GP_S_Gen5'
-    tier: 'GeneralPurpose'
-    family: 'Gen5'
-    capacity: 1
+    name:'Basic'
+    tier: 'Basic'
+    capacity: 5
   }
+  kind: 'v12.0,user'
   properties: {
     requestedBackupStorageRedundancy: 'Local'
     zoneRedundant: false
+    availabilityZone: 'NoPreference'
+    readScale: 'Disabled'
     autoPauseDelay: 60
     minCapacity: 1
   }
 }
 
-resource sqlserverName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallRules@2022-08-01-preview' = {
+resource sqlserverName_AllowAllWindowsAzureIps 'Microsoft.Sql/servers/firewallRules@2023-05-01-preview' = {
   parent: sqlServer
   name: 'AllowAllWindowsAzureIps'
   properties: {
-    endIpAddress: '0.0.0.0'
+    endIpAddress: '255.255.255.255'
     startIpAddress: '0.0.0.0'
   }
 }
