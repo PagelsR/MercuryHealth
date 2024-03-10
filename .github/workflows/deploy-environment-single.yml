@@ -189,8 +189,8 @@ jobs:
       run: |
         az logout
 
-    - name: Pause Stage for 30 secs
-      run: sleep 300
+    # - name: Pause Stage for 30 secs
+    #   run: sleep 300
 
   ###################################################################
   # Deploy Database
