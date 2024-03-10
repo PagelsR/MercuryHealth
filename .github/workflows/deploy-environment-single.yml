@@ -401,17 +401,29 @@ jobs:
     # AzureAppServiceSettings, AzureRmWebAppDeployment, AzureFunctionApp, AzureFunctionAppContainer, AzureWebAppContainer, AzureWebApp
       
     # github.run_id, github_run_number, github.workflow
+    # - name: Create Release Annotations for Monitoring
+    #   uses: Azure/powershell@v1
+    #   continue-on-error: true
+    #   env:
+    #     POWERSHELL_TELEMETRY_OPTOUT: 1
+    #   with:
+    #     inlineScript: ./MercuryHealth.IaC/CreateReleaseAnnotation.ps1 -releaseName "${{ github.run_number }}-${{ github.workflow }}" -aiResourceId "/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/${{ env.Azure_Resource_GroupName }}/providers/microsoft.insights/components/${{ needs.deploy_infrastructure.outputs.output_appInsightsApplicationId }}"
+    #     # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
+    #     azPSVersion: latest
+    #     # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
+    #     errorActionPreference: continue   
+
     - name: Create Release Annotations for Monitoring
       uses: Azure/powershell@v1
       continue-on-error: true
       env:
         POWERSHELL_TELEMETRY_OPTOUT: 1
       with:
-        inlineScript: ./MercuryHealth.IaC/CreateReleaseAnnotation.ps1 -releaseName "${{ github.run_number }}-${{ github.workflow }}" -aiResourceId "/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/${{ env.Azure_Resource_GroupName }}/providers/microsoft.insights/components/${{ needs.deploy_infrastructure.outputs.output_appInsightsApplicationId }}"
+        inlineScript: ./MercuryHealth.IaC/CreateReleaseAnnotation.ps1 -releaseName "${{ github.run_number }}-${{ github.workflow }}" -aiResourceId "/subscriptions/295e777c-2a1b-456a-989e-3c9b15d52a8e/resourceGroups/${{ env.Azure_Resource_GroupName }}/providers/microsoft.insights/components/${{ needs.deploy_infrastructure.outputs.output_appInsightsAPIApplicationId }}"
         # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
         azPSVersion: latest
         # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
-        errorActionPreference: continue   
+        errorActionPreference: continue  
 
     - name: Resource Group Locked
       #if: contains(github.event_name, 'push')
