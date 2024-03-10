@@ -356,12 +356,12 @@ jobs:
 
 # Randy Pagels - Look here! WHY!!! Download IaC Files???
 
-    # - name: Download Artifacts for Infrastructure
-    #   uses: actions/download-artifact@v2
-    #   continue-on-error: false
-    #   with:
-    #     name: MercuryHealth.IaC
-    #     path: ${{ github.workspace }}/MercuryHealth.IaC
+    - name: Download Artifacts for Infrastructure
+      uses: actions/download-artifact@v2
+      continue-on-error: false
+      with:
+        name: MercuryHealth.IaC
+        path: ${{ github.workspace }}/MercuryHealth.IaC
 
       # Get Key Vault Value
     - name: Get KeyVault Value for DB Connection String
