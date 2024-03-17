@@ -354,8 +354,6 @@ jobs:
         slot-name: 'production'
         package: './MercuryHealth.FunctionApp'
 
-# Randy Pagels - Look here! WHY!!! Download IaC Files???
-
     - name: Download Artifacts for Infrastructure
       uses: actions/download-artifact@v2
       continue-on-error: false
@@ -424,6 +422,39 @@ jobs:
         azPSVersion: latest
         # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
         errorActionPreference: continue  
+
+    # - task: CmdLine@2
+    #   displayName: 'Create Release Annotation using REST API'
+    #   inputs:
+    #     script: |
+    #       curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer $(AppInsightsAPIApplicationId)' -d '{"annotationName": "$(annotationName)", "annotationType": "$(annotationType)", "releaseName": "$(releaseName)", "releaseId": "$(releaseId)", "environment": "$(environment)", "comment": "$(comment)"}' 'https://management.azure.com/subscriptions/$(azureSubscriptionId)/resourceGroups/$(Azure_Resource_GroupName)/providers/microsoft.insights/components/$(AppInsightsApplicationName)/Annotations?api-version=2015-05-01'
+    #   env:
+    #     annotationName: 'Your Annotation Name'
+    #     accessToken: '$(AppInsightsAPIApplicationId)'
+    #     annotationType: 'Your Annotation Type'
+    #     releaseName: 'Your Release Name'
+    #     releaseId: 'Your Release ID'
+    #     environment: 'Your Environment'
+    #     comment: 'Your Comment'
+    #     subscriptionId: '$(azureSubscriptionId)'
+    #     resourceGroup: '$(Azure_Resource_GroupName)'
+    #     appInsightsName: '$(AppInsightsApplicationName)'
+
+    #        curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer ${{ secrets.APP_INSIGHTS_API_APPLICATION_ID }}' -d '{"annotationName": "${{ secrets.ANNOTATION_NAME }}", "annotationType": "${{ secrets.ANNOTATION_TYPE }}", "releaseName": "${{ secrets.RELEASE_NAME }}", "releaseId": "${{ secrets.RELEASE_ID }}", "environment": "${{ secrets.ENVIRONMENT }}", "comment": "${{ secrets.COMMENT }}"}' 'https://management.azure.com/subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/${{ secrets.AZURE_RESOURCE_GROUP_NAME }}/providers/microsoft.insights/components/$(AppInsightsApplicationName)/Annotations?api-version=2015-05-01'
+    - name: Create Release Annotation using REST API
+      run: |
+        curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer $(AppInsightsAPIApplicationId)' -d '{"annotationName": "$(annotationName)", "annotationType": "$(annotationType)", "releaseName": "$(releaseName)", "releaseId": "$(releaseId)", "environment": "$(environment)", "comment": "$(comment)"}' 'https://management.azure.com/subscriptions/$(azureSubscriptionId)/resourceGroups/$(Azure_Resource_GroupName)/providers/microsoft.insights/components/$(AppInsightsApplicationName)/Annotations?api-version=2015-05-01'
+      env:
+        APP_INSIGHTS_API_APPLICATION_ID: ${{ needs.deploy_infrastructure.outputs.output_appInsightsAPIApplicationId }}
+        ANNOTATION_NAME: ${{ secrets.ANNOTATION_NAME }}
+        ANNOTATION_TYPE: ${{ secrets.ANNOTATION_TYPE }}
+        RELEASE_NAME: ${{ github.run_number }}-${{ github.workflow }}
+        RELEASE_ID: ${{ secrets.RELEASE_ID }}
+        ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+        COMMENT: ${{ secrets.COMMENT }}
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        # AZURE_RESOURCE_GROUP_NAME: ${{ env.Azure_Resource_GroupName }}
+        APP_INSIGHTS_APPLICATION_NAME: ${{ needs.deploy_infrastructure.outputs.output_appInsightsAPIApplicationId }}
 
     - name: Resource Group Locked
       #if: contains(github.event_name, 'push')
